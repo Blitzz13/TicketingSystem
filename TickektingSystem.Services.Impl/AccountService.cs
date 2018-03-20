@@ -74,6 +74,14 @@ namespace TickektingSystem.Services.Impl
 				};
 			}
 
+			if (registerModel.UserName.Length < 3)
+			{
+				return new RegisterResult()
+				{
+					IvalidUsernameSize = true
+				};
+			}
+
 			string password = HashPassword(registerModel);
 
 			DATA.Models.User user = new DATA.Models.User
@@ -82,7 +90,8 @@ namespace TickektingSystem.Services.Impl
 				Password = password,
 				Email = registerModel.Email,
 				FirstName = registerModel.FirstName,
-				LastName = registerModel.LastName
+				LastName = registerModel.LastName,
+				AccountState = registerModel.AccountState
 			};
 
 			_context.Add(user);

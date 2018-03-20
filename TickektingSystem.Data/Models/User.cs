@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using TickektingSystem.Data.Enums;
 
 namespace TicketingSystem.Data.Models
 {
@@ -17,6 +19,8 @@ namespace TicketingSystem.Data.Models
 		public string FirstName { get; set; }
 
 		public string LastName { get; set; }
+
+		public AccountState AccountState { get; set; }
 
 		public ICollection<Message> Messages { get; set; } = new List<Message>();
 	}

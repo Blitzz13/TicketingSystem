@@ -7,12 +7,13 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Storage.Internal;
 using System;
 using TickektingSystem.Data;
+using TickektingSystem.Data.Enums;
 using TicketingSystem.Data.Models;
 
 namespace TickektingSystem.Data.Migrations
 {
     [DbContext(typeof(TicketingSystemDbContext))]
-    [Migration("20180320121000_Initial")]
+    [Migration("20180320145947_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -110,6 +111,8 @@ namespace TickektingSystem.Data.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
+
+                    b.Property<int>("AccountState");
 
                     b.Property<string>("Email");
 

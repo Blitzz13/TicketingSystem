@@ -9,6 +9,8 @@
 
 		public bool UsernameTaken { get; set; }
 
+		public bool IvalidUsernameSize { get; set; }
+
 		public bool IncorrectEmailFormat { get; set; }
 
 		public bool InvalidFirstName { get; set; }
