@@ -1,6 +1,7 @@
 ﻿namespace TickektingSystem.Services
 {
-	public class LogOnResult
+	public class LoginResult
 	{
+
 	}
 }

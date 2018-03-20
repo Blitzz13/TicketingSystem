@@ -4,4 +4,9 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\TickektingSystem.Data\TickektingSystem.Data.csproj" />
+    <ProjectReference Include="..\TickektingSystem.Services\TickektingSystem.Services.csproj" />
+  </ItemGroup>
+
 </Project>

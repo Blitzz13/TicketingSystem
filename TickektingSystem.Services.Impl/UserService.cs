@@ -1,4 +1,5 @@
-﻿using TicketingSystem.Data;
+﻿using TickektingSystem.Data;
+using TicketingSystem.Data;
 
 namespace TickektingSystem.Services.Impl
 {

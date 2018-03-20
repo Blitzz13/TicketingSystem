@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TicketingSystem.Data.Models;
 
-namespace TicketingSystem.Data
+namespace TickektingSystem.Data
 {
 	public class TicketingSystemDbContext : DbContext
 	{
@@ -14,7 +14,6 @@ namespace TicketingSystem.Data
 		{
 		}
 
-
 		public DbSet<User> Users { get; set; }
 
 		public DbSet<Project> Projects { get; set; }
@@ -25,7 +24,6 @@ namespace TicketingSystem.Data
 
 		public DbSet<Message> Messages { get; set; }
 
-
 		protected override void OnConfiguring(DbContextOptionsBuilder builder)
 		{
 			base.OnConfiguring(builder);
@@ -34,6 +32,7 @@ namespace TicketingSystem.Data
 			{
 				builder.UseSqlServer(@"Server=(LocalDb)\MSSQLLocalDB;Database=TicketingSystem;Integrated Security=True");
 			}
+
 		}
 
 		protected override void OnModelCreating(ModelBuilder builder)

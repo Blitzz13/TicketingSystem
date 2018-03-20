@@ -2,8 +2,10 @@
 {
 	public interface IAccountService
 	{
-		LogOnResult Logon(string userName, string password);
+		LoginResult Login(string userName, string password);
 
 		RegisterResult Register(RegisterModel registerModel);
+
+		string HashPassword(RegisterModel registerModel);
 	}
 }
