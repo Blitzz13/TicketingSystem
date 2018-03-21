@@ -22,27 +22,17 @@ namespace TicketingSystem.Services.Impl
 			DATA.User user = _context.Users.FirstOrDefault(u => u.Username == userName);
 			if (user == null)
 			{
-
+				throw new ServiceException("The username you have entered is wrong.");
 			}
 
-			byte[] hashBytes = Convert.FromBase64String(user.Password);
-			byte[] salt = new byte[16];
-			Array.Copy(hashBytes, 0, salt, 0, 16);
-			var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 10000);
-			byte[] hash = pbkdf2.GetBytes(20);
+			byte[] hashBytes, hash;
+			UnhashPassword(password, user, out hashBytes, out hash);
+			ValidatePassword(hashBytes, hash);
 
-			for (int i = 0; i < 20; i++)
+			if (user.AccountState == DATA.AccountState.Pending)
 			{
-				if (hashBytes[i + 16] != hash[i])
-				{
-					Console.WriteLine("Wrong password!");
-					return new LoginResult
-					{
-
-					};
-				}
+				throw new ServiceException("Your account is not approved yet. Please try again later.");
 			}
-
 			return new LoginResult
 			{
 				UserId = user.Id
@@ -71,7 +61,12 @@ namespace TicketingSystem.Services.Impl
 				throw new ServiceException("The username you have chosen already exists.");
 			}
 
-			var regex = new Regex(@"^([0-9a-zA-Z_]([_+-.\w]*[0-9a-zA-Z_])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9})$/");
+			if (string.IsNullOrEmpty(registerModel.Email))
+			{
+				throw new ServiceException("The email cannot be empty");
+			}
+
+			var regex = new Regex(@"^([0-9a-zA-Z_]([_+-.\w]*[0-9a-zA-Z_])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9})$");
 			Match match = regex.Match(registerModel.Email);
 			if (!match.Success)
 			{
@@ -99,6 +94,32 @@ namespace TicketingSystem.Services.Impl
 			_context.SaveChanges();
 		}
 
+		public void CreateProject(int userId, ProjectModel projectModel)
+		{
+			if (userId == -1)
+			{
+				throw new ServiceException("You are not logged in.");
+			}
+
+			var user = _context.Users.FirstOrDefault(u => u.Id == userId);
+
+			if (user.Role == DATA.Role.Administrator)
+			{
+				var project = new DATA.Project
+				{
+					Name = projectModel.Title,
+					Description = projectModel.Description
+				};
+
+				_context.Add(project);
+				_context.SaveChanges();
+			}
+			else
+			{
+				throw new ServiceException("You have to be administrator to use this command.");
+			}
+		}
+
 		#endregion
 
 		public static string HashPassword(RegisterModel registerModel)
@@ -115,5 +136,26 @@ namespace TicketingSystem.Services.Impl
 
 			return Convert.ToBase64String(hashBytes);
 		}
+
+		private static void UnhashPassword(string password, DATA.User user, out byte[] hashBytes, out byte[] hash)
+		{
+			hashBytes = Convert.FromBase64String(user.Password);
+			byte[] salt = new byte[16];
+			Array.Copy(hashBytes, 0, salt, 0, 16);
+			var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 10000);
+			hash = pbkdf2.GetBytes(20);
+		}
+
+		private static void ValidatePassword(byte[] hashBytes, byte[] hash)
+		{
+			for (int i = 0; i < 20; i++)
+			{
+				if (hashBytes[i + 16] != hash[i])
+				{
+					throw new ServiceException("The password you have entered is wrong.");
+				}
+			}
+		}
+
 	}
 }

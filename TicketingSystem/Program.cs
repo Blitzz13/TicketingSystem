@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
+using System.Linq;
+using TicketingSystem.Data;
 using TicketingSystem.Services;
 using TicketingSystem.Services.Impl;
 
@@ -19,6 +21,8 @@ namespace TicketingSystem
 
 			var context = new Data.TicketingSystemDbContext();
 
+			int userId = -1;
+
 			context.Database.Migrate();
 
 			string[] command;
@@ -37,39 +41,65 @@ namespace TicketingSystem
 				if (command[0] == "register")
 				{
 					Register(accountService);
+				}
+				else if (command[0] == "login")
+				{
+					Console.Write("Username: ");
+					string username = Console.ReadLine();
+
+					Console.Write("Password: ");
+					string password = Console.ReadLine();
+
+					try
+					{
+						loginResult = accountService.Login(username, password);
+						userId = loginResult.UserId;
+						Console.WriteLine("You have been logged in.");
+					}
+					catch (ServiceException se)
+					{
+						Console.WriteLine(se.Message);
+					}
+				}
+				else if (string.Join(" ", command) == "create project")
+				{
+					try
+					{
+						Console.Write("Project title: ");
+						string title = Console.ReadLine();
+
+						Console.Write("Description: ");
+						string description = Console.ReadLine();
+
+						ProjectModel projectModel = new ProjectModel(title, description);
+
+						accountService.CreateProject(userId, projectModel);
+					}
+					catch (ServiceException se)
+					{
+						Console.WriteLine(se.Message);
+					}
 
 				}
-				//else if (command[0] == "login")
-				//{
-				//	Console.Write("Username: ");
-				//	string username = Console.ReadLine();
-
-				//	Console.Write("Password: ");
-				//	string password = Console.ReadLine();
-
-				//	loginResult = accountService.Login(username, password);
-				//	if (user.AccountState == AccountState.Pending)
-				//	{
-				//		Console.WriteLine("Your account haven't been activated yet! Try again later.");
-				//	}
-				//	else if (user.AccountState == AccountState.Aproved)
-				//	{
-				//		Console.WriteLine("You have been logged in");
-				//	}
-
-
-
-				//}
-				//else if (string.Join(" ", command) == "create project")
-				//{
-				//	if (user != null)
-				//	{
-				//		if (user.Role == Role.Administrator)
-				//		{
-							
-				//		}
-				//	}
-				//}
+				else if (command[0] == "logout")
+				{
+					if (userId == -1)
+					{
+						Console.WriteLine("You have to be logged in to be logout.");
+					}
+					else
+					{
+						userId = -1;
+						Console.WriteLine("You have been logged out.");
+					}
+				}
+				else if (command[0] == "help")
+				{
+					Console.WriteLine("-------------------------------");
+					Console.WriteLine("Here are the commands avalable:");
+					Console.WriteLine("register, login, logout");
+					Console.WriteLine("-------------------------------");
+				}
 
 			} while (command[0].ToLower() != "exit");
 		}
@@ -81,41 +111,13 @@ namespace TicketingSystem
 			try
 			{
 				accountService.Register(registerModel);
-				Console.WriteLine("");
+				Console.WriteLine("Your account is being processed");
 			}
-			catch (ServiceException e)
+			catch (ServiceException se)
 			{
-				Console.WriteLine(e.Message);
+				Console.WriteLine(se.Message);
 			}
 		}
-
-		//private static User VerifyUserPasswordAndGetUser(TicketingSystemDbContext context, string username, string password, LoginResult loginResult)
-		//{
-		//	string savedPasswordHash = context.Users.FirstOrDefault(u => u.Username == username).Password;
-		//	byte[] hashBytes = Convert.FromBase64String(savedPasswordHash);
-		//	byte[] salt = new byte[16];
-		//	Array.Copy(hashBytes, 0, salt, 0, 16);
-		//	var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 10000);
-		//	byte[] hash = pbkdf2.GetBytes(20);
-
-		//	for (int i = 0; i < 20; i++)
-		//	{
-		//		if (hashBytes[i + 16] != hash[i])
-		//		{
-		//			Console.WriteLine("Wrong password!");
-		//			loginResult.WrongPassword = true;
-		//			break;
-		//		}
-		//	}
-
-		//	if (!loginResult.WrongPassword)
-		//	{
-		//		loginResult.IsSuccsessful = true;
-		//		return context.Users.FirstOrDefault(u => u.Username == username);
-		//	}
-
-		//	return null;
-		//}
 
 		private static void DrawTitle()
 		{
