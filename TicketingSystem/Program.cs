@@ -1,7 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
-using System.Linq;
-using TicketingSystem.Data;
 using TicketingSystem.Services;
 using TicketingSystem.Services.Impl;
 
