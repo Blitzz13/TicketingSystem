@@ -5,11 +5,11 @@ VisualStudioVersion = 15.0.27428.2002
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TicketingSystem", "TicketingSystem\TicketingSystem.csproj", "{468FB413-4652-47B5-AEC8-699622711E07}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TickektingSystem.Data", "TickektingSystem.Data\TickektingSystem.Data.csproj", "{FF55D2D3-1D5C-41DA-9870-EB02FCDFFC69}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TicketingSystem.Data", "TicketingSystem.Data\TicketingSystem.Data.csproj", "{FF55D2D3-1D5C-41DA-9870-EB02FCDFFC69}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TickektingSystem.Services", "TickektingSystem.Services\TickektingSystem.Services.csproj", "{1625277C-CF01-49E8-A77A-37EEDE509720}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TicketingSystem.Services", "TicketingSystem.Services\TicketingSystem.Services.csproj", "{1625277C-CF01-49E8-A77A-37EEDE509720}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TickektingSystem.Services.Impl", "TickektingSystem.Services.Impl\TickektingSystem.Services.Impl.csproj", "{6C580D16-E979-4CCD-8CF3-0F0E29E00B7E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TicketingSystem.Services.Impl", "TicketingSystem.Services.Impl\TicketingSystem.Services.Impl.csproj", "{6C580D16-E979-4CCD-8CF3-0F0E29E00B7E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

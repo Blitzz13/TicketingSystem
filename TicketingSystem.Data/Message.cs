@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace TicketingSystem.Data.Models
+namespace TicketingSystem.Data
 {
 	public class Message
 	{

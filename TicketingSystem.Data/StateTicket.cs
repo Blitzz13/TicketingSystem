@@ -1,4 +1,4 @@
-﻿namespace TicketingSystem.Data.Models
+﻿namespace TicketingSystem.Data
 {
 	public enum StateTicket
 	{

@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TicketingSystem.Data.Models;
 
-namespace TickektingSystem.Data
+namespace TicketingSystem.Data
 {
 	public class TicketingSystemDbContext : DbContext
 	{

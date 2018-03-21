@@ -6,23 +6,22 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Storage.Internal;
 using System;
-using TickektingSystem.Data;
-using TickektingSystem.Data.Enums;
-using TicketingSystem.Data.Models;
+using TicketingSystem.Data;
 
-namespace TickektingSystem.Data.Migrations
+namespace TicketingSystem.Data.Migrations
 {
     [DbContext(typeof(TicketingSystemDbContext))]
-    partial class TicketingSystemDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180321135951_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "2.0.2-rtm-10011")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("TicketingSystem.Data.Models.File", b =>
+            modelBuilder.Entity("TicketingSystem.Data.File", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -44,7 +43,7 @@ namespace TickektingSystem.Data.Migrations
                     b.ToTable("Files");
                 });
 
-            modelBuilder.Entity("TicketingSystem.Data.Models.Message", b =>
+            modelBuilder.Entity("TicketingSystem.Data.Message", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -64,7 +63,7 @@ namespace TickektingSystem.Data.Migrations
                     b.ToTable("Messages");
                 });
 
-            modelBuilder.Entity("TicketingSystem.Data.Models.Project", b =>
+            modelBuilder.Entity("TicketingSystem.Data.Project", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -78,7 +77,7 @@ namespace TickektingSystem.Data.Migrations
                     b.ToTable("Projects");
                 });
 
-            modelBuilder.Entity("TicketingSystem.Data.Models.Ticket", b =>
+            modelBuilder.Entity("TicketingSystem.Data.Ticket", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -106,7 +105,7 @@ namespace TickektingSystem.Data.Migrations
                     b.ToTable("Tickets");
                 });
 
-            modelBuilder.Entity("TicketingSystem.Data.Models.User", b =>
+            modelBuilder.Entity("TicketingSystem.Data.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -130,33 +129,33 @@ namespace TickektingSystem.Data.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("TicketingSystem.Data.Models.File", b =>
+            modelBuilder.Entity("TicketingSystem.Data.File", b =>
                 {
-                    b.HasOne("TicketingSystem.Data.Models.Message", "Message")
+                    b.HasOne("TicketingSystem.Data.Message", "Message")
                         .WithMany("Files")
                         .HasForeignKey("MessageId");
 
-                    b.HasOne("TicketingSystem.Data.Models.Ticket", "Ticket")
+                    b.HasOne("TicketingSystem.Data.Ticket", "Ticket")
                         .WithMany("Files")
                         .HasForeignKey("TicketId");
                 });
 
-            modelBuilder.Entity("TicketingSystem.Data.Models.Message", b =>
+            modelBuilder.Entity("TicketingSystem.Data.Message", b =>
                 {
-                    b.HasOne("TicketingSystem.Data.Models.User", "User")
+                    b.HasOne("TicketingSystem.Data.User", "User")
                         .WithMany("Messages")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("TicketingSystem.Data.Models.Ticket", b =>
+            modelBuilder.Entity("TicketingSystem.Data.Ticket", b =>
                 {
-                    b.HasOne("TicketingSystem.Data.Models.Project", "Project")
+                    b.HasOne("TicketingSystem.Data.Project", "Project")
                         .WithMany("Tickets")
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("TicketingSystem.Data.Models.User", "Submitter")
+                    b.HasOne("TicketingSystem.Data.User", "Submitter")
                         .WithMany()
                         .HasForeignKey("SubmitterId");
                 });

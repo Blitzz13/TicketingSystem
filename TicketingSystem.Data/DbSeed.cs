@@ -1,7 +1,6 @@
 ﻿using System.Linq;
-using TicketingSystem.Data;
 
-namespace TickektingSystem.Data
+namespace TicketingSystem.Data
 {
 	public static class DbSeed
 	{

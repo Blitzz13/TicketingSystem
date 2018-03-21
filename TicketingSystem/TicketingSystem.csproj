@@ -13,9 +13,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TickektingSystem.Data\TickektingSystem.Data.csproj" />
-    <ProjectReference Include="..\TickektingSystem.Services.Impl\TickektingSystem.Services.Impl.csproj" />
-    <ProjectReference Include="..\TickektingSystem.Services\TickektingSystem.Services.csproj" />
+    <ProjectReference Include="..\TicketingSystem.Data\TicketingSystem.Data.csproj" />
+    <ProjectReference Include="..\TicketingSystem.Services.Impl\TicketingSystem.Services.Impl.csproj" />
+    <ProjectReference Include="..\TicketingSystem.Services\TicketingSystem.Services.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,4 @@
-﻿namespace TickektingSystem.Data.Enums
+﻿namespace TicketingSystem.Data
 {
 	public enum AccountState
 	{

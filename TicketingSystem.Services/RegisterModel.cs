@@ -1,6 +1,6 @@
-﻿using TickektingSystem.Data.Enums;
+﻿using TicketingSystem.Data;
 
-namespace TickektingSystem.Services
+namespace TicketingSystem.Services
 {
 	public class RegisterModel
 	{
