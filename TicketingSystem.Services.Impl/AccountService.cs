@@ -94,30 +94,90 @@ namespace TicketingSystem.Services.Impl
 			_context.SaveChanges();
 		}
 
-		public void CreateProject(int userId, ProjectModel projectModel)
+		public void ChangeRole(string username, int? loggedAccId, DATA.Role roleToChange)
 		{
-			if (userId == -1)
+			//if (loggedAccId == null)
+			//{
+			//	throw new ServiceException("You are not logged in");
+			//}
+
+			//var loggedAcc = _context.Users.FirstOrDefault(u => u.Id == loggedAccId);
+
+			//if (loggedAcc.Role != DATA.Role.Administrator)
+			//{
+			//	throw new ServiceException("You have to be administrator to do that.");
+			//}
+
+			var targetedAcc = _context.Users.FirstOrDefault(a => a.Username == username);
+
+			if (targetedAcc == null)
 			{
-				throw new ServiceException("You are not logged in.");
+				throw new ServiceException($"There is no account with name {username}");
 			}
 
-			var user = _context.Users.FirstOrDefault(u => u.Id == userId);
+			targetedAcc.Role = roleToChange;
+			_context.SaveChanges();
+			Console.WriteLine($"{username} is now {roleToChange}");
+		}
 
-			if (user.Role == DATA.Role.Administrator)
+		public void ApproveAccounts()
+		{
+			Console.WriteLine("These accounts are to be processed:");
+			foreach (var user in _context.Users.Where(u => u.AccountState == DATA.AccountState.Pending))
 			{
-				var project = new DATA.Project
+				Console.WriteLine($"{user.Id} - {user.Username}");
+			}
+
+			string command;
+			do
+			{
+				Console.Write("Enter user id to approve or 'stop': ");
+				command = Console.ReadLine();
+				if (command == "stop")
 				{
-					Name = projectModel.Title,
-					Description = projectModel.Description
-				};
+					Console.WriteLine("You stopped approving");
+					break;
+				}
 
-				_context.Add(project);
-				_context.SaveChanges();
-			}
-			else
-			{
-				throw new ServiceException("You have to be administrator to use this command.");
-			}
+				int id = int.Parse(command);
+				var accToApprove = _context.Users.FirstOrDefault(u => u.Id == id);
+
+				while (accToApprove == null)
+				{
+					Console.WriteLine("There is no person with this id.");
+					Console.Write("Enter user id to approve: ");
+					id = int.Parse(Console.ReadLine());
+					accToApprove = _context.Users.FirstOrDefault(u => u.Id == id);
+				}
+
+				if (accToApprove.AccountState == DATA.AccountState.Aproved)
+				{
+					Console.Write("This account is already approved. Do you want to stop approving (enter 'y' or 'n'): ");
+					command = Console.ReadLine();
+					if (command.ToLower() == "y")
+					{
+						break;
+					}
+				}
+				else
+				{
+					Console.Write("Are you sure(enter 'y' or 'n' 'stop)': ");
+					command = Console.ReadLine();
+					if (command.ToLower() == "y")
+					{
+						accToApprove.AccountState = DATA.AccountState.Aproved;
+						_context.SaveChanges();
+						Console.WriteLine("The account has been approved.");
+					}
+
+				}
+				
+			} while (command != "stop");
+		}
+
+		public void EditUser(string username)
+		{
+			throw new NotImplementedException();
 		}
 
 		#endregion

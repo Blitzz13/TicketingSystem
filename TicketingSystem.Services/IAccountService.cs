@@ -1,4 +1,6 @@
-﻿namespace TicketingSystem.Services
+﻿using TicketingSystem.Data;
+
+namespace TicketingSystem.Services
 {
 	public interface IAccountService
 	{
@@ -6,6 +8,10 @@
 
 		void Register(RegisterModel registerModel);
 
-		void CreateProject(int userId, ProjectModel projectModel);
+		void ChangeRole(string username,int? loggedAccId,Role roleToChange);
+
+		void ApproveAccounts();
+
+		void EditUser(string username);
 	}
 }

@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
+using System.Linq;
+using TicketingSystem.Data;
 using TicketingSystem.Services;
 using TicketingSystem.Services.Impl;
 
@@ -15,11 +17,11 @@ namespace TicketingSystem
 
 			IAccountService accountService = new AccountService();
 
-			LoginResult loginResult = new LoginResult();
+			IProjectService projectService = new ProjectService();
 
 			var context = new Data.TicketingSystemDbContext();
 
-			int userId = -1;
+			int? userId = null;
 
 			context.Database.Migrate();
 
@@ -50,7 +52,7 @@ namespace TicketingSystem
 
 					try
 					{
-						loginResult = accountService.Login(username, password);
+						var loginResult = accountService.Login(username, password);
 						userId = loginResult.UserId;
 						Console.WriteLine("You have been logged in.");
 					}
@@ -61,33 +63,48 @@ namespace TicketingSystem
 				}
 				else if (string.Join(" ", command) == "create project")
 				{
-					try
+					if (userId != null)
 					{
-						Console.Write("Project title: ");
-						string title = Console.ReadLine();
+						if (context.Users.FirstOrDefault(u => u.Id == userId).Role == Role.Administrator)
+						{
+							try
+							{
+								Console.Write("Project title: ");
+								string title = Console.ReadLine();
 
-						Console.Write("Description: ");
-						string description = Console.ReadLine();
+								Console.Write("Description: ");
+								string description = Console.ReadLine();
 
-						ProjectModel projectModel = new ProjectModel(title, description);
+								ProjectModel projectModel = new ProjectModel(title, description);
 
-						accountService.CreateProject(userId, projectModel);
+								projectService.CreateProject(userId, projectModel);
+							}
+							catch (ServiceException se)
+							{
+								Console.WriteLine(se.Message);
+							}
+						}
+						else
+						{
+							Console.WriteLine("You have to be administrator.");
+						}
 					}
-					catch (ServiceException se)
+					else
 					{
-						Console.WriteLine(se.Message);
+						Console.WriteLine("You are not logged in.");
 					}
+					
 
 				}
 				else if (command[0] == "logout")
 				{
-					if (userId == -1)
+					if (userId == null)
 					{
 						Console.WriteLine("You have to be logged in to be logout.");
 					}
 					else
 					{
-						userId = -1;
+						userId = null;
 						Console.WriteLine("You have been logged out.");
 					}
 				}
@@ -97,6 +114,84 @@ namespace TicketingSystem
 					Console.WriteLine("Here are the commands avalable:");
 					Console.WriteLine("register, login, logout");
 					Console.WriteLine("-------------------------------");
+				}
+				else if (string.Join(" ", command) == "create ticket")
+				{
+
+				}
+				else if (string.Join(" ", command) == "change acc role")
+				{
+					if (userId != null)
+					{
+						if (context.Users.FirstOrDefault(u => u.Id == userId).Role == Role.Administrator)
+						{
+							try
+							{
+								Console.Write("Targeted username: ");
+								string username = Console.ReadLine();
+
+								Console.WriteLine("Choose role: ");
+								Console.WriteLine("0 - Client");
+								Console.WriteLine("1 - Support");
+								Console.WriteLine("2 - Administrator");
+
+								Role role = (Role)Enum.Parse(typeof(Role), Console.ReadLine());
+								accountService.ChangeRole(username, userId, role);
+							}
+							catch (ServiceException se)
+							{
+								Console.WriteLine(se.Message);
+							}
+						}
+						else
+						{
+							Console.WriteLine("You have to be administrator.");
+						}
+					}
+					else
+					{
+						Console.WriteLine("You are not logged in.");
+					}
+					
+				}
+				else if (string.Join(" ",command) == "approve acc")
+				{
+					if (userId != null)
+					{
+						if (context.Users.FirstOrDefault(u => u.Id == userId).Role == Role.Administrator)
+						{
+							accountService.ApproveAccounts();
+						}
+						else
+						{
+							Console.WriteLine("You have to be administrator.");
+						}
+					}
+					else
+					{
+						Console.WriteLine("You are not logged in.");
+					}
+				}
+				else if (string.Join(" ", command) == "edit user")
+				{
+					if (userId != null)
+					{
+						if (context.Users.FirstOrDefault(u => u.Id == userId).Role == Role.Administrator)
+						{
+							Console.Write("Enter username for which account must be edited: ");
+							string username = Console.ReadLine();
+
+							accountService.EditUser(username);
+						}
+						else
+						{
+							Console.WriteLine("You have to be administrator.");
+						}
+					}
+					else
+					{
+						Console.WriteLine("You are not logged in.");
+					}
 				}
 
 			} while (command[0].ToLower() != "exit");
