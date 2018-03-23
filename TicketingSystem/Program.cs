@@ -13,6 +13,8 @@ namespace TicketingSystem
 		{
 			//DbSeed.Seed(new Data.TicketingSystemDbContext());
 
+			Console.ForegroundColor = ConsoleColor.Green;
+
 			DrawTitle();
 
 			IAccountService accountService = new AccountService();
@@ -37,6 +39,7 @@ namespace TicketingSystem
 				{
 					command[i] = command[i].ToLower();
 				}
+
 
 				if (command[0] == "register")
 				{
@@ -117,42 +120,31 @@ namespace TicketingSystem
 				}
 				else if (string.Join(" ", command) == "create ticket")
 				{
+					Console.Write("Enter project name: ");
+					string projectName = Console.ReadLine();
 
-				}
-				else if (string.Join(" ", command) == "change acc role")
-				{
-					if (userId != null)
-					{
-						if (context.Users.FirstOrDefault(u => u.Id == userId).Role == Role.Administrator)
-						{
-							try
-							{
-								Console.Write("Targeted username: ");
-								string username = Console.ReadLine();
+					Console.WriteLine("0 - Bug report ");
+					Console.WriteLine("1 - Feature request");
+					Console.WriteLine("2 - Assistance request");
+					Console.WriteLine("3 - Other");
+					Console.Write("Enter type: ");
+					TicketType ticketType = (TicketType)Enum.Parse(typeof(TicketType), Console.ReadLine());
 
-								Console.WriteLine("Choose role: ");
-								Console.WriteLine("0 - Client");
-								Console.WriteLine("1 - Support");
-								Console.WriteLine("2 - Administrator");
+					Console.WriteLine("0 - Draft ");
+					Console.WriteLine("1 - New");
+					Console.WriteLine("2 - Worked on");
+					Console.WriteLine("3 - Done");
+					Console.Write("Enter state: ");
+					StateTicket ticketState = (StateTicket) Enum.Parse(typeof(StateTicket), Console.ReadLine());
 
-								Role role = (Role)Enum.Parse(typeof(Role), Console.ReadLine());
-								accountService.ChangeRole(username, userId, role);
-							}
-							catch (ServiceException se)
-							{
-								Console.WriteLine(se.Message);
-							}
-						}
-						else
-						{
-							Console.WriteLine("You have to be administrator.");
-						}
-					}
-					else
-					{
-						Console.WriteLine("You are not logged in.");
-					}
-					
+					Console.Write("Enter title: ");
+					string ticketTitle = Console.ReadLine();
+
+					Console.Write("Enter description: ");
+					string ticketDescription = Console.ReadLine();
+
+					Console.Write("Enter file path: ");
+					string filePath = Console.ReadLine();
 				}
 				else if (string.Join(" ",command) == "approve acc")
 				{
@@ -178,20 +170,28 @@ namespace TicketingSystem
 					{
 						if (context.Users.FirstOrDefault(u => u.Id == userId).Role == Role.Administrator)
 						{
-							Console.Write("Enter username for which account must be edited: ");
-							string username = Console.ReadLine();
-
-							accountService.EditUser(username);
+							try
+							{
+								Console.Write("Enter username for which account must be edited: ");
+								string username = Console.ReadLine();
+								accountService.EditUser(username);
+							}
+							catch (ServiceException se)
+							{
+								Console.WriteLine(se.Message);
+							}
 						}
 						else
 						{
 							Console.WriteLine("You have to be administrator.");
 						}
+
 					}
 					else
 					{
 						Console.WriteLine("You are not logged in.");
 					}
+					
 				}
 
 			} while (command[0].ToLower() != "exit");

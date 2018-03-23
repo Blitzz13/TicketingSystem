@@ -78,7 +78,7 @@ namespace TicketingSystem.Services.Impl
 				throw new ServiceException("The username should be more than 2 characters");
 			}
 
-			string password = HashPassword(registerModel);
+			string password = HashPassword(registerModel.Passowrd);
 
 			DATA.User user = new DATA.User
 			{
@@ -87,38 +87,38 @@ namespace TicketingSystem.Services.Impl
 				Email = registerModel.Email,
 				FirstName = registerModel.FirstName,
 				LastName = registerModel.LastName,
-				AccountState = registerModel.AccountState
+				AccountState = DATA.AccountState.Pending
 			};
 
 			_context.Add(user);
 			_context.SaveChanges();
 		}
 
-		public void ChangeRole(string username, int? loggedAccId, DATA.Role roleToChange)
-		{
-			//if (loggedAccId == null)
-			//{
-			//	throw new ServiceException("You are not logged in");
-			//}
+		//public void ChangeRole(string username, int? loggedAccId, DATA.Role roleToChange)
+		//{
+		//	//if (loggedAccId == null)
+		//	//{
+		//	//	throw new ServiceException("You are not logged in");
+		//	//}
 
-			//var loggedAcc = _context.Users.FirstOrDefault(u => u.Id == loggedAccId);
+		//	//var loggedAcc = _context.Users.FirstOrDefault(u => u.Id == loggedAccId);
 
-			//if (loggedAcc.Role != DATA.Role.Administrator)
-			//{
-			//	throw new ServiceException("You have to be administrator to do that.");
-			//}
+		//	//if (loggedAcc.Role != DATA.Role.Administrator)
+		//	//{
+		//	//	throw new ServiceException("You have to be administrator to do that.");
+		//	//}
 
-			var targetedAcc = _context.Users.FirstOrDefault(a => a.Username == username);
+		//	var targetedAcc = _context.Users.FirstOrDefault(a => a.Username == username);
 
-			if (targetedAcc == null)
-			{
-				throw new ServiceException($"There is no account with name {username}");
-			}
+		//	if (targetedAcc == null)
+		//	{
+		//		throw new ServiceException($"There is no account with name {username}");
+		//	}
 
-			targetedAcc.Role = roleToChange;
-			_context.SaveChanges();
-			Console.WriteLine($"{username} is now {roleToChange}");
-		}
+		//	targetedAcc.Role = roleToChange;
+		//	_context.SaveChanges();
+		//	Console.WriteLine($"{username} is now {roleToChange}");
+		//}
 
 		public void ApproveAccounts()
 		{
@@ -177,17 +177,141 @@ namespace TicketingSystem.Services.Impl
 
 		public void EditUser(string username)
 		{
-			throw new NotImplementedException();
+			var user = _context.Users.FirstOrDefault(u => u.Username == username);
+			if (user == null)
+			{
+				throw new ServiceException($"Account with username ({username}) does not exist.");
+			}
+
+			Console.Write("Enter edit command: ");
+			string[] command = Console.ReadLine().Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
+
+			while (string.Join(" ",command) != "stop")
+			{
+				if (string.Join(" ",command).ToLower() == "change password")
+				{
+					Console.Write("Enter the new password: ");
+					string newPassword = Console.ReadLine();
+					while (string.IsNullOrEmpty(newPassword))
+					{
+						Console.WriteLine("Cannot change password to empy.");
+						Console.Write("Enter the new password: ");
+						newPassword = Console.ReadLine();
+					}
+
+					Console.Write("Are you sure 'y' or 'n': ");
+					command = Console.ReadLine().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+					if (command[0].ToLower() == "y")
+					{
+						newPassword = HashPassword(newPassword);
+						user.Password = newPassword;
+						_context.SaveChanges();
+						Console.WriteLine("The password have been changed.");
+					}
+				}
+				else if (string.Join(" ", command).ToLower() == "change email")
+				{
+					Console.Write("Enter the new email: ");
+					string newEmail = Console.ReadLine();
+					var regex = new Regex(@"^([0-9a-zA-Z_]([_+-.\w]*[0-9a-zA-Z_])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9})$");
+					Match match = regex.Match(user.Email);
+					while (string.IsNullOrEmpty(newEmail) || !match.Success)
+					{
+					
+						Console.WriteLine("Wrong email format.");
+						Console.Write("Enter the new email: ");
+						newEmail = Console.ReadLine();
+					}
+
+					Console.Write("Are you sure 'y' or 'n': ");
+					command = Console.ReadLine().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+					if (command[0].ToLower() == "y")
+					{
+						user.Email = newEmail;
+						_context.SaveChanges();
+						Console.WriteLine($"The email have been changed to {newEmail}.");
+					}
+				}
+				else if (string.Join(" ", command).ToLower() == "change first name")
+				{
+					Console.Write("Enter the new first name: ");
+					string newFirstName = Console.ReadLine();
+					while (string.IsNullOrEmpty(newFirstName))
+					{
+
+						Console.WriteLine("First name cannot be empty.");
+						Console.Write("Enter the new first name: ");
+						newFirstName = Console.ReadLine();
+					}
+
+					Console.Write("Are you sure 'y' or 'n': ");
+					command = Console.ReadLine().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+					if (command[0].ToLower() == "y")
+					{
+						user.FirstName = newFirstName;
+						_context.SaveChanges();
+						Console.WriteLine($"The email have been changed to {newFirstName}.");
+					}
+				}
+				else if (string.Join(" ", command).ToLower() == "change last name")
+				{
+					Console.Write("Enter the new last name: ");
+					string newLastName = Console.ReadLine();
+					while (string.IsNullOrEmpty(newLastName))
+					{
+
+						Console.WriteLine("First name cannot be empty.");
+						Console.Write("Enter the new last name: ");
+						newLastName = Console.ReadLine();
+					}
+
+					Console.Write("Are you sure 'y' or 'n': ");
+					command = Console.ReadLine().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+					if (command[0].ToLower() == "y")
+					{
+						user.LastName = newLastName;
+						_context.SaveChanges();
+						Console.WriteLine($"The last name have been changed to {newLastName}.");
+					}
+				}
+				else if (string.Join(" ", command).ToLower() == "change role")
+				{
+					Console.WriteLine("0 - Client");
+					Console.WriteLine("1 - Support");
+					Console.WriteLine("2 - Administrator");
+					Console.Write("Choose role: ");
+					DATA.Role role = (DATA.Role)Enum.Parse(typeof(DATA.Role), Console.ReadLine());
+					if (role == DATA.Role.Client || role == DATA.Role.Support || role == DATA.Role.Administrator)
+					{
+						user.Role = role;
+						_context.SaveChanges();
+						Console.WriteLine($"{username} is now {role}");
+					}
+					else
+					{
+						Console.WriteLine("Ivalid role.");
+					}
+					
+
+				}
+				else
+				{
+					Console.WriteLine("Wrong edit command. Write 'stop' to stop editing this user");
+				}
+
+				Console.Write("Enter edit command: ");
+				command = Console.ReadLine().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+			}
 		}
 
 		#endregion
 
-		public static string HashPassword(RegisterModel registerModel)
+		public static string HashPassword(string password)
 		{
 			byte[] salt;
 			new RNGCryptoServiceProvider().GetBytes(salt = new byte[16]);
 
-			var pbkdf2 = new Rfc2898DeriveBytes(registerModel.Passowrd, salt, 10000);
+			var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 10000);
 			byte[] hash = pbkdf2.GetBytes(20);
 
 			byte[] hashBytes = new byte[36];
