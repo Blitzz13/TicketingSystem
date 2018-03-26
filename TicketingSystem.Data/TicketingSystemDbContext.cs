@@ -53,6 +53,14 @@ namespace TicketingSystem.Data
 				.HasForeignKey(m => m.UserId);
 
 			builder.Entity<Project>()
+				.Property(u => u.Name)
+				.IsRequired();
+
+			builder.Entity<Project>()
+				.HasAlternateKey(u => u.Name)
+				.HasName("AlternateKey_ProjectName");
+
+			builder.Entity<Project>()
 				.HasMany(p => p.Tickets)
 				.WithOne(t => t.Project)
 				.HasForeignKey(t => t.ProjectId);

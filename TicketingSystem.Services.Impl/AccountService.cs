@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
@@ -145,7 +146,7 @@ namespace TicketingSystem.Services.Impl
 					}
 
 				}
-				
+
 			} while (command != "stop");
 		}
 
@@ -158,11 +159,11 @@ namespace TicketingSystem.Services.Impl
 			}
 
 			Console.Write("Enter edit command: ");
-			string[] command = Console.ReadLine().Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
+			string[] command = Console.ReadLine().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-			while (string.Join(" ",command) != "stop")
+			while (string.Join(" ", command) != "stop")
 			{
-				if (string.Join(" ",command).ToLower() == "change password")
+				if (string.Join(" ", command).ToLower() == "change password")
 				{
 					Console.Write("Enter the new password: ");
 					string newPassword = Console.ReadLine();
@@ -191,7 +192,7 @@ namespace TicketingSystem.Services.Impl
 					Match match = regex.Match(user.Email);
 					while (string.IsNullOrEmpty(newEmail) || !match.Success)
 					{
-					
+
 						Console.WriteLine("Wrong email format.");
 						Console.Write("Enter the new email: ");
 						newEmail = Console.ReadLine();
@@ -254,8 +255,8 @@ namespace TicketingSystem.Services.Impl
 					Console.WriteLine("1 - Support");
 					Console.WriteLine("2 - Administrator");
 					Console.Write("Choose role: ");
-					DATA.Role role = (DATA.Role)Enum.Parse(typeof(DATA.Role), Console.ReadLine());
-					if (role == DATA.Role.Client || role == DATA.Role.Support || role == DATA.Role.Administrator)
+					DATA.AccountRole role = (DATA.AccountRole)Enum.Parse(typeof(DATA.AccountRole), Console.ReadLine());
+					if (role == DATA.AccountRole.Client || role == DATA.AccountRole.Support || role == DATA.AccountRole.Administrator)
 					{
 						user.Role = role;
 						_context.SaveChanges();
@@ -265,7 +266,7 @@ namespace TicketingSystem.Services.Impl
 					{
 						Console.WriteLine("Ivalid role.");
 					}
-					
+
 
 				}
 				else
@@ -276,6 +277,53 @@ namespace TicketingSystem.Services.Impl
 				Console.Write("Enter edit command: ");
 				command = Console.ReadLine().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 			}
+		}
+
+		public void CreateTicket(TicketModel ticketModel, string projectName)
+		{
+			var project = _context.Projects.FirstOrDefault(p => p.Name == projectName);
+
+			if (project == null)
+			{
+				throw new ServiceException($"No project with name {projectName}");
+			}
+
+			DATA.TicketType ticketType = (DATA.TicketType)Enum.Parse(typeof(DATA.TicketType), ticketModel.TicketType);
+			//if (ticketType != DATA.TicketType.AssistanceRequest || ticketType != DATA.TicketType.FeatureRequest ||
+			//		 ticketType != DATA.TicketType.BugReport || ticketType != DATA.TicketType.Other)
+			//{
+			//	throw new ServiceException("Invalid Ticket Type.");
+			//}
+
+			DATA.TicketState ticketState = (DATA.TicketState)Enum.Parse(typeof(DATA.TicketState), ticketModel.TicketState);
+			//if (ticketState != DATA.TicketState.Done || ticketState != DATA.TicketState.Draft ||
+			//		ticketState != DATA.TicketState.New || ticketState != DATA.TicketState.WorkedOn)
+			//{
+			//	throw new ServiceException("Invalid Ticket State.");
+			//}
+
+			if (string.IsNullOrEmpty(ticketModel.TicketTitle))
+			{
+				throw new ServiceException("Title cannot be empty.");
+			}
+
+			if (string.IsNullOrEmpty(ticketModel.TicketTitle))
+			{
+				throw new ServiceException("Title cannot be empty.");
+			}
+
+			DATA.File file = new DATA.File
+			{
+				Name = ticketModel.FileName,
+				Content = ticketModel.FileContent,
+				
+			};
+
+			DATA.Ticket ticket = new DATA.Ticket()
+			{
+				ProjectId = project.Id,
+				Description = ticketModel.TicketDescription,
+			};
 		}
 
 		#endregion

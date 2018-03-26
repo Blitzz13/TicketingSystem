@@ -1,9 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
+using System.IO;
 using System.Linq;
 using TicketingSystem.Data;
 using TicketingSystem.Services;
 using TicketingSystem.Services.Impl;
+using File = System.IO.File;
 
 namespace TicketingSystem
 {
@@ -65,35 +67,28 @@ namespace TicketingSystem
 				{
 					if (userId != null)
 					{
-						if (context.Users.FirstOrDefault(u => u.Id == userId).Role == Role.Administrator)
+						try
 						{
-							try
-							{
-								Console.Write("Project title: ");
-								string title = Console.ReadLine();
+							Console.Write("Project title: ");
+							string title = Console.ReadLine();
 
-								Console.Write("Description: ");
-								string description = Console.ReadLine();
+							Console.Write("Description: ");
+							string description = Console.ReadLine();
 
-								ProjectModel projectModel = new ProjectModel(title, description);
+							ProjectModel projectModel = new ProjectModel(title, description);
 
-								projectService.CreateProject(userId, projectModel);
-							}
-							catch (ServiceException se)
-							{
-								Console.WriteLine(se.Message);
-							}
+							projectService.CreateProject(userId, projectModel);
 						}
-						else
+						catch (ServiceException se)
 						{
-							Console.WriteLine("You have to be administrator.");
+							Console.WriteLine(se.Message);
 						}
+
 					}
 					else
 					{
 						Console.WriteLine("You are not logged in.");
 					}
-
 
 				}
 				else if (command[0] == "logout")
@@ -145,22 +140,34 @@ namespace TicketingSystem
 					Console.WriteLine("Enter file path(optional): ");
 					string filePath = Console.ReadLine();
 
+					byte[] file = File.ReadAllBytes(filePath);
+
+					string fileName = Path.GetFileName(filePath);
+
 					TicketModel ticketModel = new TicketModel()
 					{
 						TicketTitle = ticketTitle,
 						TicketType = ticketType,
 						TicketState = ticketState,
 						TicketDescription = ticketDescription,
-						FilePath = filePath
+						FileContent = file,
+						FileName = fileName
 					};
 
-					accountService.CreateTicket(ticketModel, projectName);
+					try
+					{
+						accountService.CreateTicket(ticketModel, projectName);
+					}
+					catch (ServiceException se)
+					{
+						Console.WriteLine(se.Message);
+					}
 				}
 				else if (string.Join(" ", command) == "approve acc")
 				{
 					if (userId != null)
 					{
-						if (context.Users.FirstOrDefault(u => u.Id == userId).Role == Role.Administrator)
+						if (context.Users.FirstOrDefault(u => u.Id == userId).Role == AccountRole.Administrator)
 						{
 							accountService.ApproveAccounts();
 						}
@@ -178,7 +185,7 @@ namespace TicketingSystem
 				{
 					if (userId != null)
 					{
-						if (context.Users.FirstOrDefault(u => u.Id == userId).Role == Role.Administrator)
+						if (context.Users.FirstOrDefault(u => u.Id == userId).Role == AccountRole.Administrator)
 						{
 							Console.Write("Enter username for which account must be edited: ");
 							string username = Console.ReadLine();

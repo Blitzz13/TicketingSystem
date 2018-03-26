@@ -1,6 +1,6 @@
 ﻿namespace TicketingSystem.Data
 {
-	public enum Role
+	public enum AccountRole
 	{
 		Client,
 		Support,

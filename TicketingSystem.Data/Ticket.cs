@@ -11,9 +11,9 @@ namespace TicketingSystem.Data
 
 		public User Submitter { get; set; }
 
-		public Type Type { get; set; }
+		public TicketType Type { get; set; }
 
-		public StateTicket State { get; set; }
+		public TicketState State { get; set; }
 
 		public string Title { get; set; }
 
@@ -24,5 +24,7 @@ namespace TicketingSystem.Data
 		public int ProjectId { get; set; }
 
 		public Project Project { get; set; }
+
+		public ICollection<Message> Messages { get; set; }
 	}
 }

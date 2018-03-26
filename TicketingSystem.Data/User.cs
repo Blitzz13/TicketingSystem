@@ -10,7 +10,7 @@ namespace TicketingSystem.Data
 
 		public string Password { get; set; }
 
-		public Role Role { get; set; }
+		public AccountRole Role { get; set; }
 
 		public string Email { get; set; }
 

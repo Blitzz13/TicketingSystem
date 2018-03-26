@@ -11,9 +11,10 @@ using TicketingSystem.Data;
 namespace TicketingSystem.Data.Migrations
 {
     [DbContext(typeof(TicketingSystemDbContext))]
-    partial class TicketingSystemDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180326142441_FileRefactor")]
+    partial class FileRefactor
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -53,13 +54,9 @@ namespace TicketingSystem.Data.Migrations
 
                     b.Property<int>("State");
 
-                    b.Property<int?>("TicketId");
-
                     b.Property<int>("UserId");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("TicketId");
 
                     b.HasIndex("UserId");
 
@@ -153,10 +150,6 @@ namespace TicketingSystem.Data.Migrations
 
             modelBuilder.Entity("TicketingSystem.Data.Message", b =>
                 {
-                    b.HasOne("TicketingSystem.Data.Ticket")
-                        .WithMany("Messages")
-                        .HasForeignKey("TicketId");
-
                     b.HasOne("TicketingSystem.Data.User", "User")
                         .WithMany("Messages")
                         .HasForeignKey("UserId")

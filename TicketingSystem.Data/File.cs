@@ -6,7 +6,7 @@
 
 		public byte[] Content { get; set; }
 
-		public int Name { get; set; }
+		public string Name { get; set; }
 
 		public int? TicketId { get; set; }
 

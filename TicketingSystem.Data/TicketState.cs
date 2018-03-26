@@ -1,6 +1,6 @@
 ﻿namespace TicketingSystem.Data
 {
-	public enum StateTicket
+	public enum TicketState
 	{
 		Draft,
 		New,

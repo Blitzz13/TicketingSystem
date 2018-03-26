@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using DATA = TicketingSystem.Data;
 
 namespace TicketingSystem.Services.Impl
 {
@@ -21,7 +22,12 @@ namespace TicketingSystem.Services.Impl
 
 			var user = _context.Users.FirstOrDefault(u => u.Id == userId);
 
-			if (user.Role == Data.Role.Administrator)
+			if (user.Role != DATA.AccountRole.Administrator)
+			{
+				throw new ServiceException("You are not administator.");
+			}
+
+			if (user.Role == Data.AccountRole.Administrator)
 			{
 				var project = new Data.Project
 				{

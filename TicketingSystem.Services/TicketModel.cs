@@ -10,6 +10,8 @@
 
 		public string TicketDescription { get; set; }
 
-		public string FilePath { get; set; }
+		public byte[] FileContent { get; set; }
+
+		public string FileName { get; set; }
 	}
 }
