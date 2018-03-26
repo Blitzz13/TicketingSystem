@@ -4,4 +4,8 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\TicketingSystem.Data\TicketingSystem.Data.csproj" />
+  </ItemGroup>
+
 </Project>

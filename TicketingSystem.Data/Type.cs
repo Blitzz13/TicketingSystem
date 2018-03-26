@@ -1,6 +1,6 @@
 ﻿namespace TicketingSystem.Data
 {
-	public enum TicketType
+	public enum Type
 	{
 		BugReport,
 		FeatureRequest,
