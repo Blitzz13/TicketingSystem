@@ -8,8 +8,6 @@ namespace TicketingSystem.Services
 
 		void Register(RegisterModel registerModel);
 
-		void ChangeRole(string username,int? loggedAccId,Role roleToChange);
-
 		void ApproveAccounts();
 
 		void EditUser(string username);

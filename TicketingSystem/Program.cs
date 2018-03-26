@@ -119,41 +119,6 @@ namespace TicketingSystem
 				{
 
 				}
-				else if (string.Join(" ", command) == "change acc role")
-				{
-					if (userId != null)
-					{
-						if (context.Users.FirstOrDefault(u => u.Id == userId).Role == Role.Administrator)
-						{
-							try
-							{
-								Console.Write("Targeted username: ");
-								string username = Console.ReadLine();
-
-								Console.WriteLine("Choose role: ");
-								Console.WriteLine("0 - Client");
-								Console.WriteLine("1 - Support");
-								Console.WriteLine("2 - Administrator");
-
-								Role role = (Role)Enum.Parse(typeof(Role), Console.ReadLine());
-								accountService.ChangeRole(username, userId, role);
-							}
-							catch (ServiceException se)
-							{
-								Console.WriteLine(se.Message);
-							}
-						}
-						else
-						{
-							Console.WriteLine("You have to be administrator.");
-						}
-					}
-					else
-					{
-						Console.WriteLine("You are not logged in.");
-					}
-					
-				}
 				else if (string.Join(" ",command) == "approve acc")
 				{
 					if (userId != null)

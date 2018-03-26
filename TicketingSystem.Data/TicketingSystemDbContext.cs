@@ -40,6 +40,14 @@ namespace TicketingSystem.Data
 				.HasKey(u => u.Id);
 
 			builder.Entity<User>()
+				.Property(u => u.Username)
+				.IsRequired();
+
+			builder.Entity<User>()
+				.HasAlternateKey(u => u.Username)
+				.HasName("AlternateKey_Username");
+
+			builder.Entity<User>()
 				.HasMany(u => u.Messages)
 				.WithOne(m => m.User)
 				.HasForeignKey(m => m.UserId);

@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using System.Security.Cryptography;
 
 namespace TicketingSystem.Data
 {
@@ -11,7 +13,7 @@ namespace TicketingSystem.Data
 			var user = new User()
 			{
 				Username = "test1",
-				Password = "123",
+				Password = HashPassword("123"),
 				FirstName = "test",
 				LastName = "testenov",
 				Email = "test1@test.test"
@@ -20,7 +22,7 @@ namespace TicketingSystem.Data
 			var user1 = new User()
 			{
 				Username = "test2",
-				Password = "123",
+				Password = HashPassword("123"),
 				FirstName = "test",
 				LastName = "testenov",
 				Email = "test2@test.test"
@@ -30,7 +32,7 @@ namespace TicketingSystem.Data
 			var user2 = new User()
 			{
 				Username = "test3",
-				Password = "123",
+				Password = HashPassword("123"),
 				FirstName = "test",
 				LastName = "testenov",
 				Email = "test3@test.test"
@@ -40,7 +42,7 @@ namespace TicketingSystem.Data
 			var user3 = new User()
 			{
 				Username = "test4",
-				Password = "123",
+				Password = HashPassword("123"),
 				FirstName = "test",
 				LastName = "testenov",
 				Email = "test4@test.test"
@@ -50,7 +52,7 @@ namespace TicketingSystem.Data
 			var user4 = new User()
 			{
 				Username = "test5",
-				Password = "123",
+				Password = HashPassword(HashPassword("123")),
 				FirstName = "test",
 				LastName = "testenov",
 				Email = "test5@test.test"
@@ -60,6 +62,20 @@ namespace TicketingSystem.Data
 			_context.AddRange(user,user1,user2,user3,user4);
 			_context.SaveChanges();
 		}
-		
+
+		public static string HashPassword(string password)
+		{
+			byte[] salt;
+			new RNGCryptoServiceProvider().GetBytes(salt = new byte[16]);
+
+			var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 10000);
+			byte[] hash = pbkdf2.GetBytes(20);
+
+			byte[] hashBytes = new byte[36];
+			Array.Copy(salt, 0, hashBytes, 0, 16);
+			Array.Copy(hash, 0, hashBytes, 16, 20);
+
+			return Convert.ToBase64String(hashBytes);
+		}
 	}
 }
