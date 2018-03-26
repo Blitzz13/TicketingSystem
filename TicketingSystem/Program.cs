@@ -93,7 +93,7 @@ namespace TicketingSystem
 					{
 						Console.WriteLine("You are not logged in.");
 					}
-					
+
 
 				}
 				else if (command[0] == "logout")
@@ -117,9 +117,46 @@ namespace TicketingSystem
 				}
 				else if (string.Join(" ", command) == "create ticket")
 				{
+					Console.WriteLine("Enter project name: ");
+					string projectName = Console.ReadLine();
 
+					Console.WriteLine("Enter ticket title: ");
+					string ticketTitle = Console.ReadLine();
+
+					Console.WriteLine("Ticket Types:");
+					Console.WriteLine("0 - Bug report");
+					Console.WriteLine("1 - Feature request");
+					Console.WriteLine("2 - Assistace request");
+					Console.WriteLine("3 - Other");
+					Console.Write("Enter ticket type: ");
+					string ticketType = Console.ReadLine();
+
+					Console.WriteLine("Ticket States:");
+					Console.WriteLine("0 - New");
+					Console.WriteLine("1 - Draft");
+					Console.WriteLine("2 - Worked on");
+					Console.WriteLine("3 - Done");
+					Console.Write("Enter ticket type: ");
+					string ticketState = Console.ReadLine();
+
+					Console.WriteLine("Enter description: ");
+					string ticketDescription = Console.ReadLine();
+
+					Console.WriteLine("Enter file path(optional): ");
+					string filePath = Console.ReadLine();
+
+					TicketModel ticketModel = new TicketModel()
+					{
+						TicketTitle = ticketTitle,
+						TicketType = ticketType,
+						TicketState = ticketState,
+						TicketDescription = ticketDescription,
+						FilePath = filePath
+					};
+
+					accountService.CreateTicket(ticketModel, projectName);
 				}
-				else if (string.Join(" ",command) == "approve acc")
+				else if (string.Join(" ", command) == "approve acc")
 				{
 					if (userId != null)
 					{

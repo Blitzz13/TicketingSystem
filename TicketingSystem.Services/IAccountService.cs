@@ -11,5 +11,7 @@ namespace TicketingSystem.Services
 		void ApproveAccounts();
 
 		void EditUser(string username);
+
+		void CreateTicket(TicketModel ticketModel, string projectName);
 	}
 }
