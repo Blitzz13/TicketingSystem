@@ -21,7 +21,5 @@ namespace TicketingSystem.Data
 		public AccountState AccountState { get; set; }
 
 		public ICollection<Message> Messages { get; set; } = new List<Message>();
-
-		public ICollection<UserProject> UserProjects { get; set; }
 	}
 }

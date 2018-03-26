@@ -9,7 +9,6 @@ namespace TicketingSystem.Services.Impl
 	public class AccountService : IAccountService
 	{
 		private readonly DATA.TicketingSystemDbContext _context;
-		private IAccountService _accountServiceImplementation;
 
 		public AccountService()
 		{
@@ -126,56 +125,52 @@ namespace TicketingSystem.Services.Impl
 			Console.WriteLine("These accounts are to be processed:");
 			foreach (var user in _context.Users.Where(u => u.AccountState == DATA.AccountState.Pending))
 			{
-
-			}
-		}
-
-		public void CreateProject(int? userId, ProjectModel projectModel)
-		{
-			throw new NotImplementedException();
-		}
-
-		public void CreateProject(int userId, ProjectModel projectModel)
-		{
-			string command = null;
-			if (userId == -1)
-			{
-				throw new ServiceException("You are not logged in.");
+				Console.WriteLine($"{user.Id} - {user.Username}");
 			}
 
-			var user = _context.Users.FirstOrDefault(u => u.Id == userId);
-
-			if (user.Role == DATA.Role.Administrator)
-
+			string command;
+			do
 			{
-				var project = new DATA.Project
+				Console.Write("Enter user id to approve or 'stop': ");
+				command = Console.ReadLine();
+				if (command == "stop")
 				{
-					Name = projectModel.Title,
-					Description = projectModel.Description
-				};
+					Console.WriteLine("You stopped approving");
+					break;
+				}
 
+				int id = int.Parse(command);
+				var accToApprove = _context.Users.FirstOrDefault(u => u.Id == id);
 
-				//if (accToApprove.AccountState == DATA.AccountState.Aproved)
-				//{
-				//	Console.Write("This account is already approved. Do you want to stop approving (enter 'y' or 'n'): ");
-				//	command = Console.ReadLine();
-				//	if (command.ToLower() == "y")
-				//	{
-				//		break;
-				//	}
-				//}
-				//else
-				//{
-				//	Console.Write("Are you sure(enter 'y' or 'n' 'stop)': ");
-				//	command = Console.ReadLine();
-				//	if (command.ToLower() == "y")
-				//	{
-				//		accToApprove.AccountState = DATA.AccountState.Aproved;
-				//		_context.SaveChanges();
-				//		Console.WriteLine("The account has been approved.");
-				//	}
+				while (accToApprove == null)
+				{
+					Console.WriteLine("There is no person with this id.");
+					Console.Write("Enter user id to approve: ");
+					id = int.Parse(Console.ReadLine());
+					accToApprove = _context.Users.FirstOrDefault(u => u.Id == id);
+				}
 
-				//}
+				if (accToApprove.AccountState == DATA.AccountState.Aproved)
+				{
+					Console.Write("This account is already approved. Do you want to stop approving (enter 'y' or 'n'): ");
+					command = Console.ReadLine();
+					if (command.ToLower() == "y")
+					{
+						break;
+					}
+				}
+				else
+				{
+					Console.Write("Are you sure(enter 'y' or 'n' 'stop)': ");
+					command = Console.ReadLine();
+					if (command.ToLower() == "y")
+					{
+						accToApprove.AccountState = DATA.AccountState.Aproved;
+						_context.SaveChanges();
+						Console.WriteLine("The account has been approved.");
+					}
+
+				}
 				
 			} while (command != "stop");
 		}
@@ -309,37 +304,6 @@ namespace TicketingSystem.Services.Impl
 			}
 		}
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-		public void CreateTicket(TicketModel ticketModel)
-		{
-			DATA.TicketType ticketType = (DATA.TicketType)Enum.Parse(typeof(DATA.TicketType), ticketModel.TicketType);
-
-			DATA.StateTicket stateTicket = (DATA.StateTicket)Enum.Parse(typeof(DATA.StateTicket), ticketModel.TicketState);
-			if (ticketType == null)
-			{
-		
-			}
-			else
-			{
-				throw new ServiceException("You have to be administrator to use this command.");
-
-			}
-		}
-
-=======
->>>>>>> parent of 28b8674... Backup commit
-=======
->>>>>>> parent of 28b8674... Backup commit
-=======
->>>>>>> parent of 28b8674... Backup commit
-=======
->>>>>>> parent of 28b8674... Backup commit
-=======
->>>>>>> parent of 28b8674... Backup commit
 		#endregion
 
 		public static string HashPassword(string password)

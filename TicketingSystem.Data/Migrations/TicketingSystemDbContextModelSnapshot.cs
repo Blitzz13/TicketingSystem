@@ -3,8 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
-using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.EntityFrameworkCore.Storage.Internal;
 using System;
 using TicketingSystem.Data;
 
@@ -128,19 +126,6 @@ namespace TicketingSystem.Data.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("TicketingSystem.Data.UserProject", b =>
-                {
-                    b.Property<int>("ProjectId");
-
-                    b.Property<int>("UserId");
-
-                    b.HasKey("ProjectId", "UserId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserProject");
-                });
-
             modelBuilder.Entity("TicketingSystem.Data.File", b =>
                 {
                     b.HasOne("TicketingSystem.Data.Message", "Message")
@@ -170,19 +155,6 @@ namespace TicketingSystem.Data.Migrations
                     b.HasOne("TicketingSystem.Data.User", "Submitter")
                         .WithMany()
                         .HasForeignKey("SubmitterId");
-                });
-
-            modelBuilder.Entity("TicketingSystem.Data.UserProject", b =>
-                {
-                    b.HasOne("TicketingSystem.Data.Project", "Project")
-                        .WithMany("UserProjects")
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("TicketingSystem.Data.User", "User")
-                        .WithMany("UserProjects")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }
