@@ -58,6 +58,20 @@ namespace TicketingSystem.Data
 				.HasMany(m => m.Files)
 				.WithOne(f => f.Message)
 				.HasForeignKey(f => f.MessageId);
+
+			builder.Entity<UserProject>()
+				.HasKey(up => new {up.ProjectId, up.UserId});
+
+			builder.Entity<UserProject>()
+				.HasOne(up => up.User)
+				.WithMany(u => u.UserProjects)
+				.HasForeignKey(up => up.UserId);
+
+			builder.Entity<UserProject>()
+				.HasOne(up => up.Project)
+				.WithMany(p => p.UserProjects)
+				.HasForeignKey(up => up.ProjectId);
+
 		}
 	}
 }

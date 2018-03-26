@@ -19,13 +19,44 @@ namespace TicketingSystem
 
 			IAccountService accountService = new AccountService();
 
-			IProjectService projectService = new ProjectService();
+			LoginResult loginResult = new LoginResult();
+
+
+			var context = new Data.TicketingSystemDbContext();
+
+			var context = new Data.TicketingSystemDbContext();
+
+			var context = new Data.TicketingSystemDbContext();
+
+			var context = new Data.TicketingSystemDbContext();
 
 			var context = new Data.TicketingSystemDbContext();
 
 			int? userId = null;
 
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+			context = new Data.TicketingSystemDbContext();
+
+			userId = -1; 
+=======
 			context.Database.Migrate();
+>>>>>>> parent of 28b8674... Backup commit
+=======
+			context.Database.Migrate();
+>>>>>>> parent of 28b8674... Backup commit
+=======
+			context.Database.Migrate();
+>>>>>>> parent of 28b8674... Backup commit
+=======
+			context.Database.Migrate();
+>>>>>>> parent of 28b8674... Backup commit
+=======
+			context.Database.Migrate();
+>>>>>>> parent of 28b8674... Backup commit
 
 			string[] command;
 
@@ -55,7 +86,7 @@ namespace TicketingSystem
 
 					try
 					{
-						var loginResult = accountService.Login(username, password);
+						loginResult = accountService.Login(username, password);
 						userId = loginResult.UserId;
 						Console.WriteLine("You have been logged in.");
 					}
@@ -66,48 +97,53 @@ namespace TicketingSystem
 				}
 				else if (string.Join(" ", command) == "create project")
 				{
-					if (userId != null)
+					try
 					{
-						if (context.Users.FirstOrDefault(u => u.Id == userId).Role == Role.Administrator)
-						{
-							try
-							{
-								Console.Write("Project title: ");
-								string title = Console.ReadLine();
+						Console.Write("Project title: ");
+						string title = Console.ReadLine();
 
-								Console.Write("Description: ");
-								string description = Console.ReadLine();
+						Console.Write("Description: ");
+						string description = Console.ReadLine();
 
-								ProjectModel projectModel = new ProjectModel(title, description);
+						ProjectModel projectModel = new ProjectModel(title, description);
 
-								projectService.CreateProject(userId, projectModel);
-							}
-							catch (ServiceException se)
-							{
-								Console.WriteLine(se.Message);
-							}
-						}
-						else
-						{
-							Console.WriteLine("You have to be administrator.");
-						}
+						accountService.CreateProject(userId, projectModel);
 					}
-					else
+					catch (ServiceException se)
 					{
-						Console.WriteLine("You are not logged in.");
+						Console.WriteLine(se.Message);
 					}
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
 					
+>>>>>>> parent of 28b8674... Backup commit
+=======
+					
+>>>>>>> parent of 28b8674... Backup commit
+=======
+					
+>>>>>>> parent of 28b8674... Backup commit
+=======
+					
+>>>>>>> parent of 28b8674... Backup commit
+=======
+					
+>>>>>>> parent of 28b8674... Backup commit
 
 				}
 				else if (command[0] == "logout")
 				{
-					if (userId == null)
+					if (userId == -1)
 					{
 						Console.WriteLine("You have to be logged in to be logout.");
 					}
 					else
 					{
-						userId = null;
+						userId = -1;
 						Console.WriteLine("You have been logged out.");
 					}
 				}
@@ -118,6 +154,7 @@ namespace TicketingSystem
 					Console.WriteLine("register, login, logout");
 					Console.WriteLine("-------------------------------");
 				}
+
 				else if (string.Join(" ", command) == "create ticket")
 				{
 					Console.Write("Enter project name: ");

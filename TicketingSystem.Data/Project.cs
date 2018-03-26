@@ -11,5 +11,7 @@ namespace TicketingSystem.Data
 		public string Description { get; set; }
 
 		public ICollection<Ticket> Tickets { get; set; } = new List<Ticket>();
+
+		public ICollection<UserProject> UserProjects { get; set; }
 	}
 }
