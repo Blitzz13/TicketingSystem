@@ -4,7 +4,7 @@ using DATA = TicketingSystem.Data;
 
 namespace TicketingSystem.Services.Impl
 {
-	class TicketService : ITicketService
+	public class TicketService : ITicketService
 	{
 		private readonly DATA.TicketingSystemDbContext _context;
 
@@ -85,8 +85,18 @@ namespace TicketingSystem.Services.Impl
 
 			if (project == null)
 			{
-				
+				throw new ServiceException($"No project with name {projectName} have been found.");
 			}
+
+			DATA.Ticket ticket = project.Tickets.FirstOrDefault(t => t.Title == ticketTitle && t.Submitter.Id == userId);
+			if (ticket == null)
+			{
+				throw new ServiceException($"No ticket with ticket title {ticketTitle} was found.");
+			}
+
+			_context.Tickets.Remove(ticket);
+			_context.SaveChanges();
+			Console.WriteLine("The ticket has been removed succsessfully.");
 		}
 	}
 }

@@ -11,7 +11,7 @@ namespace TicketingSystem
 {
 	class Program
 	{
-		static void Main(string[] args)
+		static void Main()
 		{
 			//DbSeed.Seed(new Data.TicketingSystemDbContext());
 
@@ -21,7 +21,9 @@ namespace TicketingSystem
 
 			IProjectService projectService = new ProjectService();
 
-			var context = new Data.TicketingSystemDbContext();
+			ITicketService ticketService = new TicketService();
+
+			var context = new TicketingSystemDbContext();
 
 			int? userId = null;
 
@@ -138,7 +140,7 @@ namespace TicketingSystem
 					string ticketDescription = Console.ReadLine();
 
 					Console.WriteLine("Enter file path(optional): ");
-					TicketModel ticketModel = new TicketModel();
+					TicketModel ticketModel;
 					string filePath = Console.ReadLine();
 
 					if (!string.IsNullOrEmpty(filePath))
@@ -169,7 +171,7 @@ namespace TicketingSystem
 					
 					try
 					{
-						accountService.CreateTicket(ticketModel, projectName, userId);
+						ticketService.CreateTicket(ticketModel, projectName, userId);
 					}
 					catch (ServiceException se)
 					{
