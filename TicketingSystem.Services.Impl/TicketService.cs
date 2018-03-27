@@ -1,0 +1,92 @@
+﻿using System;
+using System.Linq;
+using DATA = TicketingSystem.Data;
+
+namespace TicketingSystem.Services.Impl
+{
+	class TicketService : ITicketService
+	{
+		private readonly DATA.TicketingSystemDbContext _context;
+
+		public TicketService()
+		{
+			_context = new DATA.TicketingSystemDbContext();
+		}
+
+		public void ViewTickets(string project, int userId)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void CreateTicket(TicketModel ticketModel, string projectName, int? userId)
+		{
+			var project = _context.Projects.FirstOrDefault(p => p.Name == projectName);
+
+			if (project == null)
+			{
+				throw new ServiceException($"No project with name {projectName}");
+			}
+
+			if (userId == null)
+			{
+				throw new ServiceException("You are not logged in.");
+			}
+
+			var user = _context.Users.FirstOrDefault(u => u.Id == userId);
+
+			DATA.TicketType ticketType = (DATA.TicketType)Enum.Parse(typeof(DATA.TicketType), ticketModel.TicketType);
+			if (!Enum.IsDefined(typeof(DATA.TicketType), ticketType))
+			{
+				throw new ServiceException("Invalid Ticket Type.");
+			}
+
+			DATA.TicketState ticketState = (DATA.TicketState)Enum.Parse(typeof(DATA.TicketState), ticketModel.TicketState);
+			if (!Enum.IsDefined(typeof(DATA.TicketState), ticketState))
+			{
+				throw new ServiceException("Invalid Ticket State.");
+			}
+
+			if (string.IsNullOrEmpty(ticketModel.TicketTitle))
+			{
+				throw new ServiceException("Title cannot be empty.");
+			}
+
+			if (string.IsNullOrEmpty(ticketModel.TicketDescription))
+			{
+				throw new ServiceException("Description cannot be empty.");
+			}
+
+			DATA.Ticket ticket = new DATA.Ticket()
+			{
+				ProjectId = project.Id,
+				Description = ticketModel.TicketDescription,
+				SubmissionDate = DateTime.Now,
+				Title = ticketModel.TicketTitle,
+				Type = ticketType,
+				State = ticketState,
+				Submitter = user,
+			};
+			_context.Tickets.Add(ticket);
+
+			DATA.File file = new DATA.File
+			{
+				Name = ticketModel.FileName,
+				Content = ticketModel.FileContent,
+				TicketId = ticket.Id,
+			};
+
+			_context.Files.Add(file);
+			_context.SaveChanges();
+		}
+
+		public void DeleteTicket(string projectName, string ticketTitle, int userId)
+		{
+			DATA.Project project = _context.Projects.FirstOrDefault(p => p.Name == projectName);
+
+			if (project == null)
+			{
+				
+			}
+		}
+	}
+}

@@ -279,53 +279,6 @@ namespace TicketingSystem.Services.Impl
 			}
 		}
 
-		public void CreateTicket(TicketModel ticketModel, string projectName)
-		{
-			var project = _context.Projects.FirstOrDefault(p => p.Name == projectName);
-
-			if (project == null)
-			{
-				throw new ServiceException($"No project with name {projectName}");
-			}
-
-			DATA.TicketType ticketType = (DATA.TicketType)Enum.Parse(typeof(DATA.TicketType), ticketModel.TicketType);
-			//if (ticketType != DATA.TicketType.AssistanceRequest || ticketType != DATA.TicketType.FeatureRequest ||
-			//		 ticketType != DATA.TicketType.BugReport || ticketType != DATA.TicketType.Other)
-			//{
-			//	throw new ServiceException("Invalid Ticket Type.");
-			//}
-
-			DATA.TicketState ticketState = (DATA.TicketState)Enum.Parse(typeof(DATA.TicketState), ticketModel.TicketState);
-			//if (ticketState != DATA.TicketState.Done || ticketState != DATA.TicketState.Draft ||
-			//		ticketState != DATA.TicketState.New || ticketState != DATA.TicketState.WorkedOn)
-			//{
-			//	throw new ServiceException("Invalid Ticket State.");
-			//}
-
-			if (string.IsNullOrEmpty(ticketModel.TicketTitle))
-			{
-				throw new ServiceException("Title cannot be empty.");
-			}
-
-			if (string.IsNullOrEmpty(ticketModel.TicketTitle))
-			{
-				throw new ServiceException("Title cannot be empty.");
-			}
-
-			DATA.File file = new DATA.File
-			{
-				Name = ticketModel.FileName,
-				Content = ticketModel.FileContent,
-				
-			};
-
-			DATA.Ticket ticket = new DATA.Ticket()
-			{
-				ProjectId = project.Id,
-				Description = ticketModel.TicketDescription,
-			};
-		}
-
 		#endregion
 
 		public static string HashPassword(string password)

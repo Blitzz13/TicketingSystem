@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using DATA = TicketingSystem.Data;
 
 namespace TicketingSystem.Services.Impl
@@ -6,11 +7,11 @@ namespace TicketingSystem.Services.Impl
 	public class ProjectService : IProjectService
 	{
 
-		private readonly Data.TicketingSystemDbContext _context;
+		private readonly DATA.TicketingSystemDbContext _context;
 
 		public ProjectService()
 		{
-			_context = new Data.TicketingSystemDbContext();
+			_context = new DATA.TicketingSystemDbContext();
 		}
 
 		public void CreateProject(int? userId, ProjectModel projectModel)
@@ -44,14 +45,38 @@ namespace TicketingSystem.Services.Impl
 			}
 		}
 
-		public void ViewProject(int projectName)
+		public void ViewProject(string projectName, int userId)
 		{
-			throw new System.NotImplementedException();
+			var project = _context.Projects.FirstOrDefault(p => p.Name == projectName);
+			if (project == null)
+			{
+				throw new ServiceException($"No project with name {projectName} have been found.");
+			}
+
+			Console.WriteLine(projectName);
+			Console.WriteLine(project.Description);
+
+			//DATA.User user = _context.Users.FirstOrDefault(u => u.Id == userId);
+			//View tickets
+			//if (user.Role == DATA.AccountRole.Client)
+			//{
+			//	foreach (var ticket in project.Tickets.Where(a => a.Submitter == user))
+			//	{
+
+			//	}
+			//}
 		}
 
-		public void DeleteProject(int projectId)
+		public void DeleteProject(string projectName)
 		{
-			throw new System.NotImplementedException();
+			var project = _context.Projects.FirstOrDefault(p => p.Name == projectName);
+			if (project == null)
+			{
+				throw new ServiceException($"No project with name {projectName} have been found.");
+			}
+
+			_context.Projects.Remove(project);
+			_context.SaveChanges();
 		}
 	}
 }

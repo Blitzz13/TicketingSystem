@@ -4,8 +4,8 @@
 	{
 		void CreateProject(int? userId, ProjectModel projectModel);
 
-		void ViewProject(int projectName);
+		void ViewProject(string projectName,int userId);
 
-		void DeleteProject(int projectId);
+		void DeleteProject(string projectName);
 	} 
 }

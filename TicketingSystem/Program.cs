@@ -112,10 +112,10 @@ namespace TicketingSystem
 				}
 				else if (string.Join(" ", command) == "create ticket")
 				{
-					Console.WriteLine("Enter project name: ");
+					Console.Write("Enter project name: ");
 					string projectName = Console.ReadLine();
 
-					Console.WriteLine("Enter ticket title: ");
+					Console.Write("Enter ticket title: ");
 					string ticketTitle = Console.ReadLine();
 
 					Console.WriteLine("Ticket Types:");
@@ -131,32 +131,45 @@ namespace TicketingSystem
 					Console.WriteLine("1 - Draft");
 					Console.WriteLine("2 - Worked on");
 					Console.WriteLine("3 - Done");
-					Console.Write("Enter ticket type: ");
+					Console.Write("Enter ticket state: ");
 					string ticketState = Console.ReadLine();
 
 					Console.WriteLine("Enter description: ");
 					string ticketDescription = Console.ReadLine();
 
 					Console.WriteLine("Enter file path(optional): ");
+					TicketModel ticketModel = new TicketModel();
 					string filePath = Console.ReadLine();
 
-					byte[] file = File.ReadAllBytes(filePath);
-
-					string fileName = Path.GetFileName(filePath);
-
-					TicketModel ticketModel = new TicketModel()
+					if (!string.IsNullOrEmpty(filePath))
 					{
-						TicketTitle = ticketTitle,
-						TicketType = ticketType,
-						TicketState = ticketState,
-						TicketDescription = ticketDescription,
-						FileContent = file,
-						FileName = fileName
-					};
+						byte[] file = File.ReadAllBytes(filePath);
+						string fileName = Path.GetFileName(filePath);
 
+						ticketModel = new TicketModel()
+						{
+							TicketTitle = ticketTitle,
+							TicketType = ticketType,
+							TicketState = ticketState,
+							TicketDescription = ticketDescription,
+							FileContent = file,
+							FileName = fileName
+						};
+					}
+					else
+					{
+						ticketModel = new TicketModel()
+						{
+							TicketTitle = ticketTitle,
+							TicketType = ticketType,
+							TicketState = ticketState,
+							TicketDescription = ticketDescription,
+						};
+					}
+					
 					try
 					{
-						accountService.CreateTicket(ticketModel, projectName);
+						accountService.CreateTicket(ticketModel, projectName, userId);
 					}
 					catch (ServiceException se)
 					{
