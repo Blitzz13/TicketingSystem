@@ -31,7 +31,6 @@ namespace TicketingSystem.Services.Impl
 					Console.WriteLine($"Submitted on {ticket.SubmissionDate}");
 					Console.WriteLine($"Description: {ticket.Description}");
 					Console.WriteLine($"Submitted by: {ticket.Submitter}");
-					Console.WriteLine($"");
 				}
 			}
 			else

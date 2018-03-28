@@ -1,5 +1,5 @@
 ﻿using System;
-using System.IO;
+using System.Data;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
@@ -95,188 +95,73 @@ namespace TicketingSystem.Services.Impl
 			_context.SaveChanges();
 		}
 
-		public void ApproveAccounts()
+		public void ApproveAccounts(string username)
 		{
-			Console.WriteLine("These accounts are to be processed:");
-			foreach (var user in _context.Users.Where(u => u.AccountState == DATA.AccountState.Pending))
+			var accToApprove = _context.Users.FirstOrDefault(u => u.Username == username);
+
+			if (accToApprove == null)
 			{
-				Console.WriteLine($"{user.Id} - {user.Username}");
+				throw new ServiceException("No account found with that name.");
 			}
 
-			string command;
-			do
+			if (accToApprove.AccountState == DATA.AccountState.Aproved)
 			{
-				Console.Write("Enter user id to approve or 'stop': ");
-				command = Console.ReadLine();
-				if (command == "stop")
-				{
-					Console.WriteLine("You stopped approving");
-					break;
-				}
+				throw new ServiceException("This account has already been approved.");
+			}
 
-				int id = int.Parse(command);
-				var accToApprove = _context.Users.FirstOrDefault(u => u.Id == id);
-
-				while (accToApprove == null)
-				{
-					Console.WriteLine("There is no person with this id.");
-					Console.Write("Enter user id to approve: ");
-					id = int.Parse(Console.ReadLine());
-					accToApprove = _context.Users.FirstOrDefault(u => u.Id == id);
-				}
-
-				if (accToApprove.AccountState == DATA.AccountState.Aproved)
-				{
-					Console.Write("This account is already approved. Do you want to stop approving (enter 'y' or 'n'): ");
-					command = Console.ReadLine();
-					if (command.ToLower() == "y")
-					{
-						break;
-					}
-				}
-				else
-				{
-					Console.Write("Are you sure(enter 'y' or 'n' 'stop)': ");
-					command = Console.ReadLine();
-					if (command.ToLower() == "y")
-					{
-						accToApprove.AccountState = DATA.AccountState.Aproved;
-						_context.SaveChanges();
-						Console.WriteLine("The account has been approved.");
-					}
-
-				}
-
-			} while (command != "stop");
+			accToApprove.AccountState = DATA.AccountState.Aproved;
+			_context.SaveChanges();
 		}
 
-		public void EditUser(string username)
+		public void EditUser(UserEditModel userEditModel, int commandNum)
 		{
-			var user = _context.Users.FirstOrDefault(u => u.Username == username);
+			var user = _context.Users.FirstOrDefault(u => u.Username == userEditModel.Username);
 			if (user == null)
 			{
-				throw new ServiceException($"Account with username ({username}) does not exist.");
+				throw new ServiceException($"Account with username ({userEditModel.Username}) does not exist.");
 			}
 
 			Console.Write("Enter edit command: ");
 			string[] command = Console.ReadLine().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-			while (string.Join(" ", command) != "stop")
+
+			if (string.Join(" ", command).ToLower() == "change password")
 			{
-				if (string.Join(" ", command).ToLower() == "change password")
+
+				string newPassword = HashPassword(userEditModel.Password);
+				user.Password = newPassword;
+				_context.SaveChanges();
+			}
+			else if (string.Join(" ", command).ToLower() == "change email")
+			{
+				user.Email = userEditModel.Email;
+				_context.SaveChanges();
+			}
+			else if (string.Join(" ", command).ToLower() == "change first name")
+			{
+				user.FirstName = userEditModel.FirstName;
+				_context.SaveChanges();
+			}
+			else if (string.Join(" ", command).ToLower() == "change last name")
+			{
+				user.LastName = userEditModel.LastName;
+				_context.SaveChanges();
+			}
+			else if (string.Join(" ", command).ToLower() == "change role")
+			{
+				DATA.AccountRole role = (DATA.AccountRole)Enum.Parse(typeof(DATA.AccountRole), userEditModel.Role);
+				if (Enum.IsDefined(typeof(DATA.AccountRole), userEditModel))
 				{
-					Console.Write("Enter the new password: ");
-					string newPassword = Console.ReadLine();
-					while (string.IsNullOrEmpty(newPassword))
-					{
-						Console.WriteLine("Cannot change password to empy.");
-						Console.Write("Enter the new password: ");
-						newPassword = Console.ReadLine();
-					}
-
-					Console.Write("Are you sure 'y' or 'n': ");
-					command = Console.ReadLine().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-					if (command[0].ToLower() == "y")
-					{
-						newPassword = HashPassword(newPassword);
-						user.Password = newPassword;
-						_context.SaveChanges();
-						Console.WriteLine("The password have been changed.");
-					}
-				}
-				else if (string.Join(" ", command).ToLower() == "change email")
-				{
-					Console.Write("Enter the new email: ");
-					string newEmail = Console.ReadLine();
-					var regex = new Regex(@"^([0-9a-zA-Z_]([_+-.\w]*[0-9a-zA-Z_])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9})$");
-					Match match = regex.Match(user.Email);
-					while (string.IsNullOrEmpty(newEmail) || !match.Success)
-					{
-
-						Console.WriteLine("Wrong email format.");
-						Console.Write("Enter the new email: ");
-						newEmail = Console.ReadLine();
-					}
-
-					Console.Write("Are you sure 'y' or 'n': ");
-					command = Console.ReadLine().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-					if (command[0].ToLower() == "y")
-					{
-						user.Email = newEmail;
-						_context.SaveChanges();
-						Console.WriteLine($"The email have been changed to {newEmail}.");
-					}
-				}
-				else if (string.Join(" ", command).ToLower() == "change first name")
-				{
-					Console.Write("Enter the new first name: ");
-					string newFirstName = Console.ReadLine();
-					while (string.IsNullOrEmpty(newFirstName))
-					{
-
-						Console.WriteLine("First name cannot be empty.");
-						Console.Write("Enter the new first name: ");
-						newFirstName = Console.ReadLine();
-					}
-
-					Console.Write("Are you sure 'y' or 'n': ");
-					command = Console.ReadLine().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-					if (command[0].ToLower() == "y")
-					{
-						user.FirstName = newFirstName;
-						_context.SaveChanges();
-						Console.WriteLine($"The email have been changed to {newFirstName}.");
-					}
-				}
-				else if (string.Join(" ", command).ToLower() == "change last name")
-				{
-					Console.Write("Enter the new last name: ");
-					string newLastName = Console.ReadLine();
-					while (string.IsNullOrEmpty(newLastName))
-					{
-
-						Console.WriteLine("First name cannot be empty.");
-						Console.Write("Enter the new last name: ");
-						newLastName = Console.ReadLine();
-					}
-
-					Console.Write("Are you sure 'y' or 'n': ");
-					command = Console.ReadLine().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-					if (command[0].ToLower() == "y")
-					{
-						user.LastName = newLastName;
-						_context.SaveChanges();
-						Console.WriteLine($"The last name have been changed to {newLastName}.");
-					}
-				}
-				else if (string.Join(" ", command).ToLower() == "change role")
-				{
-					Console.WriteLine("0 - Client");
-					Console.WriteLine("1 - Support");
-					Console.WriteLine("2 - Administrator");
-					Console.Write("Choose role: ");
-					DATA.AccountRole role = (DATA.AccountRole)Enum.Parse(typeof(DATA.AccountRole), Console.ReadLine());
-					if (role == DATA.AccountRole.Client || role == DATA.AccountRole.Support || role == DATA.AccountRole.Administrator)
-					{
-						user.Role = role;
-						_context.SaveChanges();
-						Console.WriteLine($"{username} is now {role}");
-					}
-					else
-					{
-						Console.WriteLine("Ivalid role.");
-					}
-
-
+					user.Role = role;
+					_context.SaveChanges();
 				}
 				else
 				{
-					Console.WriteLine("Wrong edit command. Write 'stop' to stop editing this user");
+					throw new ServiceException("You have chosen non existing role.");
 				}
 
-				Console.Write("Enter edit command: ");
-				command = Console.ReadLine().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 			}
+
 		}
 
 		#endregion

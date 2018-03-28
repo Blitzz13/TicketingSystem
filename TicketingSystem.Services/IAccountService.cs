@@ -8,8 +8,8 @@ namespace TicketingSystem.Services
 
 		void Register(RegisterModel registerModel);
 
-		void ApproveAccounts();
+		void ApproveAccounts(string username);
 
-		void EditUser(string username);
+		void EditUser(UserEditModel userEditModel, int commandNum);
 	}
 }

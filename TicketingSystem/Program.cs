@@ -2,7 +2,7 @@
 using System;
 using System.IO;
 using System.Linq;
-using TicketingSystem.Data;
+using System.Text.RegularExpressions;
 using TicketingSystem.Services;
 using TicketingSystem.Services.Impl;
 using File = System.IO.File;
@@ -23,11 +23,11 @@ namespace TicketingSystem
 
 			ITicketService ticketService = new TicketService();
 
-			var context = new TicketingSystemDbContext();
+			//var context = new TicketingSystemDbContext();
 
 			int? userId = null;
 
-			context.Database.Migrate();
+			//context.Database.Migrate();
 
 			string[] command;
 
@@ -168,7 +168,7 @@ namespace TicketingSystem
 							TicketDescription = ticketDescription,
 						};
 					}
-					
+
 					try
 					{
 						ticketService.CreateTicket(ticketModel, projectName, userId);
@@ -180,41 +180,56 @@ namespace TicketingSystem
 				}
 				else if (string.Join(" ", command) == "approve acc")
 				{
-					if (userId != null)
+					Console.Write("Enter username: ");
+					string username = Console.ReadLine();
+
+					try
 					{
-						if (context.Users.FirstOrDefault(u => u.Id == userId).Role == AccountRole.Administrator)
-						{
-							accountService.ApproveAccounts();
-						}
-						else
-						{
-							Console.WriteLine("You have to be administrator.");
-						}
+						accountService.ApproveAccounts(username);
 					}
-					else
+					catch (ServiceException se)
 					{
-						Console.WriteLine("You are not logged in.");
+						Console.WriteLine(se.Message);
 					}
 				}
 				else if (string.Join(" ", command) == "edit user")
 				{
-					if (userId != null)
+					Console.WriteLine("1 - Change password");
+					Console.WriteLine("2 - Change email");
+					Console.WriteLine("3 - Change first name");
+					Console.WriteLine("4 - Change last name");
+					Console.Write("5 - Change role");
+					int commandNum = int.Parse(Console.ReadLine());
+					UserEditModel userEditModel = new UserEditModel();
+					switch (commandNum)
 					{
-						if (context.Users.FirstOrDefault(u => u.Id == userId).Role == AccountRole.Administrator)
-						{
-							Console.Write("Enter username for which account must be edited: ");
-							string username = Console.ReadLine();
-
-							accountService.EditUser(username);
-						}
-						else
-						{
-							Console.WriteLine("You have to be administrator.");
-						}
-					}
-					else
-					{
-						Console.WriteLine("You are not logged in.");
+						case 1:
+							command = ChangePassword(ref userEditModel);
+							accountService.EditUser(userEditModel, commandNum);
+							Console.WriteLine("The password have been changed.");
+							break;
+						case 2:
+							string newEmail;
+							ChangeEmail(out userEditModel, out newEmail);
+							accountService.EditUser(userEditModel, commandNum);
+							Console.WriteLine($"The email have been changed to {newEmail}.");
+							break;
+						case 3:
+							string newFirstName;
+							ChangeFirstName(out userEditModel, out newFirstName);
+							accountService.EditUser(userEditModel, commandNum);
+							Console.WriteLine($"The first name have been changed to {newFirstName}.");
+							break;
+						case 4:
+							string newLastName;
+							ChangeLastName(out userEditModel, out newLastName);
+							accountService.EditUser(userEditModel, commandNum);
+							Console.WriteLine($"The last name have been changed to {newLastName}.");
+							break;
+						case 5:
+							userEditModel = ChangeRole(accountService, commandNum);
+							accountService.EditUser(userEditModel, commandNum);
+							break;
 					}
 				}
 				else if (string.Join(" ", command) == "delete project")
@@ -232,10 +247,104 @@ namespace TicketingSystem
 					Console.Write("Enter ticket title: ");
 					string ticketTitle = Console.ReadLine();
 
-					ticketService.DeleteTicket(projectName,ticketTitle,userId);
+					ticketService.DeleteTicket(projectName, ticketTitle, userId);
 				}
 
 			} while (command[0].ToLower() != "exit");
+		}
+
+		private static string[] ChangePassword(ref UserEditModel userEditModel)
+		{
+			string[] command;
+			Console.Write("Enter the new password: ");
+			string newPassword = Console.ReadLine();
+			while (string.IsNullOrEmpty(newPassword))
+			{
+				Console.WriteLine("Cannot change password to empy.");
+				Console.Write("Enter the new password: ");
+				newPassword = Console.ReadLine();
+			}
+
+			Console.Write("Are you sure 'y' or 'n': ");
+			command = Console.ReadLine().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+			if (command[0].ToLower() == "y")
+			{
+				userEditModel = new UserEditModel()
+				{
+					Password = newPassword
+				};
+			}
+
+			return command;
+		}
+
+		private static void ChangeEmail(out UserEditModel userEditModel, out string newEmail)
+		{
+			Console.Write("Enter the new email: ");
+			newEmail = Console.ReadLine();
+			var regex = new Regex(@"^([0-9a-zA-Z_]([_+-.\w]*[0-9a-zA-Z_])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9})$");
+			Match match = regex.Match(newEmail);
+			while (string.IsNullOrEmpty(newEmail) || !match.Success)
+			{
+
+				Console.WriteLine("Wrong email format.");
+				Console.Write("Enter the new email: ");
+				newEmail = Console.ReadLine();
+			}
+
+			userEditModel = new UserEditModel()
+			{
+				Email = newEmail
+			};
+		}
+
+		private static void ChangeFirstName(out UserEditModel userEditModel, out string newFirstName)
+		{
+			Console.Write("Enter the new first name: ");
+			newFirstName = Console.ReadLine();
+			while (string.IsNullOrEmpty(newFirstName))
+			{
+				Console.WriteLine("First name cannot be empty.");
+				Console.Write("Enter the new first name: ");
+				newFirstName = Console.ReadLine();
+			}
+
+			userEditModel = new UserEditModel()
+			{
+				FirstName = newFirstName
+			};
+		}
+
+		private static void ChangeLastName(out UserEditModel userEditModel, out string newLastName)
+		{
+			Console.Write("Enter the new last name: ");
+			newLastName = Console.ReadLine();
+			while (string.IsNullOrEmpty(newLastName))
+			{
+				Console.WriteLine("First name cannot be empty.");
+				Console.Write("Enter the new last name: ");
+				newLastName = Console.ReadLine();
+			}
+
+			userEditModel = new UserEditModel()
+			{
+				LastName = newLastName
+			};
+		}
+
+		private static UserEditModel ChangeRole(IAccountService accountService, int commandNum)
+		{
+			UserEditModel userEditModel;
+			Console.WriteLine("Client");
+			Console.WriteLine("Support");
+			Console.WriteLine("Administrator");
+			Console.Write("Choose role: ");
+			string role = Console.ReadLine();
+			userEditModel = new UserEditModel()
+			{
+				Role = role
+			};
+			return userEditModel;
 		}
 
 		private static void Register(IAccountService accountService)
