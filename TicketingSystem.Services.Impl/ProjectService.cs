@@ -77,6 +77,7 @@ namespace TicketingSystem.Services.Impl
 
 			_context.Projects.Remove(project);
 			_context.SaveChanges();
+			Console.WriteLine($"Project {projectName} has been succsessfully deleted.");
 		}
 	}
 }

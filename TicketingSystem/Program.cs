@@ -217,6 +217,23 @@ namespace TicketingSystem
 						Console.WriteLine("You are not logged in.");
 					}
 				}
+				else if (string.Join(" ", command) == "delete project")
+				{
+					Console.Write("Enter project name: ");
+					string projectName = Console.ReadLine();
+
+					projectService.DeleteProject(projectName);
+				}
+				else if (string.Join(" ", command) == "delete ticket")
+				{
+					Console.Write("Enter project name: ");
+					string projectName = Console.ReadLine();
+
+					Console.Write("Enter ticket title: ");
+					string ticketTitle = Console.ReadLine();
+
+					ticketService.DeleteTicket(projectName,ticketTitle,userId);
+				}
 
 			} while (command[0].ToLower() != "exit");
 		}

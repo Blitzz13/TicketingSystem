@@ -6,6 +6,6 @@
 
 		void CreateTicket(TicketModel ticketModel, string projectName, int? userId);
 
-		void DeleteTicket(string projectName, string ticketTitle, int userId);
+		void DeleteTicket(string projectName, string ticketTitle, int? userId);
 	}
 }

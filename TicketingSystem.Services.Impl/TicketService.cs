@@ -13,9 +13,37 @@ namespace TicketingSystem.Services.Impl
 			_context = new DATA.TicketingSystemDbContext();
 		}
 
-		public void ViewTickets(string project, int userId)
+		public void ViewTickets(string projectName, int userId)
 		{
-			throw new NotImplementedException();
+			DATA.Project project = _context.Projects.FirstOrDefault(p => p.Name == projectName);
+
+			if (project == null)
+			{
+				throw new ServiceException("No project found.");
+			}
+
+			DATA.User user = _context.Users.FirstOrDefault(u => u.Id == userId);
+			if (user.Role == DATA.AccountRole.Administrator || user.Role == DATA.AccountRole.Support)
+			{
+				foreach (var ticket in project.Tickets.Where(u => u.Submitter.Id == userId))
+				{
+					Console.WriteLine($"{ticket.Title} - {ticket.Type} - {ticket.State}: ");
+					Console.WriteLine($"Submitted on {ticket.SubmissionDate}");
+					Console.WriteLine($"Description: {ticket.Description}");
+					Console.WriteLine($"Submitted by: {ticket.Submitter}");
+					Console.WriteLine($"");
+				}
+			}
+			else
+			{
+				foreach (var ticket in project.Tickets.Where(u => u.Submitter.Id == userId))
+				{
+					Console.WriteLine($"{ticket.Title} - {ticket.Type} - {ticket.State}: ");
+					Console.WriteLine($"Submitted on {ticket.SubmissionDate}");
+					Console.WriteLine($"Description: {ticket.Description}");
+				}
+			}
+			
 		}
 
 		public void CreateTicket(TicketModel ticketModel, string projectName, int? userId)
@@ -79,7 +107,7 @@ namespace TicketingSystem.Services.Impl
 			_context.SaveChanges();
 		}
 
-		public void DeleteTicket(string projectName, string ticketTitle, int userId)
+		public void DeleteTicket(string projectName, string ticketTitle, int? userId)
 		{
 			DATA.Project project = _context.Projects.FirstOrDefault(p => p.Name == projectName);
 
@@ -88,7 +116,7 @@ namespace TicketingSystem.Services.Impl
 				throw new ServiceException($"No project with name {projectName} have been found.");
 			}
 
-			DATA.Ticket ticket = project.Tickets.FirstOrDefault(t => t.Title == ticketTitle && t.Submitter.Id == userId);
+			DATA.Ticket ticket = _context.Tickets.FirstOrDefault(t => t.Title == ticketTitle && t.Submitter.Id == userId && t.ProjectId == project.Id);
 			if (ticket == null)
 			{
 				throw new ServiceException($"No ticket with ticket title {ticketTitle} was found.");
