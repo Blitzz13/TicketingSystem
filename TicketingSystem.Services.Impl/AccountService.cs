@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
@@ -121,45 +120,37 @@ namespace TicketingSystem.Services.Impl
 				throw new ServiceException($"Account with username ({userEditModel.Username}) does not exist.");
 			}
 
-			Console.Write("Enter edit command: ");
-			string[] command = Console.ReadLine().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-
-
-			if (string.Join(" ", command).ToLower() == "change password")
+			switch (commandNum)
 			{
-
-				string newPassword = HashPassword(userEditModel.Password);
-				user.Password = newPassword;
-				_context.SaveChanges();
-			}
-			else if (string.Join(" ", command).ToLower() == "change email")
-			{
-				user.Email = userEditModel.Email;
-				_context.SaveChanges();
-			}
-			else if (string.Join(" ", command).ToLower() == "change first name")
-			{
-				user.FirstName = userEditModel.FirstName;
-				_context.SaveChanges();
-			}
-			else if (string.Join(" ", command).ToLower() == "change last name")
-			{
-				user.LastName = userEditModel.LastName;
-				_context.SaveChanges();
-			}
-			else if (string.Join(" ", command).ToLower() == "change role")
-			{
-				DATA.AccountRole role = (DATA.AccountRole)Enum.Parse(typeof(DATA.AccountRole), userEditModel.Role);
-				if (Enum.IsDefined(typeof(DATA.AccountRole), userEditModel))
-				{
-					user.Role = role;
+				case 1:
+					string newPassword = HashPassword(userEditModel.Password);
+					user.Password = newPassword;
 					_context.SaveChanges();
-				}
-				else
-				{
-					throw new ServiceException("You have chosen non existing role.");
-				}
-
+					break;
+				case 2:
+					user.Email = userEditModel.Email;
+					_context.SaveChanges();
+					break;
+				case 3:
+					user.FirstName = userEditModel.FirstName;
+					_context.SaveChanges();
+					break;
+				case 4:
+					user.LastName = userEditModel.LastName;
+					_context.SaveChanges();
+					break;
+				case 5:
+					DATA.AccountRole role = (DATA.AccountRole)Enum.Parse(typeof(DATA.AccountRole), userEditModel.Role);
+					if (Enum.IsDefined(typeof(DATA.AccountRole), userEditModel))
+					{
+						user.Role = role;
+						_context.SaveChanges();
+					}
+					else
+					{
+						throw new ServiceException("You have chosen non existing role.");
+					}
+					break;
 			}
 
 		}

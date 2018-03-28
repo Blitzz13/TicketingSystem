@@ -194,41 +194,48 @@ namespace TicketingSystem
 				}
 				else if (string.Join(" ", command) == "edit user")
 				{
+					Console.Write("Enter username: ");
+					string username = Console.ReadLine();
+
 					Console.WriteLine("1 - Change password");
 					Console.WriteLine("2 - Change email");
 					Console.WriteLine("3 - Change first name");
 					Console.WriteLine("4 - Change last name");
-					Console.Write("5 - Change role");
+					Console.WriteLine("5 - Change role");
+					Console.Write("Enter number of command: ");
 					int commandNum = int.Parse(Console.ReadLine());
-					UserEditModel userEditModel = new UserEditModel();
+
+					UserEditModel userEditModel = new UserEditModel()
+					{
+						Username = username
+					};
+
 					switch (commandNum)
 					{
 						case 1:
-							command = ChangePassword(ref userEditModel);
+							ChangePassword(userEditModel);
 							accountService.EditUser(userEditModel, commandNum);
 							Console.WriteLine("The password have been changed.");
 							break;
 						case 2:
-							string newEmail;
-							ChangeEmail(out userEditModel, out newEmail);
+							ChangeEmail(userEditModel);
 							accountService.EditUser(userEditModel, commandNum);
-							Console.WriteLine($"The email have been changed to {newEmail}.");
+							Console.WriteLine($"The email have been changed.");
 							break;
 						case 3:
-							string newFirstName;
-							ChangeFirstName(out userEditModel, out newFirstName);
+							ChangeFirstName(userEditModel);
 							accountService.EditUser(userEditModel, commandNum);
-							Console.WriteLine($"The first name have been changed to {newFirstName}.");
+							Console.WriteLine($"The first name have been changed.");
 							break;
 						case 4:
-							string newLastName;
-							ChangeLastName(out userEditModel, out newLastName);
+							ChangeLastName(userEditModel);
 							accountService.EditUser(userEditModel, commandNum);
-							Console.WriteLine($"The last name have been changed to {newLastName}.");
+							Console.WriteLine($"The last name have been changed.");
 							break;
 						case 5:
-							userEditModel = ChangeRole(accountService, commandNum);
+							ChangeRole(userEditModel);
 							accountService.EditUser(userEditModel, commandNum);
+							Console.WriteLine($"The role have been changed.");
 							break;
 					}
 				}
@@ -253,9 +260,19 @@ namespace TicketingSystem
 			} while (command[0].ToLower() != "exit");
 		}
 
-		private static string[] ChangePassword(ref UserEditModel userEditModel)
+		private static void ChangeRole(UserEditModel userEditModel)
 		{
-			string[] command;
+			Console.WriteLine("Client");
+			Console.WriteLine("Support");
+			Console.WriteLine("Administrator");
+			Console.Write("Choose role: ");
+			string role = Console.ReadLine();
+
+			userEditModel.Role = role;
+		}
+
+		private static void ChangePassword(UserEditModel userEditModel)
+		{
 			Console.Write("Enter the new password: ");
 			string newPassword = Console.ReadLine();
 			while (string.IsNullOrEmpty(newPassword))
@@ -265,23 +282,13 @@ namespace TicketingSystem
 				newPassword = Console.ReadLine();
 			}
 
-			Console.Write("Are you sure 'y' or 'n': ");
-			command = Console.ReadLine().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-			if (command[0].ToLower() == "y")
-			{
-				userEditModel = new UserEditModel()
-				{
-					Password = newPassword
-				};
-			}
-
-			return command;
+			userEditModel.Password = newPassword;
 		}
 
-		private static void ChangeEmail(out UserEditModel userEditModel, out string newEmail)
+		private static void ChangeEmail(UserEditModel userEditModel)
 		{
 			Console.Write("Enter the new email: ");
-			newEmail = Console.ReadLine();
+			string newEmail = Console.ReadLine();
 			var regex = new Regex(@"^([0-9a-zA-Z_]([_+-.\w]*[0-9a-zA-Z_])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9})$");
 			Match match = regex.Match(newEmail);
 			while (string.IsNullOrEmpty(newEmail) || !match.Success)
@@ -292,16 +299,13 @@ namespace TicketingSystem
 				newEmail = Console.ReadLine();
 			}
 
-			userEditModel = new UserEditModel()
-			{
-				Email = newEmail
-			};
+			userEditModel.Email = newEmail;
 		}
 
-		private static void ChangeFirstName(out UserEditModel userEditModel, out string newFirstName)
+		private static void ChangeFirstName(UserEditModel userEditModel)
 		{
 			Console.Write("Enter the new first name: ");
-			newFirstName = Console.ReadLine();
+			string newFirstName = Console.ReadLine();
 			while (string.IsNullOrEmpty(newFirstName))
 			{
 				Console.WriteLine("First name cannot be empty.");
@@ -309,16 +313,13 @@ namespace TicketingSystem
 				newFirstName = Console.ReadLine();
 			}
 
-			userEditModel = new UserEditModel()
-			{
-				FirstName = newFirstName
-			};
+			userEditModel.FirstName = newFirstName;
 		}
 
-		private static void ChangeLastName(out UserEditModel userEditModel, out string newLastName)
+		private static void ChangeLastName(UserEditModel userEditModel)
 		{
 			Console.Write("Enter the new last name: ");
-			newLastName = Console.ReadLine();
+			string newLastName = Console.ReadLine();
 			while (string.IsNullOrEmpty(newLastName))
 			{
 				Console.WriteLine("First name cannot be empty.");
@@ -326,25 +327,7 @@ namespace TicketingSystem
 				newLastName = Console.ReadLine();
 			}
 
-			userEditModel = new UserEditModel()
-			{
-				LastName = newLastName
-			};
-		}
-
-		private static UserEditModel ChangeRole(IAccountService accountService, int commandNum)
-		{
-			UserEditModel userEditModel;
-			Console.WriteLine("Client");
-			Console.WriteLine("Support");
-			Console.WriteLine("Administrator");
-			Console.Write("Choose role: ");
-			string role = Console.ReadLine();
-			userEditModel = new UserEditModel()
-			{
-				Role = role
-			};
-			return userEditModel;
+			userEditModel.LastName = newLastName;
 		}
 
 		private static void Register(IAccountService accountService)
