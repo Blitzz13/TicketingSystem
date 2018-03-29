@@ -96,11 +96,17 @@ namespace TicketingSystem
 
 					List<Ticket> tickets = ticketService.ViewTickets(projectName, userId).ToList();
 
+					Console.WriteLine("----------------------------------------");
 					foreach (var ticket in tickets)
 					{
-						Console.WriteLine(ticket.Title);
-						Console.WriteLine(ticket.Submitter);
-						Console.WriteLine(ticket.Submitter);
+						Console.WriteLine($"Title: {ticket.Title}");
+						Console.WriteLine($"Submited by: {ticket.Submitter.Username} - ({ticket.Submitter.FirstName} {ticket.Submitter.LastName})");
+						Console.WriteLine($"From: {ticket.Project.Name}");
+						Console.WriteLine($"Number of files: {ticket.Files.Count}");
+						Console.WriteLine($"State: {ticket.State}");
+						Console.WriteLine($"Submited on: {ticket.SubmissionDate}");
+						Console.WriteLine($"Description: {ticket.Description}");
+						Console.WriteLine("----------------------------------------");
 					}
 				}
 
@@ -155,13 +161,9 @@ namespace TicketingSystem
 			{
 				Console.WriteLine("You have to be logged in to be logout.");
 			}
-			else
-			{
-				userId = null;
-				Console.WriteLine("You have been logged out.");
-			}
 
-			return userId;
+			Console.WriteLine("You have been logged out.");
+			return null;
 		}
 
 		private static void CreateTicket(ITicketService ticketService, int? userId)
