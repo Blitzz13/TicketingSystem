@@ -1,8 +1,10 @@
-﻿namespace TicketingSystem.Services
+﻿using System.Collections.Generic;
+
+namespace TicketingSystem.Services
 {
 	public interface ITicketService
 	{
-		void ViewTickets(string project, int userId);
+		ICollection<Data.Ticket> ViewTickets(string project, int? userId);
 
 		void CreateTicket(TicketModel ticketModel, string projectName, int? userId);
 

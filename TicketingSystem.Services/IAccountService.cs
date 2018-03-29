@@ -1,6 +1,4 @@
-﻿using TicketingSystem.Data;
-
-namespace TicketingSystem.Services
+﻿namespace TicketingSystem.Services
 {
 	public interface IAccountService
 	{

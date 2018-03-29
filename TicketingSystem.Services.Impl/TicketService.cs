@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using DATA = TicketingSystem.Data;
 
@@ -13,7 +14,7 @@ namespace TicketingSystem.Services.Impl
 			_context = new DATA.TicketingSystemDbContext();
 		}
 
-		public void ViewTickets(string projectName, int userId)
+		public ICollection<DATA.Ticket> ViewTickets(string projectName, int userId)
 		{
 			DATA.Project project = _context.Projects.FirstOrDefault(p => p.Name == projectName);
 
@@ -25,24 +26,14 @@ namespace TicketingSystem.Services.Impl
 			DATA.User user = _context.Users.FirstOrDefault(u => u.Id == userId);
 			if (user.Role == DATA.AccountRole.Administrator || user.Role == DATA.AccountRole.Support)
 			{
-				foreach (var ticket in project.Tickets.Where(u => u.Submitter.Id == userId))
-				{
-					Console.WriteLine($"{ticket.Title} - {ticket.Type} - {ticket.State}: ");
-					Console.WriteLine($"Submitted on {ticket.SubmissionDate}");
-					Console.WriteLine($"Description: {ticket.Description}");
-					Console.WriteLine($"Submitted by: {ticket.Submitter}");
-				}
+				return _context.Tickets.Where(t => t.ProjectId == project.Id).ToList();
 			}
-			else
+			else if (user.Role == DATA.AccountRole.Client)
 			{
-				foreach (var ticket in project.Tickets.Where(u => u.Submitter.Id == userId))
-				{
-					Console.WriteLine($"{ticket.Title} - {ticket.Type} - {ticket.State}: ");
-					Console.WriteLine($"Submitted on {ticket.SubmissionDate}");
-					Console.WriteLine($"Description: {ticket.Description}");
-				}
+				return _context.Tickets.Where(t => t.Submitter.Id == userId).ToList();
 			}
-			
+
+			throw new ServiceException("You are not logged in.");
 		}
 
 		public void CreateTicket(TicketModel ticketModel, string projectName, int? userId)
