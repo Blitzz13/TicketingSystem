@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using TicketingSystem.Data;
+using DATA = TicketingSystem.Data;
 using TicketingSystem.Services;
 using TicketingSystem.Services.Impl;
 using File = System.IO.File;
@@ -13,19 +13,22 @@ namespace TicketingSystem
 {
 	class Program
 	{
+		private static readonly IUserService _userService = new UserService();
+		private static readonly IProjectService _projectService = new ProjectService();
+		private static readonly ITicketService _ticketService = new TicketService();
+		private static UserIdentity _identity;
+
+		public static bool IsLoggedIn => _identity != null;
+
 		static void Main()
 		{
 			//DbSeed.Seed(new Data.TicketingSystemDbContext());
 
 			DrawTitle();
 
-			IAccountService accountService = new AccountService();
 
-			IProjectService projectService = new ProjectService();
 
-			ITicketService ticketService = new TicketService();
-
-			var context = new TicketingSystemDbContext();
+			var context = new DATA.TicketingSystemDbContext();
 
 			int? userId = null;
 
@@ -46,38 +49,39 @@ namespace TicketingSystem
 
 				if (command[0] == "register")
 				{
-					Register(accountService);
+					Register(_userService);
 				}
 				else if (command[0] == "login")
 				{
-					userId = Login(accountService, userId);
+					Login();
 				}
 				else if (string.Join(" ", command) == "create project")
 				{
-					CreateProject(projectService, userId);
+					CreateProject(_projectService, userId);
 				}
 				else if (command[0] == "logout")
 				{
-					userId = Logout(userId);
+					Logout();
 				}
 				else if (string.Join(" ", command) == "create ticket")
 				{
-					CreateTicket(ticketService, userId);
+					CreateTicket(_ticketService, userId);
 				}
 				else if (string.Join(" ", command) == "approve acc")
 				{
-					ApproveAccount(accountService);
+					ApproveAccount(_userService);
 				}
 				else if (string.Join(" ", command) == "edit user")
 				{
-					EditUser(accountService);
+					EditUser(_userService);
 				}
 				else if (string.Join(" ", command) == "delete project")
 				{
 					Console.Write("Enter project name: ");
 					string projectName = Console.ReadLine();
 
-					projectService.DeleteProject(projectName);
+					var project = _projectService.GetByName(projectName);
+					_projectService.Delete(project.Id);
 				}
 				else if (string.Join(" ", command) == "delete ticket")
 				{
@@ -87,22 +91,31 @@ namespace TicketingSystem
 					Console.Write("Enter ticket title: ");
 					string ticketTitle = Console.ReadLine();
 
-					ticketService.DeleteTicket(projectName, ticketTitle, userId);
+					_ticketService.Delete(projectName, ticketTitle, userId);
 				}
 				else if (string.Join(" ", command) == "view tickets")
 				{
 					Console.Write("Enter project name: ");
 					string projectName = Console.ReadLine();
+					List<Ticket> tickets;
+					Project project = _projectService.GetByName(projectName);
 
-					List<Ticket> tickets = ticketService.ViewTickets(projectName, userId).ToList();
+					if (_identity.IsAdministrator || _identity.IsSupport)
+					{
+						tickets = _ticketService.Get(project.Id).ToList();
+					}
+					else
+					{
+						tickets = _ticketService.Get(project.Id,_identity.UserId).ToList();
+					}
+					
 
 					Console.WriteLine("----------------------------------------");
 					foreach (var ticket in tickets)
 					{
 						Console.WriteLine($"Title: {ticket.Title}");
-						Console.WriteLine($"Submited by: {ticket.Submitter.Username} - ({ticket.Submitter.FirstName} {ticket.Submitter.LastName})");
-						Console.WriteLine($"From: {ticket.Project.Name}");
-						Console.WriteLine($"Number of files: {ticket.Files.Count}");
+						Console.WriteLine($"Submited by: {ticket.Submitter}");
+						Console.WriteLine($"Number of files: {ticket.FileCount}");
 						Console.WriteLine($"State: {ticket.State}");
 						Console.WriteLine($"Submited on: {ticket.SubmissionDate}");
 						Console.WriteLine($"Description: {ticket.Description}");
@@ -113,7 +126,34 @@ namespace TicketingSystem
 			} while (command[0].ToLower() != "exit");
 		}
 
-		private static int? Login(IAccountService accountService, int? userId)
+		public static void Print()
+		{
+			if (IsLoggedIn)
+			{
+				if (_identity.IsAdministrator)
+				{
+					
+				}
+				else if (_identity.IsClient)
+				{
+
+				}
+				else if (_identity.IsSupport)
+				{
+
+				}
+
+				
+			}
+			else
+			{
+				
+			}
+
+
+		}
+
+		private static void Login()
 		{
 			Console.Write("Username: ");
 			string username = Console.ReadLine();
@@ -123,16 +163,26 @@ namespace TicketingSystem
 
 			try
 			{
-				var loginResult = accountService.Login(username, password);
-				userId = loginResult.UserId;
+				LoginResult loginResult = _userService.Login(username, password);
 				Console.WriteLine("You have been logged in.");
+
+				_identity = new UserIdentity
+				{
+					UserId = loginResult.UserId,
+					IsAdministrator = loginResult.IsAdministrator,
+					IsClient = loginResult.IsClient,
+					IsSupport = loginResult.IsSupport
+				};
 			}
 			catch (ServiceException se)
 			{
 				Console.WriteLine(se.Message);
 			}
+		}
 
-			return userId;
+		public static void Logout()
+		{
+			_identity = null;
 		}
 
 		private static void CreateProject(IProjectService projectService, int? userId)
@@ -145,25 +195,14 @@ namespace TicketingSystem
 				Console.Write("Description: ");
 				string description = Console.ReadLine();
 
-				ProjectModel projectModel = new ProjectModel(title, description);
+				CreateProjectModel projectModel = new CreateProjectModel(title, description);
 
-				projectService.CreateProject(userId, projectModel);
+				projectService.Create(userId, projectModel);
 			}
 			catch (ServiceException se)
 			{
 				Console.WriteLine(se.Message);
 			}
-		}
-
-		private static int? Logout(int? userId)
-		{
-			if (userId == null)
-			{
-				Console.WriteLine("You have to be logged in to be logout.");
-			}
-
-			Console.WriteLine("You have been logged out.");
-			return null;
 		}
 
 		private static void CreateTicket(ITicketService ticketService, int? userId)
@@ -171,11 +210,11 @@ namespace TicketingSystem
 			Console.Write("Enter project name: ");
 			string projectName = Console.ReadLine();
 
-			TicketModel ticketModel = GetTicketModel();
+			CreateTicketModel ticketModel = GetTicketModel();
 
 			try
 			{
-				ticketService.CreateTicket(ticketModel, projectName, userId);
+				ticketService.Create(ticketModel, projectName, userId);
 			}
 			catch (ServiceException se)
 			{
@@ -183,7 +222,7 @@ namespace TicketingSystem
 			}
 		}
 
-		private static void EditUser(IAccountService accountService)
+		private static void EditUser(IUserService accountService)
 		{
 			Console.Write("Enter username: ");
 			string username = Console.ReadLine();
@@ -196,42 +235,42 @@ namespace TicketingSystem
 			Console.Write("Enter number of command: ");
 			int commandNum = int.Parse(Console.ReadLine());
 
-			UserEditModel userEditModel = new UserEditModel()
-			{
-				Username = username
-			};
+			User user = _userService.GetByUsername(username);
+			var updateRequest = new UpdateUserModel();
 
 			switch (commandNum)
 			{
 				case 1:
-					ChangePassword(userEditModel);
-					accountService.EditUser(userEditModel, commandNum);
-					Console.WriteLine("The password have been changed.");
+					Console.Write("Enter new password: ");
+					updateRequest.Password = Console.ReadLine();
 					break;
 				case 2:
-					ChangeEmail(userEditModel);
-					accountService.EditUser(userEditModel, commandNum);
+					Console.Write("Enter new email: ");
+					updateRequest.Email = Console.ReadLine();
 					Console.WriteLine($"The email have been changed.");
 					break;
 				case 3:
-					ChangeFirstName(userEditModel);
-					accountService.EditUser(userEditModel, commandNum);
+					Console.Write("Enter new first name: ");
+					updateRequest.FirstName = Console.ReadLine();
 					Console.WriteLine($"The first name have been changed.");
 					break;
 				case 4:
-					ChangeLastName(userEditModel);
-					accountService.EditUser(userEditModel, commandNum);
+					Console.Write("Enter new last name: ");
+					updateRequest.LastName = Console.ReadLine();
 					Console.WriteLine($"The last name have been changed.");
 					break;
 				case 5:
-					ChangeRole(userEditModel);
-					accountService.EditUser(userEditModel, commandNum);
+					Console.Write("Enter new role: ");
+					updateRequest.Role = Console.ReadLine();
 					Console.WriteLine($"The role have been changed.");
 					break;
 			}
+			
+			_userService.Update(user.Id, updateRequest);
+
 		}
 
-		private static void ApproveAccount(IAccountService accountService)
+		private static void ApproveAccount(IUserService accountService)
 		{
 			Console.Write("Enter username: ");
 			string username = Console.ReadLine();
@@ -246,7 +285,7 @@ namespace TicketingSystem
 			}
 		}
 
-		private static void ChangeRole(UserEditModel userEditModel)
+		private static void ChangeRole(UpdateUserModel userEditModel)
 		{
 			Console.WriteLine("Client");
 			Console.WriteLine("Support");
@@ -257,7 +296,7 @@ namespace TicketingSystem
 			userEditModel.Role = role;
 		}
 
-		private static void ChangePassword(UserEditModel userEditModel)
+		private static void ChangePassword(UpdateUserModel userEditModel)
 		{
 			Console.Write("Enter the new password: ");
 			string newPassword = Console.ReadLine();
@@ -271,7 +310,7 @@ namespace TicketingSystem
 			userEditModel.Password = newPassword;
 		}
 
-		private static void ChangeEmail(UserEditModel userEditModel)
+		private static void ChangeEmail(UpdateUserModel userEditModel)
 		{
 			Console.Write("Enter the new email: ");
 			string newEmail = Console.ReadLine();
@@ -287,7 +326,7 @@ namespace TicketingSystem
 			userEditModel.Email = newEmail;
 		}
 
-		private static void ChangeFirstName(UserEditModel userEditModel)
+		private static void ChangeFirstName(UpdateUserModel userEditModel)
 		{
 			Console.Write("Enter the new first name: ");
 			string newFirstName = Console.ReadLine();
@@ -301,7 +340,7 @@ namespace TicketingSystem
 			userEditModel.FirstName = newFirstName;
 		}
 
-		private static void ChangeLastName(UserEditModel userEditModel)
+		private static void ChangeLastName(UpdateUserModel userEditModel)
 		{
 			Console.Write("Enter the new last name: ");
 			string newLastName = Console.ReadLine();
@@ -315,13 +354,13 @@ namespace TicketingSystem
 			userEditModel.LastName = newLastName;
 		}
 
-		private static void Register(IAccountService accountService)
+		private static void Register(IUserService accountService)
 		{
-			RegisterModel registerModel = CreateRegisterModel();
+			CreateUserModel registerModel = CreateRegisterModel();
 
 			try
 			{
-				accountService.Register(registerModel);
+				accountService.Create(registerModel);
 				Console.WriteLine("Your account is being processed");
 			}
 			catch (ServiceException se)
@@ -330,7 +369,7 @@ namespace TicketingSystem
 			}
 		}
 
-		private static TicketModel GetTicketModel()
+		private static CreateTicketModel GetTicketModel()
 		{
 
 			Console.Write("Enter ticket title: ");
@@ -363,7 +402,7 @@ namespace TicketingSystem
 				byte[] file = File.ReadAllBytes(filePath);
 				string fileName = Path.GetFileName(filePath);
 
-				return new TicketModel()
+				return new CreateTicketModel()
 				{
 					TicketTitle = ticketTitle,
 					TicketType = ticketType,
@@ -374,7 +413,7 @@ namespace TicketingSystem
 				};
 			}
 
-			return new TicketModel()
+			return new CreateTicketModel()
 			{
 				TicketTitle = ticketTitle,
 				TicketType = ticketType,
@@ -391,7 +430,7 @@ namespace TicketingSystem
 			Console.WriteLine("		--------------------------------------------------------");
 		}
 
-		private static RegisterModel CreateRegisterModel()
+		private static CreateUserModel CreateRegisterModel()
 		{
 			Console.Write("Username: ");
 			string username = Console.ReadLine();
@@ -408,7 +447,7 @@ namespace TicketingSystem
 			Console.Write("Last Name: ");
 			string lastName = Console.ReadLine();
 
-			return new RegisterModel(username, password, email, firstName, lastName);
+			return new CreateUserModel(username, password, email, firstName, lastName);
 		}
 	}
 }

@@ -2,10 +2,10 @@
 
 namespace TicketingSystem.Services
 {
-	public class RegisterModel
+	public class CreateUserModel
 	{
 
-		public RegisterModel(string userName, string passowrd, string email, string firstName, string lastName)
+		public CreateUserModel(string userName, string passowrd, string email, string firstName, string lastName)
 		{
 			UserName = userName;
 			Passowrd = passowrd;

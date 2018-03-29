@@ -1,6 +1,6 @@
 ﻿namespace TicketingSystem.Services
 {
-	public class TicketModel
+	public class CreateTicketModel
 	{
 		public string TicketTitle { get; set; }
 
@@ -13,5 +13,9 @@
 		public byte[] FileContent { get; set; }
 
 		public string FileName { get; set; }
+
+		public int ProjectId { get; set; }
+
+		public int SubmitterId { get; set; }
 	}
 }

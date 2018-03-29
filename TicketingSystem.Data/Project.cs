@@ -10,6 +10,10 @@ namespace TicketingSystem.Data
 
 		public string Description { get; set; }
 
+		public int UserId { get; set; }
+
+		public User User { get; set; }
+
 		public ICollection<Ticket> Tickets { get; set; } = new List<Ticket>();
 	}
 }

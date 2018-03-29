@@ -4,10 +4,10 @@ namespace TicketingSystem.Services
 {
 	public interface ITicketService
 	{
-		ICollection<Data.Ticket> ViewTickets(string project, int? userId);
+		IEnumerable<Ticket> Get(int projectId, int? userId = null);
 
-		void CreateTicket(TicketModel ticketModel, string projectName, int? userId);
+		int Create(CreateTicketModel model);
 
-		void DeleteTicket(string projectName, string ticketTitle, int? userId);
+		void Delete(int ticketId);
 	}
 }

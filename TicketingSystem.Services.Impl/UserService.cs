@@ -6,11 +6,11 @@ using DATA = TicketingSystem.Data;
 
 namespace TicketingSystem.Services.Impl
 {
-	public class AccountService : IAccountService
+	public class UserService : IUserService
 	{
 		private readonly DATA.TicketingSystemDbContext _context;
 
-		public AccountService()
+		public UserService()
 		{
 			_context = new DATA.TicketingSystemDbContext();
 		}
@@ -33,60 +33,76 @@ namespace TicketingSystem.Services.Impl
 			{
 				throw new ServiceException("Your account is not approved yet. Please try again later.");
 			}
-			return new LoginResult
+
+			var result = new LoginResult
 			{
-				UserId = user.Id
+				UserId = user.Id,
 			};
+
+			switch (user.Role)
+			{
+				case DATA.AccountRole.Administrator:
+					result.IsAdministrator = true;
+					break;
+				case DATA.AccountRole.Support:
+					result.IsSupport = true;
+					break;
+				case DATA.AccountRole.Client:
+					result.IsClient = true;
+					break;
+			}
+
+			return result;
 		}
 
-		public void Register(RegisterModel registerModel)
+		public void Create(CreateUserModel model)
 		{
-			if (string.IsNullOrEmpty(registerModel.FirstName))
+			if (string.IsNullOrEmpty(model.FirstName))
 			{
 				throw new ServiceException("Your first name cannot be empty.");
 			}
 
-			if (string.IsNullOrEmpty(registerModel.LastName))
+			if (string.IsNullOrEmpty(model.LastName))
 			{
 				throw new ServiceException("Your last name cannot be empty.");
 			}
 
-			if (string.IsNullOrEmpty(registerModel.UserName))
+			if (string.IsNullOrEmpty(model.UserName))
 			{
 				throw new ServiceException("Your username cannot be empty.");
 			}
 
-			if (_context.Users.Any(u => u.Username == registerModel.UserName))
+			if (_context.Users.Any(u => u.Username == model.UserName))
 			{
 				throw new ServiceException("The username you have chosen already exists.");
 			}
 
-			if (string.IsNullOrEmpty(registerModel.Email))
+			if (string.IsNullOrEmpty(model.Email))
 			{
 				throw new ServiceException("The email cannot be empty");
 			}
 
 			var regex = new Regex(@"^([0-9a-zA-Z_]([_+-.\w]*[0-9a-zA-Z_])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9})$");
-			Match match = regex.Match(registerModel.Email);
+			Match match = regex.Match(model.Email);
 			if (!match.Success)
 			{
 				throw new ServiceException("The email you enterted is in incorrect format");
 			}
 
-			if (registerModel.UserName.Length < 3)
+			if (model.UserName.Length < 3)
 			{
 				throw new ServiceException("The username should be more than 2 characters");
 			}
 
-			string password = HashPassword(registerModel.Passowrd);
+			string password = HashPassword(model.Passowrd);
 
 			DATA.User user = new DATA.User
 			{
-				Username = registerModel.UserName,
+				Username = model.UserName,
 				Password = password,
-				Email = registerModel.Email,
-				FirstName = registerModel.FirstName,
-				LastName = registerModel.LastName,
+				Email = model.Email,
+				FirstName = model.FirstName,
+				LastName = model.LastName,
 				AccountState = DATA.AccountState.Pending
 			};
 
@@ -94,9 +110,9 @@ namespace TicketingSystem.Services.Impl
 			_context.SaveChanges();
 		}
 
-		public void ApproveAccounts(string username)
+		public void Approve(int userId)
 		{
-			var accToApprove = _context.Users.FirstOrDefault(u => u.Username == username);
+			var accToApprove = _context.Users.FirstOrDefault(u => u.Id == userId);
 
 			if (accToApprove == null)
 			{
@@ -112,47 +128,49 @@ namespace TicketingSystem.Services.Impl
 			_context.SaveChanges();
 		}
 
-		public void EditUser(UserEditModel userEditModel, int commandNum)
+		public void Update(int userId, UpdateUserModel model)
 		{
-			var user = _context.Users.FirstOrDefault(u => u.Username == userEditModel.Username);
+			var user = _context.Users.FirstOrDefault(u => u.Id == userId);
 			if (user == null)
 			{
-				throw new ServiceException($"Account with username ({userEditModel.Username}) does not exist.");
+				throw new ServiceException($"Account with username ({model.Username}) does not exist.");
 			}
 
-			switch (commandNum)
+			if (string.IsNullOrEmpty(model.FirstName))
 			{
-				case 1:
-					string newPassword = HashPassword(userEditModel.Password);
-					user.Password = newPassword;
-					_context.SaveChanges();
-					break;
-				case 2:
-					user.Email = userEditModel.Email;
-					_context.SaveChanges();
-					break;
-				case 3:
-					user.FirstName = userEditModel.FirstName;
-					_context.SaveChanges();
-					break;
-				case 4:
-					user.LastName = userEditModel.LastName;
-					_context.SaveChanges();
-					break;
-				case 5:
-					DATA.AccountRole role = (DATA.AccountRole)Enum.Parse(typeof(DATA.AccountRole), userEditModel.Role);
-					if (Enum.IsDefined(typeof(DATA.AccountRole), userEditModel))
-					{
-						user.Role = role;
-						_context.SaveChanges();
-					}
-					else
-					{
-						throw new ServiceException("You have chosen non existing role.");
-					}
-					break;
+				user.Username = model.FirstName;
 			}
 
+			if (string.IsNullOrEmpty(model.LastName))
+			{
+				user.Username = model.LastName;
+			}
+
+			if (string.IsNullOrEmpty(model.Role))
+			{
+				DATA.AccountRole role = (DATA.AccountRole)Enum.Parse(typeof(DATA.AccountRole), model.Role);
+				user.Role = role;
+			}
+
+			if (string.IsNullOrEmpty(model.Password))
+			{
+				model.Password = HashPassword(model.Password);
+				user.Username = model.Password;
+			}
+
+			if (string.IsNullOrEmpty(model.Email))
+			{
+				user.Username = model.Email;
+			}
+
+			_context.SaveChanges();
+		}
+
+		public User GetByUsername(string userName)
+		{
+			DATA.User user = _context.Users.FirstOrDefault(u => u.Username == userName);
+
+			return CreateUser(user);
 		}
 
 		#endregion
@@ -190,6 +208,18 @@ namespace TicketingSystem.Services.Impl
 					throw new ServiceException("The password you have entered is wrong.");
 				}
 			}
+		}
+
+		private static User CreateUser(DATA.User user)
+		{
+			return new User()
+			{
+				Id = user.Id,
+				Username = user.Username,
+				Email = user.Email,
+				FirstName = user.FirstName,
+				LastName = user.LastName
+			};
 		}
 
 	}

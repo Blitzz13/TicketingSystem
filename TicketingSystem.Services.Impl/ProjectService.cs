@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using DATA = TicketingSystem.Data;
 
@@ -6,78 +7,56 @@ namespace TicketingSystem.Services.Impl
 {
 	public class ProjectService : IProjectService
 	{
-
-		private readonly DATA.TicketingSystemDbContext _context;
+		private static readonly DATA.TicketingSystemDbContext _context;
 
 		public ProjectService()
 		{
 			_context = new DATA.TicketingSystemDbContext();
 		}
 
-		public void CreateProject(int? userId, ProjectModel projectModel)
+		public int Create(CreateProjectModel model)
 		{
-			if (userId == null)
+			var project = new DATA.Project
 			{
-				throw new ServiceException("You are not logged in.");
-			}
+				Name = model.Title,
+				Description = model.Description,
+				UserId = model.UserId
+			};
 
-			var user = _context.Users.FirstOrDefault(u => u.Id == userId);
+			_context.Add(project);
+			_context.SaveChanges();
 
-			if (user.Role != DATA.AccountRole.Administrator)
-			{
-				throw new ServiceException("You are not administator.");
-			}
-
-			if (user.Role == Data.AccountRole.Administrator)
-			{
-				var project = new Data.Project
-				{
-					Name = projectModel.Title,
-					Description = projectModel.Description
-				};
-
-				_context.Add(project);
-				_context.SaveChanges();
-			}
-			else
-			{
-				throw new ServiceException("You have to be administrator to use this command.");
-			}
+			return project.Id;
 		}
 
-		public void ViewProject(string projectName, int userId)
+		public IEnumerable<Project> Get()
 		{
-			var project = _context.Projects.FirstOrDefault(p => p.Name == projectName);
-			if (project == null)
-			{
-				throw new ServiceException($"No project with name {projectName} have been found.");
-			}
-
-			Console.WriteLine(projectName);
-			Console.WriteLine(project.Description);
-
-			//DATA.User user = _context.Users.FirstOrDefault(u => u.Id == userId);
-			//View tickets
-			//if (user.Role == DATA.AccountRole.Client)
-			//{
-			//	foreach (var ticket in project.Tickets.Where(a => a.Submitter == user))
-			//	{
-
-			//	}
-			//}
+			return _context.Projects.Select(CreateProject);
 		}
 
-		public void DeleteProject(string projectName)
+		public void Delete(int projectId)
 		{
-			var project = _context.Projects.FirstOrDefault(p => p.Name == projectName);
-			if (project == null)
-			{
-				throw new ServiceException($"No project with name {projectName} have been found.");
-			}
+			DATA.Project project = _context.Projects.First(p => p.Id == projectId);
 
 			_context.Projects.Remove(project);
 			_context.SaveChanges();
-			Console.WriteLine($"Project {projectName} has been succsessfully deleted.");
 		}
+
+		public static Project CreateProject(DATA.Project project)
+		{
+			return new Project()
+			{
+				Id = project.Id,
+				Name = project.Name,
+				Description = project.Description
+			};
+		}
+
+		public static Project GetByName(string projectName)
+		{
+			DATA.Project project = _context.Projects.FirstOrDefault(p => p.Name == projectName);
+
+			return CreateProject(project);
+		} 
 	}
 }

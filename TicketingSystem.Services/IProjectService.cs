@@ -1,11 +1,15 @@
-﻿namespace TicketingSystem.Services
+﻿using System.Collections.Generic;
+
+namespace TicketingSystem.Services
 {
 	public interface IProjectService
 	{
-		void CreateProject(int? userId, ProjectModel projectModel);
+		int Create(CreateProjectModel model);
 
-		void ViewProject(string projectName,int userId);
+		IEnumerable<Project> Get();
 
-		void DeleteProject(string projectName);
-	} 
+		void Delete(int projectId);
+
+		Project GetByName(string projectName);
+	}
 }

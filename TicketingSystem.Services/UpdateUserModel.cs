@@ -1,6 +1,6 @@
 ﻿namespace TicketingSystem.Services
 {
-	public class UserEditModel
+	public class UpdateUserModel
 	{
 		public string Username { get; set; }
 

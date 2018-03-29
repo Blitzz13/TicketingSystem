@@ -14,107 +14,74 @@ namespace TicketingSystem.Services.Impl
 			_context = new DATA.TicketingSystemDbContext();
 		}
 
-		public ICollection<DATA.Ticket> ViewTickets(string projectName, int? userId)
+		public IEnumerable<Ticket> Get(int projectId, int? userId = null)
 		{
-			DATA.Project project = _context.Projects.FirstOrDefault(p => p.Name == projectName);
-
-			if (project == null)
+			IQueryable<DATA.Ticket> tickets = _context.Tickets.Where(t => t.ProjectId == projectId);
+			if (userId != null)
 			{
-				throw new ServiceException("No project found.");
+				_context.Tickets.Where(t => t.Submitter.Id == userId.Value);
 			}
 
-			DATA.User user = _context.Users.FirstOrDefault(u => u.Id == userId);
-			if (user.Role == DATA.AccountRole.Administrator || user.Role == DATA.AccountRole.Support)
-			{
-				return _context.Tickets.Where(t => t.ProjectId == project.Id).ToList();
-			}
-			else if (user.Role == DATA.AccountRole.Client)
-			{
-				return _context.Tickets.Where(t => t.Submitter.Id == userId).ToList();
-			}
-
-			throw new ServiceException("You are not logged in.");
+			return tickets.ToList().Select(CreateTicket);
 		}
 
-		public void CreateTicket(TicketModel ticketModel, string projectName, int? userId)
+		public int Create(CreateTicketModel model)
 		{
-			var project = _context.Projects.FirstOrDefault(p => p.Name == projectName);
-
-			if (project == null)
-			{
-				throw new ServiceException($"No project with name {projectName}");
-			}
-
-			if (userId == null)
-			{
-				throw new ServiceException("You are not logged in.");
-			}
-
-			var user = _context.Users.FirstOrDefault(u => u.Id == userId);
-
-			DATA.TicketType ticketType = (DATA.TicketType)Enum.Parse(typeof(DATA.TicketType), ticketModel.TicketType);
+			DATA.TicketType ticketType = (DATA.TicketType)Enum.Parse(typeof(DATA.TicketType), model.TicketType);
 			if (!Enum.IsDefined(typeof(DATA.TicketType), ticketType))
 			{
 				throw new ServiceException("Invalid Ticket Type.");
 			}
 
-			DATA.TicketState ticketState = (DATA.TicketState)Enum.Parse(typeof(DATA.TicketState), ticketModel.TicketState);
+			DATA.TicketState ticketState = (DATA.TicketState)Enum.Parse(typeof(DATA.TicketState), model.TicketState);
 			if (!Enum.IsDefined(typeof(DATA.TicketState), ticketState))
 			{
 				throw new ServiceException("Invalid Ticket State.");
 			}
 
-			if (string.IsNullOrEmpty(ticketModel.TicketTitle))
-			{
-				throw new ServiceException("Title cannot be empty.");
-			}
-
-			if (string.IsNullOrEmpty(ticketModel.TicketDescription))
-			{
-				throw new ServiceException("Description cannot be empty.");
-			}
-
 			DATA.Ticket ticket = new DATA.Ticket()
 			{
-				ProjectId = project.Id,
-				Description = ticketModel.TicketDescription,
+				ProjectId = model.ProjectId,
+				Description = model.TicketDescription,
 				SubmissionDate = DateTime.Now,
-				Title = ticketModel.TicketTitle,
+				Title = model.TicketTitle,
 				Type = ticketType,
 				State = ticketState,
-				Submitter = user,
+				SubmitterId = model.SubmitterId,
 			};
+
 			_context.Tickets.Add(ticket);
 
 			DATA.File file = new DATA.File
 			{
-				Name = ticketModel.FileName,
-				Content = ticketModel.FileContent,
+				Name = model.FileName,
+				Content = model.FileContent,
 				TicketId = ticket.Id,
 			};
 
 			_context.Files.Add(file);
 			_context.SaveChanges();
+
+			return ticket.Id;
 		}
 
-		public void DeleteTicket(string projectName, string ticketTitle, int? userId)
+		public void Delete(int ticketId)
 		{
-			DATA.Project project = _context.Projects.FirstOrDefault(p => p.Name == projectName);
-
-			if (project == null)
-			{
-				throw new ServiceException($"No project with name {projectName} have been found.");
-			}
-
-			DATA.Ticket ticket = _context.Tickets.FirstOrDefault(t => t.Title == ticketTitle && t.Submitter.Id == userId && t.ProjectId == project.Id);
-			if (ticket == null)
-			{
-				throw new ServiceException($"No ticket with ticket title {ticketTitle} was found.");
-			}
+			DATA.Ticket ticket = _context.Tickets.First(p => p.Id == ticketId);
 
 			_context.Tickets.Remove(ticket);
 			_context.SaveChanges();
-			Console.WriteLine("The ticket has been removed succsessfully.");
+		}
+
+		public static Ticket CreateTicket(DATA.Ticket ticket)
+		{
+			return new Ticket
+			{
+				Id = ticket.Id,
+				Submitter = ticket.Submitter.FirstName,
+				ProjectId = ticket.ProjectId,
+
+			};
 		}
 	}
 }
