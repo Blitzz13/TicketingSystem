@@ -95,6 +95,13 @@ namespace TicketingSystem
 					string projectName = Console.ReadLine();
 
 					List<Ticket> tickets = ticketService.ViewTickets(projectName, userId).ToList();
+
+					foreach (var ticket in tickets)
+					{
+						Console.WriteLine(ticket.Title);
+						Console.WriteLine(ticket.Submitter);
+						Console.WriteLine(ticket.Submitter);
+					}
 				}
 
 			} while (command[0].ToLower() != "exit");

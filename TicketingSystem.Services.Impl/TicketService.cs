@@ -14,7 +14,7 @@ namespace TicketingSystem.Services.Impl
 			_context = new DATA.TicketingSystemDbContext();
 		}
 
-		public ICollection<DATA.Ticket> ViewTickets(string projectName, int userId)
+		public ICollection<DATA.Ticket> ViewTickets(string projectName, int? userId)
 		{
 			DATA.Project project = _context.Projects.FirstOrDefault(p => p.Name == projectName);
 
