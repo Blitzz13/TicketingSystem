@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using DATA = TicketingSystem.Data;
 
@@ -7,7 +6,7 @@ namespace TicketingSystem.Services.Impl
 {
 	public class ProjectService : IProjectService
 	{
-		private static readonly DATA.TicketingSystemDbContext _context;
+		private readonly DATA.TicketingSystemDbContext _context;
 
 		public ProjectService()
 		{
@@ -48,13 +47,14 @@ namespace TicketingSystem.Services.Impl
 			{
 				Id = project.Id,
 				Name = project.Name,
-				Description = project.Description
+				Description = project.Description,
+				UserId = project.UserId
 			};
 		}
 
-		public static Project GetByName(string projectName)
+		public Project GetByName(string projectName)
 		{
-			DATA.Project project = _context.Projects.FirstOrDefault(p => p.Name == projectName);
+			DATA.Project project = _context.Projects.First(p => p.Name == projectName);
 
 			return CreateProject(project);
 		} 

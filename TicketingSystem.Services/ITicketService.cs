@@ -9,5 +9,11 @@ namespace TicketingSystem.Services
 		int Create(CreateTicketModel model);
 
 		void Delete(int ticketId);
+
+		Ticket GetByTitle(string ticketTitle);
+
+		Ticket GetByProjectId(int projectId);
+
+		Ticket GetByProjectIdAndTicketTitle(int projectId, string ticketTitle);
 	}
 }

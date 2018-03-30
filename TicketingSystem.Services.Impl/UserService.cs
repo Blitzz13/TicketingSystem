@@ -136,31 +136,31 @@ namespace TicketingSystem.Services.Impl
 				throw new ServiceException($"Account with username ({model.Username}) does not exist.");
 			}
 
-			if (string.IsNullOrEmpty(model.FirstName))
+			if (!string.IsNullOrEmpty(model.FirstName))
 			{
-				user.Username = model.FirstName;
+				user.FirstName = model.FirstName;
 			}
 
-			if (string.IsNullOrEmpty(model.LastName))
+			if (!string.IsNullOrEmpty(model.LastName))
 			{
-				user.Username = model.LastName;
+				user.LastName = model.LastName;
 			}
 
-			if (string.IsNullOrEmpty(model.Role))
+			if (!string.IsNullOrEmpty(model.Role))
 			{
 				DATA.AccountRole role = (DATA.AccountRole)Enum.Parse(typeof(DATA.AccountRole), model.Role);
 				user.Role = role;
 			}
 
-			if (string.IsNullOrEmpty(model.Password))
+			if (!string.IsNullOrEmpty(model.Password))
 			{
 				model.Password = HashPassword(model.Password);
-				user.Username = model.Password;
+				user.Password = model.Password;
 			}
 
-			if (string.IsNullOrEmpty(model.Email))
+			if (!string.IsNullOrEmpty(model.Email))
 			{
-				user.Username = model.Email;
+				user.Email = model.Email;
 			}
 
 			_context.SaveChanges();

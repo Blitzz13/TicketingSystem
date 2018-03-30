@@ -52,14 +52,19 @@ namespace TicketingSystem.Services.Impl
 
 			_context.Tickets.Add(ticket);
 
-			DATA.File file = new DATA.File
+			if (!string.IsNullOrEmpty(model.FileName))
 			{
-				Name = model.FileName,
-				Content = model.FileContent,
-				TicketId = ticket.Id,
-			};
+				DATA.File file = new DATA.File
+				{
+					Name = model.FileName,
+					Content = model.FileContent,
+					TicketId = ticket.Id,
+				};
 
-			_context.Files.Add(file);
+				_context.Files.Add(file);
+			}
+
+			
 			_context.SaveChanges();
 
 			return ticket.Id;
@@ -73,6 +78,27 @@ namespace TicketingSystem.Services.Impl
 			_context.SaveChanges();
 		}
 
+		public Ticket GetByTitle(string ticketTitle)
+		{
+			DATA.Ticket ticket = _context.Tickets.First(t => t.Title == ticketTitle);
+
+			return CreateTicket(ticket);
+		}
+
+		public Ticket GetByProjectId(int projectId)
+		{
+			DATA.Ticket ticket = _context.Tickets.First(t => t.ProjectId == projectId);
+
+			return CreateTicket(ticket);
+		}
+
+		public Ticket GetByProjectIdAndTicketTitle(int projectId, string ticketTitle)
+		{
+			DATA.Ticket ticket = _context.Tickets.First(t => t.ProjectId == projectId && t.Title == ticketTitle);
+
+			return CreateTicket(ticket);
+		}
+
 		public static Ticket CreateTicket(DATA.Ticket ticket)
 		{
 			return new Ticket
@@ -83,5 +109,6 @@ namespace TicketingSystem.Services.Impl
 
 			};
 		}
+		
 	}
 }

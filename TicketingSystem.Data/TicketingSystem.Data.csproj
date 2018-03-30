@@ -6,6 +6,11 @@
 
   <ItemGroup>
     <Compile Remove="Migrations\20180321152856_UserProjects.cs" />
+    <Compile Remove="Migrations\20180330115058_Operative.cs" />
+    <Compile Remove="Migrations\20180330122955_Operative.cs" />
+    <Compile Remove="Migrations\20180330123548_UserId.cs" />
+    <Compile Remove="Migrations\20180330123659_UserId.cs" />
+    <Compile Remove="Migrations\20180330124920_UserId.cs" />
   </ItemGroup>
 
 	<ItemGroup>

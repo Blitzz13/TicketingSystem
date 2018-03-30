@@ -61,9 +61,9 @@ namespace TicketingSystem.Data
 				.HasName("AlternateKey_ProjectName");
 
 			builder.Entity<Project>()
-				.HasMany(p => p.Tickets)
-				.WithOne(t => t.Project)
-				.HasForeignKey(t => t.ProjectId);
+				.HasOne(p => p.User)
+				.WithMany(u => u.Projects)
+				.HasForeignKey(p => p.UserId);
 
 			builder.Entity<Ticket>()
 				.HasMany(t => t.Files)
@@ -74,6 +74,8 @@ namespace TicketingSystem.Data
 				.HasMany(m => m.Files)
 				.WithOne(f => f.Message)
 				.HasForeignKey(f => f.MessageId);
+
+
 		}
 	}
 }
