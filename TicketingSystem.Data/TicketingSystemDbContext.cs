@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace TicketingSystem.Data
 {
@@ -52,6 +53,12 @@ namespace TicketingSystem.Data
 				.WithOne(m => m.User)
 				.HasForeignKey(m => m.UserId);
 
+			builder.Entity<User>()
+				.HasMany(u => u.Tickets)
+				.WithOne(m => m.Submitter)
+				.HasForeignKey(m => m.SubmitterId)
+				.OnDelete(DeleteBehavior.Restrict);
+
 			builder.Entity<Project>()
 				.Property(u => u.Name)
 				.IsRequired();
@@ -63,7 +70,8 @@ namespace TicketingSystem.Data
 			builder.Entity<Project>()
 				.HasOne(p => p.User)
 				.WithMany(u => u.Projects)
-				.HasForeignKey(p => p.UserId);
+				.HasForeignKey(p => p.UserId)
+				.OnDelete(DeleteBehavior.Restrict);
 
 			builder.Entity<Ticket>()
 				.HasMany(t => t.Files)
@@ -74,8 +82,6 @@ namespace TicketingSystem.Data
 				.HasMany(m => m.Files)
 				.WithOne(f => f.Message)
 				.HasForeignKey(f => f.MessageId);
-
-
 		}
 	}
 }
