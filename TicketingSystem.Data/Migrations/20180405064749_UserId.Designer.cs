@@ -11,7 +11,7 @@ using TicketingSystem.Data;
 namespace TicketingSystem.Data.Migrations
 {
     [DbContext(typeof(TicketingSystemDbContext))]
-    [Migration("20180330134915_UserId")]
+    [Migration("20180405064749_UserId")]
     partial class UserId
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -173,7 +173,7 @@ namespace TicketingSystem.Data.Migrations
                     b.HasOne("TicketingSystem.Data.User", "User")
                         .WithMany("Projects")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("TicketingSystem.Data.Ticket", b =>
@@ -184,9 +184,9 @@ namespace TicketingSystem.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("TicketingSystem.Data.User", "Submitter")
-                        .WithMany()
+                        .WithMany("Tickets")
                         .HasForeignKey("SubmitterId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 #pragma warning restore 612, 618
         }

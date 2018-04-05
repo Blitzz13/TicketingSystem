@@ -172,7 +172,7 @@ namespace TicketingSystem.Data.Migrations
                     b.HasOne("TicketingSystem.Data.User", "User")
                         .WithMany("Projects")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("TicketingSystem.Data.Ticket", b =>
@@ -183,9 +183,9 @@ namespace TicketingSystem.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("TicketingSystem.Data.User", "Submitter")
-                        .WithMany()
+                        .WithMany("Tickets")
                         .HasForeignKey("SubmitterId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 #pragma warning restore 612, 618
         }

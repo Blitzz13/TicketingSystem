@@ -104,9 +104,8 @@ namespace TicketingSystem.Services.Impl
 			return new Ticket
 			{
 				Id = ticket.Id,
-				Submitter = ticket.Submitter.FirstName,
 				ProjectId = ticket.ProjectId,
-
+				SubmitterId = ticket.SubmitterId
 			};
 		}
 		

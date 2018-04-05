@@ -22,7 +22,7 @@ namespace TicketingSystem
 
 		static void Main()
 		{
-			//DbSeed.Seed(new Data.TicketingSystemDbContext());
+			//DATA.DbSeed.Seed(new Data.TicketingSystemDbContext());
 
 			DrawTitle();
 
@@ -77,80 +77,217 @@ namespace TicketingSystem
 				}
 				else if (string.Join(" ", command) == "delete project")
 				{
-					Console.Write("Enter project name: ");
-					string projectName = Console.ReadLine();
-
-					var project = _projectService.GetByName(projectName);
-					_projectService.Delete(project.Id);
+					DeleteProject();
 				}
 				else if (string.Join(" ", command) == "delete ticket")
 				{
-					Console.Write("Enter project name: ");
-					string projectName = Console.ReadLine();
-
-					Console.Write("Enter ticket title: ");
-					string ticketTitle = Console.ReadLine();
-
-					Project project = _projectService.GetByName(projectName);
-					Ticket ticket = _ticketService.GetByProjectIdAndTicketTitle(project.Id, ticketTitle);
-
-					_ticketService.Delete(ticket.Id);
+					DeleteTicket();
 				}
 				else if (string.Join(" ", command) == "view tickets")
 				{
-					Console.Write("Enter project name: ");
-					string projectName = Console.ReadLine();
-					List<Ticket> tickets;
-					Project project = _projectService.GetByName(projectName);
-
-					if (_identity.IsAdministrator || _identity.IsSupport)
-					{
-						tickets = _ticketService.Get(project.Id).ToList();
-					}
-					else
-					{
-						tickets = _ticketService.Get(project.Id, _identity.UserId).ToList();
-					}
-
-
-					Console.WriteLine("----------------------------------------");
-					foreach (var ticket in tickets)
-					{
-						Console.WriteLine($"Title: {ticket.Title}");
-						Console.WriteLine($"Submited by: {ticket.Submitter}");
-						Console.WriteLine($"Number of files: {ticket.FileCount}");
-						Console.WriteLine($"State: {ticket.State}");
-						Console.WriteLine($"Submited on: {ticket.SubmissionDate}");
-						Console.WriteLine($"Description: {ticket.Description}");
-						Console.WriteLine("----------------------------------------");
-					}
+					ViewTickets();
 				}
 
 			} while (command[0].ToLower() != "exit");
 		}
 
+		private static void ViewTickets()
+		{
+			Console.Write("Enter project name: ");
+			string projectName = Console.ReadLine();
+			List<Ticket> tickets;
+			Project project = _projectService.GetByName(projectName);
+
+			if (_identity.IsAdministrator || _identity.IsSupport)
+			{
+				tickets = _ticketService.Get(project.Id).ToList();
+			}
+			else
+			{
+				tickets = _ticketService.Get(project.Id, _identity.UserId).ToList();
+			}
+
+
+			Console.WriteLine("----------------------------------------");
+			foreach (var ticket in tickets)
+			{
+				Console.WriteLine($"Title: {ticket.Title}");
+				Console.WriteLine($"Submited by: {ticket.Submitter}");
+				Console.WriteLine($"Number of files: {ticket.FileCount}");
+				Console.WriteLine($"State: {ticket.State}");
+				Console.WriteLine($"Submited on: {ticket.SubmissionDate}");
+				Console.WriteLine($"Description: {ticket.Description}");
+				Console.WriteLine("----------------------------------------");
+			}
+		}
+
+		private static void DeleteProject()
+		{
+			Console.Write("Enter project name: ");
+			string projectName = Console.ReadLine();
+
+			var project = _projectService.GetByName(projectName);
+			_projectService.Delete(project.Id);
+		}
+
+		private static void DeleteTicket()
+		{
+			Console.Write("Enter project name: ");
+			string projectName = Console.ReadLine();
+
+			Console.Write("Enter ticket title: ");
+			string ticketTitle = Console.ReadLine();
+
+			Project project = _projectService.GetByName(projectName);
+			Ticket ticket = _ticketService.GetByProjectIdAndTicketTitle(project.Id, ticketTitle);
+
+			_ticketService.Delete(ticket.Id);
+		}
+
 		public static void Print()
 		{
+			int commandNum;
 			if (IsLoggedIn)
 			{
 				if (_identity.IsAdministrator)
 				{
+					{
+						Console.WriteLine("1 - Create Ticket");
+						Console.WriteLine("2 - Delete Ticket");
+						Console.WriteLine("3 - View Ticket");
+						Console.WriteLine("4 - Message Ticket");
+						Console.WriteLine("5 - Change Ticket Type");
+						Console.WriteLine("6 - Approve User");
+						Console.WriteLine("7 - Deny User");
+						Console.WriteLine("8 - Edit User");
+						Console.WriteLine("9 - Register User");
+						Console.WriteLine("10 - Delete User");
+						Console.WriteLine("11 - Create Project");
+						Console.WriteLine("12 - View Project");
+						Console.WriteLine("13 - Delete Project");
+						Console.WriteLine("14 - Change Ticket State");
+						Console.Write("Enter command number: ");
+					}
 
-				}
-				else if (_identity.IsClient)
-				{
-
+					commandNum = int.Parse(Console.ReadLine());
+					switch (commandNum)
+					{
+						case 1:
+							CreateTicket(_ticketService,_identity.UserId);
+							break;
+						case 2:
+							DeleteTicket();
+							break;
+						case 3:
+							ViewTickets();
+							break;
+						case 4:
+							//Create Method
+							break;
+						case 5:
+							//Create Method
+							break;
+						case 6:
+							ApproveAccount(_userService);
+							break;
+						case 7:
+							//Create Method
+							break;
+						case 8:
+							EditUser();
+							break;
+						case 9:
+							Register(_userService);
+							break;
+						case 10:
+							//Create Method
+							break;
+						case 11:
+							CreateProject(_projectService, _identity.UserId);
+							break;
+						case 12:
+							//Create Method
+							break;
+						case 13:
+							DeleteProject();
+							break;
+						case 14:
+							//Create method
+							break;
+					}
 				}
 				else if (_identity.IsSupport)
 				{
+					{
+						Console.WriteLine("1 - Create Ticket");
+						Console.WriteLine("2 - Delete Ticket");
+						Console.WriteLine("3 - View Tickets");
+						Console.WriteLine("4 - Message Ticket");
+						Console.WriteLine("5 - Change Ticket Type");
+						Console.WriteLine("6 - Change Ticket State");
+						Console.Write("Enter command number: ");
+					}
 
+					commandNum = int.Parse(Console.ReadLine());
+					switch (commandNum)
+					{
+						case 1:
+							CreateTicket(_ticketService, _identity.UserId);
+							break;
+						case 2:
+							DeleteTicket();
+							break;
+						case 3:
+							ViewTickets();
+							break;
+						case 4:
+							//Create Method
+							break;
+						case 5:
+							//Create Method
+							break;
+						case 6:
+							//Create Method
+							break;
+					}
 				}
+				else if (_identity.IsClient)
+				{
+					Console.WriteLine("1 - Create Ticket");
+					Console.WriteLine("2 - View Tickets");
+					Console.WriteLine("3 - Message Ticket");
+					Console.Write("Enter command number: ");
+					commandNum = int.Parse(Console.ReadLine());
 
-
+					switch (commandNum)
+					{
+						case 1:
+							CreateTicket(_ticketService, _identity.UserId);
+							break;
+						case 2:
+							DeleteTicket();
+							break;
+						case 3:
+							ViewTickets();
+							break;
+					}
+				}
 			}
 			else
 			{
-
+				Console.WriteLine("1 - Login");
+				Console.WriteLine("2 - Register");
+				Console.Write("Enter command number: ");
+				commandNum = int.Parse(Console.ReadLine());
+				switch (commandNum)
+				{
+					case 1:
+						Login();
+						break;
+					case 2:
+						Register(_userService);
+						break;
+				}
 			}
 
 
@@ -199,7 +336,7 @@ namespace TicketingSystem
 				Console.Write("Description: ");
 				string description = Console.ReadLine();
 
-				CreateProjectModel projectModel = new CreateProjectModel(title, description);
+				CreateProjectModel projectModel = new CreateProjectModel(title, description, _identity.UserId);
 
 				projectService.Create(projectModel);
 			}
@@ -353,13 +490,13 @@ namespace TicketingSystem
 			userEditModel.LastName = newLastName;
 		}
 
-		private static void Register(IUserService accountService)
+		private static void Register(IUserService registerService)
 		{
 			CreateUserModel registerModel = CreateRegisterModel();
 
 			try
 			{
-				accountService.Create(registerModel);
+				registerService.Create(registerModel);
 				Console.WriteLine("Your account is being processed");
 			}
 			catch (ServiceException se)
@@ -403,7 +540,7 @@ namespace TicketingSystem
 				byte[] file = File.ReadAllBytes(filePath);
 				string fileName = Path.GetFileName(filePath);
 
-				
+
 				return new CreateTicketModel()
 				{
 					TicketTitle = ticketTitle,

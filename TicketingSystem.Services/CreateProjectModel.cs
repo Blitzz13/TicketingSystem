@@ -2,10 +2,11 @@
 {
 	public class CreateProjectModel
 	{
-		public CreateProjectModel(string title, string description)
+		public CreateProjectModel(string title, string description,int userId)
 		{
 			Title = title;
 			Description = description;
+			UserId = userId;
 		}
 
 		public string Title { get; set; }
