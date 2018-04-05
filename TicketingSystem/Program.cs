@@ -26,69 +26,17 @@ namespace TicketingSystem
 
 			DrawTitle();
 
-
-
 			var context = new DATA.TicketingSystemDbContext();
 
 			int? userId = null;
 
 			context.Database.Migrate();
 
-			string[] command;
-
-			do
+			while (true)
 			{
-				Console.Write("Please enter a command: ");
-				command = Console.ReadLine().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+				Print();
 
-				//make all letters low
-				for (int i = 0; i < command.Length; i++)
-				{
-					command[i] = command[i].ToLower();
-				}
-
-				if (command[0] == "register")
-				{
-					Register(_userService);
-				}
-				else if (command[0] == "login")
-				{
-					Login();
-				}
-				else if (string.Join(" ", command) == "create project")
-				{
-					CreateProject(_projectService, userId);
-				}
-				else if (command[0] == "logout")
-				{
-					Logout();
-				}
-				else if (string.Join(" ", command) == "create ticket")
-				{
-					CreateTicket(_ticketService, userId);
-				}
-				else if (string.Join(" ", command) == "approve acc")
-				{
-					ApproveAccount(_userService);
-				}
-				else if (string.Join(" ", command) == "edit user")
-				{
-					EditUser();
-				}
-				else if (string.Join(" ", command) == "delete project")
-				{
-					DeleteProject();
-				}
-				else if (string.Join(" ", command) == "delete ticket")
-				{
-					DeleteTicket();
-				}
-				else if (string.Join(" ", command) == "view tickets")
-				{
-					ViewTickets();
-				}
-
-			} while (command[0].ToLower() != "exit");
+			}
 		}
 
 		private static void ViewTickets()
@@ -166,6 +114,7 @@ namespace TicketingSystem
 						Console.WriteLine("12 - View Project");
 						Console.WriteLine("13 - Delete Project");
 						Console.WriteLine("14 - Change Ticket State");
+						Console.WriteLine("15 - Logout");
 						Console.Write("Enter command number: ");
 					}
 
@@ -214,6 +163,9 @@ namespace TicketingSystem
 						case 14:
 							//Create method
 							break;
+						case 15:
+							Logout();
+							break;
 					}
 				}
 				else if (_identity.IsSupport)
@@ -225,6 +177,7 @@ namespace TicketingSystem
 						Console.WriteLine("4 - Message Ticket");
 						Console.WriteLine("5 - Change Ticket Type");
 						Console.WriteLine("6 - Change Ticket State");
+						Console.WriteLine("7 - Logout");
 						Console.Write("Enter command number: ");
 					}
 
@@ -249,6 +202,9 @@ namespace TicketingSystem
 						case 6:
 							//Create Method
 							break;
+						case 7:
+							Logout();
+							break;
 					}
 				}
 				else if (_identity.IsClient)
@@ -256,6 +212,7 @@ namespace TicketingSystem
 					Console.WriteLine("1 - Create Ticket");
 					Console.WriteLine("2 - View Tickets");
 					Console.WriteLine("3 - Message Ticket");
+					Console.WriteLine("4 - Logout");
 					Console.Write("Enter command number: ");
 					commandNum = int.Parse(Console.ReadLine());
 
@@ -269,6 +226,9 @@ namespace TicketingSystem
 							break;
 						case 3:
 							ViewTickets();
+							break;
+						case 4:
+							Logout();
 							break;
 					}
 				}
@@ -320,7 +280,7 @@ namespace TicketingSystem
 			}
 		}
 
-		public static void Logout()
+		private static void Logout()
 		{
 			_identity = null;
 			Console.WriteLine("You have been logged out.");
@@ -591,6 +551,14 @@ namespace TicketingSystem
 			string lastName = Console.ReadLine();
 
 			return new CreateUserModel(username, password, email, firstName, lastName);
+		}
+
+		private static void ChangeTicketType ()
+		{
+			Console.WriteLine("Enter ticket name:");
+			string ticketName = Console.ReadLine();
+
+
 		}
 	}
 }
