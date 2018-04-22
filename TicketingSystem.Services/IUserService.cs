@@ -8,8 +8,14 @@
 
 		void Approve(int userId);
 
+		void Deny(int userId);
+
 		void Update(int userId, UpdateUserModel model);
 
+		void Delete(int userId);
+
 		User GetByUsername(string userName);
+
+		User GetByUserId(int userId);
 	}
 }

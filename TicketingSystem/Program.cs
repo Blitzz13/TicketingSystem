@@ -16,6 +16,7 @@ namespace TicketingSystem
 		private static readonly IUserService _userService = new UserService();
 		private static readonly IProjectService _projectService = new ProjectService();
 		private static readonly ITicketService _ticketService = new TicketService();
+		private static readonly IMessageService _messageService = new MessageService();
 		private static UserIdentity _identity;
 
 		public static bool IsLoggedIn => _identity != null;
@@ -28,14 +29,11 @@ namespace TicketingSystem
 
 			var context = new DATA.TicketingSystemDbContext();
 
-			int? userId = null;
-
 			context.Database.Migrate();
 
 			while (true)
 			{
 				Print();
-
 			}
 		}
 
@@ -67,6 +65,19 @@ namespace TicketingSystem
 				Console.WriteLine($"Description: {ticket.Description}");
 				Console.WriteLine("----------------------------------------");
 			}
+		}
+
+		private static void ViewProject()
+		{
+			Console.Write("Enter project name: ");
+			string projectName = Console.ReadLine();
+			Project project = _projectService.GetByName(projectName);
+			string username = _userService.GetByUserId(project.UserId).Username;
+			Console.WriteLine("------------------------------------------------");
+			Console.WriteLine($"Name: {project.Name}");
+			Console.WriteLine($"Created by: {username}");
+			Console.WriteLine($"Description: {project.Description}");
+			Console.WriteLine("------------------------------------------------");
 		}
 
 		private static void DeleteProject()
@@ -122,7 +133,7 @@ namespace TicketingSystem
 					switch (commandNum)
 					{
 						case 1:
-							CreateTicket(_ticketService,_identity.UserId);
+							CreateTicket(_ticketService, _identity.UserId);
 							break;
 						case 2:
 							DeleteTicket();
@@ -131,16 +142,16 @@ namespace TicketingSystem
 							ViewTickets();
 							break;
 						case 4:
-							//Create Method
+							MessageTicket();
 							break;
 						case 5:
-							//Create Method
+							ChangeTicketType();
 							break;
 						case 6:
 							ApproveAccount(_userService);
 							break;
 						case 7:
-							//Create Method
+							DenyAccount(_userService);
 							break;
 						case 8:
 							EditUser();
@@ -149,19 +160,19 @@ namespace TicketingSystem
 							Register(_userService);
 							break;
 						case 10:
-							//Create Method
+							DeleteUser();
 							break;
 						case 11:
 							CreateProject(_projectService, _identity.UserId);
 							break;
 						case 12:
-							//Create Method
+							ViewProject();
 							break;
 						case 13:
 							DeleteProject();
 							break;
 						case 14:
-							//Create method
+							ChangeTicketState();
 							break;
 						case 15:
 							Logout();
@@ -194,13 +205,13 @@ namespace TicketingSystem
 							ViewTickets();
 							break;
 						case 4:
-							//Create Method
+							MessageTicket();
 							break;
 						case 5:
-							//Create Method
+							ChangeTicketType();
 							break;
 						case 6:
-							//Create Method
+							ChangeTicketState();
 							break;
 						case 7:
 							Logout();
@@ -222,10 +233,10 @@ namespace TicketingSystem
 							CreateTicket(_ticketService, _identity.UserId);
 							break;
 						case 2:
-							DeleteTicket();
+							ViewTickets();
 							break;
 						case 3:
-							ViewTickets();
+							MessageTicket();
 							break;
 						case 4:
 							Logout();
@@ -251,6 +262,75 @@ namespace TicketingSystem
 			}
 
 
+		}
+
+		private static void MessageTicket()
+		{
+		
+			Console.Write("Enter ticket title: ");
+			string ticketTitle = Console.ReadLine();
+			Ticket ticket = _ticketService.GetByTitle(ticketTitle);
+			if (_identity.IsClient && ticket.State != "Done")
+			{
+				Console.WriteLine("You can't message this ticket");
+			}
+			else
+			{
+				CreateMessage(ticket);
+			}
+
+
+
+		}
+
+		private static void CreateMessage(Ticket ticket)
+		{
+			Console.Write("Enter your message:");
+			string content = Console.ReadLine();
+			Console.WriteLine("Choose state");
+			Console.WriteLine("Draft");
+			Console.WriteLine("Posted");
+			Console.Write("Enter state:");
+			string state = Console.ReadLine();
+			Console.Write("Enter file path(optional): ");
+			if (ticket.Title == null)
+			{
+				Console.WriteLine("Invalid Ticket title!");
+			}
+			else
+			{
+				try
+				{
+					string path = Console.ReadLine();
+					byte[] file = File.ReadAllBytes(path);
+					string fileName = Path.GetFileName(path);
+
+					var message = new CreateMessageModel
+					{
+						State = state,
+						UserId = _identity.UserId,
+						Content = content,
+						PublishingDate = DateTime.Now,
+						FileContent = file,
+						FileName = fileName,
+						TicketId = ticket.Id
+					};
+					_messageService.Create(message);
+				}
+				catch
+				{
+					var message = new CreateMessageModel
+					{
+						State = state,
+						UserId = _identity.UserId,
+						Content = content,
+						PublishingDate = DateTime.Now,
+						TicketId = ticket.Id,
+					};
+					_messageService.Create(message);
+
+				}
+			}
 		}
 
 		private static void Login()
@@ -366,6 +446,23 @@ namespace TicketingSystem
 
 		}
 
+		private static void DeleteUser()
+		{
+			Console.Write("Enter username: ");
+			string username = Console.ReadLine();
+
+			try
+			{
+				User user = _userService.GetByUsername(username);
+				_userService.Delete(user.Id);
+				Console.WriteLine("User account has been deleted.");
+			}
+			catch (ServiceException se)
+			{
+				Console.WriteLine(se.Message);
+			}
+		}
+
 		private static void ApproveAccount(IUserService userService)
 		{
 			Console.Write("Enter username: ");
@@ -374,6 +471,23 @@ namespace TicketingSystem
 			try
 			{
 				userService.Approve(user.Id);
+				Console.WriteLine("The account has been approved.");
+			}
+			catch (ServiceException se)
+			{
+				Console.WriteLine(se.Message);
+			}
+		}
+
+		private static void DenyAccount(IUserService userService)
+		{
+			Console.Write("Enter username: ");
+			string username = Console.ReadLine();
+			User user = _userService.GetByUsername(username);
+			try
+			{
+				userService.Deny(user.Id);
+				Console.WriteLine("The account has been denied.");
 			}
 			catch (ServiceException se)
 			{
@@ -553,11 +667,73 @@ namespace TicketingSystem
 			return new CreateUserModel(username, password, email, firstName, lastName);
 		}
 
-		private static void ChangeTicketType ()
+		private static void ChangeTicketType()
 		{
-			Console.WriteLine("Enter ticket name:");
-			string ticketName = Console.ReadLine();
+			Console.Write("Enter project name: ");
+			string projectName = Console.ReadLine();
 
+			Console.Write("Enter ticket title: ");
+			string ticketTitle = Console.ReadLine();
+
+			Project project = _projectService.GetByName(projectName);
+			Ticket ticket = _ticketService.GetByProjectIdAndTicketTitle(project.Id, ticketTitle);
+
+			Console.WriteLine("BugReport");
+			Console.WriteLine("FeatureRequest");
+			Console.WriteLine("AssistanceRequest");
+			Console.WriteLine("Other");
+			Console.Write("Enter type: ");
+			string type = Console.ReadLine();
+
+			UpdateTicketModel model = new UpdateTicketModel
+			{
+				Id = ticket.Id,
+				Type = type
+			};
+
+			try
+			{
+				_ticketService.ChangeType(model);
+			}
+			catch (ServiceException se)
+			{
+				Console.WriteLine(se.Message);
+			}
+
+		}
+
+		private static void ChangeTicketState()
+		{
+			Console.Write("Enter project name: ");
+			string projectName = Console.ReadLine();
+
+			Console.Write("Enter ticket title: ");
+			string ticketTitle = Console.ReadLine();
+
+			Project project = _projectService.GetByName(projectName);
+			Ticket ticket = _ticketService.GetByProjectIdAndTicketTitle(project.Id, ticketTitle);
+
+			Console.WriteLine("Draft");
+			Console.WriteLine("New");
+			Console.WriteLine("WorkedOn");
+			Console.WriteLine("Done");
+			Console.Write("Enter state: ");
+			string state = Console.ReadLine();
+
+			UpdateTicketModel model = new UpdateTicketModel
+			{
+				Id = ticket.Id,
+				State = state
+			};
+
+			try
+			{
+				_ticketService.ChangeState(model);
+			}
+			catch (ServiceException se)
+			{
+				Console.WriteLine(se.Message);
+			}
 
 		}
 	}

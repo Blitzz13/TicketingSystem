@@ -15,5 +15,9 @@ namespace TicketingSystem.Services
 		Ticket GetByProjectId(int projectId);
 
 		Ticket GetByProjectIdAndTicketTitle(int projectId, string ticketTitle);
+
+		void ChangeType(UpdateTicketModel model);
+
+		void ChangeState(UpdateTicketModel model);
 	}
 }

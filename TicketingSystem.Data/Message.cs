@@ -9,9 +9,13 @@ namespace TicketingSystem.Data
 
 		public DateTime PublishingDate { get; set; }
 
+		public User User { get; set; }
+
 		public int UserId { get; set; }
 
-		public User User { get; set; }
+		public Ticket Ticket { get; set; }
+
+		public int TicketId { get; set; }
 
 		public StateMessage State { get; set; }
 

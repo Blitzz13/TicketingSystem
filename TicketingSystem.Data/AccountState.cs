@@ -4,6 +4,6 @@
 	{
 		Pending,
 		Aproved,
-		Dnied
+		Denied
 	}
 }

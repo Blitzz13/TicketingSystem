@@ -34,6 +34,11 @@ namespace TicketingSystem.Services.Impl
 				throw new ServiceException("Your account is not approved yet. Please try again later.");
 			}
 
+			if (user.AccountState == DATA.AccountState.Denied)
+			{
+				throw new ServiceException("Your account is denied.");
+			}
+
 			var result = new LoginResult
 			{
 				UserId = user.Id,
@@ -128,6 +133,24 @@ namespace TicketingSystem.Services.Impl
 			_context.SaveChanges();
 		}
 
+		public void Deny(int userId)
+		{
+			var accToDeny = _context.Users.FirstOrDefault(u => u.Id == userId);
+
+			if (accToDeny == null)
+			{
+				throw new ServiceException("No account found with that name.");
+			}
+
+			if (accToDeny.AccountState == DATA.AccountState.Denied)
+			{
+				throw new ServiceException("This account has already been approved.");
+			}
+
+			accToDeny.AccountState = DATA.AccountState.Denied;
+			_context.SaveChanges();
+		}
+
 		public void Update(int userId, UpdateUserModel model)
 		{
 			var user = _context.Users.FirstOrDefault(u => u.Id == userId);
@@ -166,13 +189,31 @@ namespace TicketingSystem.Services.Impl
 			_context.SaveChanges();
 		}
 
+		public void Delete(int userId)
+		{
+			DATA.User user = _context.Users.First(u => u.Id == userId);
+
+			_context.Users.Remove(user);
+			_context.SaveChanges();
+		}
+
 		public User GetByUsername(string userName)
 		{
 			DATA.User user = _context.Users.FirstOrDefault(u => u.Username == userName);
+			if (user == null)
+			{
+				throw new ServiceException("User not found.");
+			}
 
 			return CreateUser(user);
 		}
 
+		public User GetByUserId(int userId)
+		{
+			DATA.User user = _context.Users.FirstOrDefault(u => u.Id == userId);
+
+			return CreateUser(user);
+		}
 		#endregion
 
 		public static string HashPassword(string password)

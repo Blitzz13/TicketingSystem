@@ -58,8 +58,29 @@ namespace TicketingSystem.Data
 				Email = "test5@test.test"
 			};
 
-			_context = new Data.TicketingSystemDbContext();
-			_context.AddRange(user,user1,user2,user3,user4);
+			var admin = new User()
+			{
+				Username = "admin",
+				Password = HashPassword(HashPassword("123")),
+				FirstName = "test",
+				LastName = "testenov",
+				Email = "admin@test.test",
+				Role = AccountRole.Administrator,
+				AccountState = AccountState.Aproved
+			};
+
+			var support = new User()
+			{
+				Username = "support",
+				Password = HashPassword(HashPassword("123")),
+				FirstName = "Support",
+				LastName = "Supportev",
+				Email = "support@test.test",
+				Role = AccountRole.Support,
+				AccountState = AccountState.Aproved
+			};
+
+			_context.AddRange(user,user1,user2,user3,user4,admin,support);
 			_context.SaveChanges();
 		}
 

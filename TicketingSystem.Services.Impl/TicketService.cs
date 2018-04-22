@@ -99,15 +99,54 @@ namespace TicketingSystem.Services.Impl
 			return CreateTicket(ticket);
 		}
 
+		public void ChangeType(UpdateTicketModel model)
+		{
+			DATA.Ticket ticket = _context.Tickets.First(t => t.Id == model.Id);
+
+			if (ticket == null)
+			{
+				throw new ServiceException("Ticket not found.");
+			}
+
+			if (!string.IsNullOrEmpty(model.Type))
+			{
+				DATA.TicketType type = (DATA.TicketType)Enum.Parse(typeof(DATA.TicketType), model.Type);
+				ticket.Type = type;
+			}
+
+			_context.SaveChanges();
+		}
+
+		public void ChangeState(UpdateTicketModel model)
+		{
+			DATA.Ticket ticket = _context.Tickets.First(t => t.Id == model.Id);
+
+			if (ticket == null)
+			{
+				throw new ServiceException("Ticket not found.");
+			}
+
+			if (!string.IsNullOrEmpty(model.State))
+			{
+				DATA.TicketState state = (DATA.TicketState)Enum.Parse(typeof(DATA.TicketState), model.Type);
+				ticket.State = state;
+			}
+
+			_context.SaveChanges();
+		}
+
 		public static Ticket CreateTicket(DATA.Ticket ticket)
 		{
 			return new Ticket
 			{
 				Id = ticket.Id,
 				ProjectId = ticket.ProjectId,
-				SubmitterId = ticket.SubmitterId
+				SubmitterId = ticket.SubmitterId,
+				Title = ticket.Title,
+				State = ticket.State.ToString()
 			};
 		}
 		
+
 	}
 }
