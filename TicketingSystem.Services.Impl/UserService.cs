@@ -42,6 +42,7 @@ namespace TicketingSystem.Services.Impl
 			var result = new LoginResult
 			{
 				UserId = user.Id,
+				Username = user.Username
 			};
 
 			switch (user.Role)

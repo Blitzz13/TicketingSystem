@@ -10,6 +10,7 @@ namespace TicketingSystem.Data
 
 		public static void Seed(TicketingSystemDbContext context)
 		{
+
 			var user = new User()
 			{
 				Username = "test1",
@@ -52,7 +53,7 @@ namespace TicketingSystem.Data
 			var user4 = new User()
 			{
 				Username = "test5",
-				Password = HashPassword(HashPassword("123")),
+				Password = HashPassword("123"),
 				FirstName = "test",
 				LastName = "testenov",
 				Email = "test5@test.test"
@@ -61,7 +62,7 @@ namespace TicketingSystem.Data
 			var admin = new User()
 			{
 				Username = "admin",
-				Password = HashPassword(HashPassword("123")),
+				Password = HashPassword("123"),
 				FirstName = "test",
 				LastName = "testenov",
 				Email = "admin@test.test",
@@ -72,7 +73,7 @@ namespace TicketingSystem.Data
 			var support = new User()
 			{
 				Username = "support",
-				Password = HashPassword(HashPassword("123")),
+				Password = HashPassword("123"),
 				FirstName = "Support",
 				LastName = "Supportev",
 				Email = "support@test.test",
@@ -80,8 +81,8 @@ namespace TicketingSystem.Data
 				AccountState = AccountState.Aproved
 			};
 
-			_context.AddRange(user,user1,user2,user3,user4,admin,support);
-			_context.SaveChanges();
+			context.AddRange(user,user1,user2,user3,user4,admin,support);
+			context.SaveChanges();
 		}
 
 		public static string HashPassword(string password)

@@ -512,7 +512,7 @@ namespace TicketingSystem
 			string newPassword = Console.ReadLine();
 			while (string.IsNullOrEmpty(newPassword))
 			{
-				Console.WriteLine("Cannot change password to empy.");
+				Console.WriteLine("Cannot change password to empty.");
 				Console.Write("Enter the new password: ");
 				newPassword = Console.ReadLine();
 			}

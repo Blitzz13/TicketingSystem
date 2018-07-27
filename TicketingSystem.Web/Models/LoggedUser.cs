@@ -1,6 +1,6 @@
-﻿namespace TicketingSystem.Services
+﻿namespace TicketingSystem.Web.Models
 {
-	public class LoginResult
+	public class LoggedUser
 	{
 		public int UserId { get; set; }
 
