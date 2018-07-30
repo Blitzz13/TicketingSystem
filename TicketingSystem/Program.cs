@@ -261,12 +261,10 @@ namespace TicketingSystem
 				}
 			}
 
-
 		}
 
 		private static void MessageTicket()
 		{
-		
 			Console.Write("Enter ticket title: ");
 			string ticketTitle = Console.ReadLine();
 			Ticket ticket = _ticketService.GetByTitle(ticketTitle);
@@ -278,9 +276,7 @@ namespace TicketingSystem
 			{
 				CreateMessage(ticket);
 			}
-
-
-
+			
 		}
 
 		private static void CreateMessage(Ticket ticket)
