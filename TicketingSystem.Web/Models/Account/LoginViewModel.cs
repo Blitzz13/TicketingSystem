@@ -9,5 +9,7 @@ namespace TicketingSystem.Web.Models.Account
 
 		[Required]
 		public string Password { get; set; }
+
+		public string ErrorMessage { get; set; }
 	}
 }

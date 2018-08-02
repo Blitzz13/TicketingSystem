@@ -1,6 +1,7 @@
-﻿@model LoginViewModel
+﻿@model RegisterViewModel
+
 @{
-	ViewData["Title"] = "Log in";
+	ViewData["Title"] = "Register";
 }
 
 <h2>@ViewData["Title"]</h2>
@@ -8,35 +9,37 @@
 <div class="row">
 	<div class="col-md-4">
 		<section>
-			<form asp-route-returnurl="@ViewData["ReturnUrl"]" method="post">
+			<form method="post">
 				<h4>Use a local account to log in.</h4>
 				<hr />
+				<div asp-validation-summary="All" class="text-danger"></div>
 				<div class="form-group">
 					<label asp-for="Username"></label>
 					<input asp-for="Username" class="form-control" />
 					<span asp-validation-for="Username" class="text-danger"></span>
 				</div>
 				<div class="form-group">
+					<label asp-for="FirstName"></label>
+					<input asp-for="FirstName" class="form-control" />
+					<span asp-validation-for="FirstName" class="text-danger"></span>
+				</div>
+				<div class="form-group">
+					<label asp-for="LastName"></label>
+					<input asp-for="LastName" class="form-control" />
+					<span asp-validation-for="LastName" class="text-danger"></span>
+				</div>
+				<div class="form-group">
+					<label asp-for="Email"></label>
+					<input asp-for="Email" class="form-control" />
+					<span asp-validation-for="Email" class="text-danger"></span>
+				</div>
+				<div class="form-group">
 					<label asp-for="Password"></label>
 					<input asp-for="Password" type="password" class="form-control" />
 					<span asp-validation-for="Password" class="text-danger"></span>
 				</div>
-				<div class="form-group alert-message alert-message-success">
-					@if (Model != null)
-					{
-						<span class="text-danger">@Model.ErrorMessage</span>
-					}
-				</div>
 				<div class="form-group">
 					<button type="submit" class="btn btn-primary">Log in</button>
-				</div>
-				<div class="form-group">
-					<p>
-						<a asp-action="ForgotPassword">Forgot your password?</a>
-					</p>
-					<p>
-						<a asp-action="Register" asp-route-returnurl="@ViewData["ReturnUrl"]">Register as a new user?</a>
-					</p>
 				</div>
 			</form>
 		</section>

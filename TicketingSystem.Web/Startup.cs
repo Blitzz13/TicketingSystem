@@ -26,17 +26,16 @@ namespace TicketingSystem.Web
 
 			services.AddMvc();
 
-			services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
+			services.AddScoped<IUserService, UserService>();
+			services.AddScoped<ITicketService, TicketService>();
+			services.AddScoped<IProjectService, ProjectService>();
+			services.AddScoped<IMessageService, MessageService>();
 
-			services.AddTransient<IUserService, UserService>();
-			services.AddTransient<ITicketService, TicketService>();
-			services.AddTransient<IProjectService, ProjectService>();
-			services.AddTransient<IMessageService, MessageService>();
+			services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
 		}
 
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env)
 		{
-
 			if (env.IsDevelopment())
 			{
 				app.UseBrowserLink();
@@ -47,14 +46,11 @@ namespace TicketingSystem.Web
 				app.UseExceptionHandler("/Home/Error");
 			}
 
+			app.UseAuthentication();
+
 			app.UseStaticFiles();
 
-			app.UseMvc(routes =>
-			{
-				routes.MapRoute(
-					name: "default",
-					template: "{controller=Home}/{action=Index}/{id?}");
-			});
+			app.UseMvcWithDefaultRoute();
 		}
 	}
 }

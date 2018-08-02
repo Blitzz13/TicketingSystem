@@ -1,16 +1,18 @@
-@using Microsoft.AspNetCore.Identity
-@using TicketingSystem.Web.Models
-@model LoggedUser
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
 
-@if (Model != null)
+@{
+	var username = HttpContextAccessor.HttpContext.User.Identity.Name;
+}
+
+@if (HttpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
 {
 	<form asp-area="" asp-controller="Account" asp-action="Logout" method="post" id="logoutForm" class="navbar-right">
 		<ul class="nav navbar-nav navbar-right">
 			<li>
-				<a asp-area="" asp-controller="Manage" asp-action="Index" title="Manage">Hello @Model.Username</a>
+				<a asp-area="" asp-controller="Manage" asp-action="Index" title="Manage">Hello @username</a>
 			</li>
 			<li>
-				<button type="submit" class="btn btn-link navbar-btn navbar-link">Log out</button>
+				<a asp-area="" asp-controller="Account" asp-action="Logout">Log out</a>
 			</li>
 		</ul>
 	</form>
@@ -21,4 +23,8 @@ else
 		<li><a asp-area="" asp-controller="Account" asp-action="Register">Register</a></li>
 		<li><a asp-area="" asp-controller="Account" asp-action="Login">Log in</a></li>
 	</ul>
+}
+
+@section Scripts {
+	@await Html.PartialAsync("_ValidationScriptsPartial")
 }

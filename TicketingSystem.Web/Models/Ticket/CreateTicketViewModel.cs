@@ -5,7 +5,9 @@ namespace TicketingSystem.Web.Models.Ticket
 {
 	public class CreateTicketViewModel
 	{
-		public IEnumerable<string> Projects { get; set; }
+		public List<string> ProjectNames { get; set; }
+
+		public string ProjectName { get; set; }
 
 		[Display(Name = "Ticket title")]
 		public string TicketTitle { get; set; }
