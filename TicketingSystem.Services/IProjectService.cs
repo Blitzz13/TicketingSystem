@@ -11,5 +11,7 @@ namespace TicketingSystem.Services
 		void Delete(int projectId);
 
 		Project GetByName(string projectName);
+
+		Project GetById(int projectId);
 	}
 }

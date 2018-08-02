@@ -39,6 +39,16 @@ namespace TicketingSystem.Services.Impl
 				throw new ServiceException("Invalid Ticket State.");
 			}
 
+			if (string.IsNullOrEmpty(model.TicketDescription) || model.TicketDescription.Length < 5)
+			{
+				throw new ServiceException("The description should have no less than 5 characters.");
+			}
+
+			if (_context.Tickets.Any(a => a.ProjectId == model.ProjectId && a.Title == model.TicketTitle))
+			{
+				throw new ServiceException("This project already has ticket with that title.");
+			}
+
 			DATA.Ticket ticket = new DATA.Ticket()
 			{
 				ProjectId = model.ProjectId,

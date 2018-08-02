@@ -57,6 +57,13 @@ namespace TicketingSystem.Services.Impl
 			DATA.Project project = _context.Projects.First(p => p.Name == projectName);
 
 			return CreateProject(project);
-		} 
+		}
+
+		public Project GetById(int projectId)
+		{
+			DATA.Project project = _context.Projects.First(p => p.Id == projectId);
+
+			return CreateProject(project);
+		}
 	}
 }
