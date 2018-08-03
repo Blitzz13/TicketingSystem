@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -129,6 +130,38 @@ namespace TicketingSystem.Web.Controllers
 
 
 			return View("FinishRegister", viewModel);
+		}
+
+		[HttpGet]
+		[Authorize]
+		public IActionResult Approve()
+		{
+			if (User.IsInRole("Administrator"))
+			{
+				var usersToApprove = new List<ApprovingUsersViewModel>();
+
+				CreateUnApprovedUserList(usersToApprove, _userService.GetUnApprovedUsers());
+
+				return View(usersToApprove);
+			}
+
+			return RedirectToAction(nameof(HomeController.Index), "Home");
+		}
+
+		private void CreateUnApprovedUserList(List<ApprovingUsersViewModel> usersToApprove, IEnumerable<User> users)
+		{
+			foreach (var user in users)
+			{
+
+				var viewModel = new ApprovingUsersViewModel
+				{
+					Username = user.Username,
+					FirstName = user.FirstName,
+					LastName = user.LastName,
+					Email = user.Email,
+				};
+				usersToApprove.Add(viewModel);
+			}
 		}
 	}
 }

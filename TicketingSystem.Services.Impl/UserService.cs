@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
@@ -196,6 +197,13 @@ namespace TicketingSystem.Services.Impl
 
 			_context.Users.Remove(user);
 			_context.SaveChanges();
+		}
+
+		public IEnumerable<User> GetUnApprovedUsers()
+		{
+			List<User> unApprovedUsers = _context.Users.Where(u => u.AccountState.ToString() == "Pending").Select(CreateUser).ToList();
+
+			return unApprovedUsers;
 		}
 
 		public User GetByUsername(string userName)

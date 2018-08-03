@@ -1,4 +1,6 @@
-﻿namespace TicketingSystem.Services
+﻿using System.Collections.Generic;
+
+namespace TicketingSystem.Services
 {
 	public interface IUserService
 	{
@@ -13,6 +15,8 @@
 		void Update(int userId, UpdateUserModel model);
 
 		void Delete(int userId);
+
+		IEnumerable<User> GetUnApprovedUsers();
 
 		User GetByUsername(string userName);
 
