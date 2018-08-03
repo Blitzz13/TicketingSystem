@@ -18,7 +18,7 @@ namespace TicketingSystem.Web.Models.Ticket
 		[Display(Name = "Ticket states")]
 		public string TicketState { get; set; }
 
-		[MinLength(4,ErrorMessage = "You should write atleast 5 characters")]
+		[MinLength(5, ErrorMessage = "You should write atleast 5 characters")]
 		public string Description { get; set; }
 
 		[Display(Name = "File (optional)")]

@@ -22,7 +22,7 @@ namespace TicketingSystem.Services.Impl
 			DATA.User user = _context.Users.FirstOrDefault(u => u.Username == userName);
 			if (user == null)
 			{
-				throw new ServiceException("Wrong username of passowrd");
+				throw new ServiceException("Wrong username or passowrd");
 			}
 
 			byte[] hashBytes, hash;

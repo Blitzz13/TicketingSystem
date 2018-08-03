@@ -15,6 +15,31 @@ namespace TicketingSystem.Services.Impl
 
 		public int Create(CreateProjectModel model)
 		{
+			if (_context.Projects.Any(p => p.Name == model.Title))
+			{
+				throw new ServiceException($"Project with name '{model.Title}' already exists.");
+			}
+
+			if (string.IsNullOrEmpty(model.Title) || string.IsNullOrWhiteSpace(model.Title))
+			{
+				throw new ServiceException("Title cannot be empty or just spaces.");
+			}
+
+			if (string.IsNullOrEmpty(model.Description) || string.IsNullOrWhiteSpace(model.Description))
+			{
+				throw new ServiceException("Description cannot be empty or just spaces.");
+			}
+
+			if (model.Title.Length < 4)
+			{
+				throw new ServiceException("Title cannot have less than 4 characters.");
+			}
+
+			if (model.Description.Length < 6)
+			{
+				throw new ServiceException("Description cannot have less than 6 characters.");
+			}
+
 			var project = new DATA.Project
 			{
 				Name = model.Title,

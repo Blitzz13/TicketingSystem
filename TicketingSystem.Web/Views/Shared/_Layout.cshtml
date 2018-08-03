@@ -31,7 +31,26 @@
 			<div class="navbar-collapse collapse">
 				<ul class="nav navbar-nav">
 					<li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
-					<li><a asp-area="" asp-controller="Ticket" asp-action="Create">Create Ticket</a></li>
+					<li><a asp-area="" asp-controller="Ticket" asp-action="ListTickets">List Tickets</a></li>
+					@if (User.Identity.IsAuthenticated)
+					 {
+						<li><a asp-area="" asp-controller="Ticket" asp-action="Create">Create Ticket</a></li>
+					 }
+					@if (User.IsInRole("Administrator"))
+					 {
+						<li class="dropdown">
+							<a class="dropdown-toggle" data-toggle="dropdown">
+								Admin Actions
+								<span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu">
+								<li><a asp-area="" asp-controller="Project" asp-action="Create">Create Project</a></li>
+								<li><a asp-area="" asp-controller="" asp-action="">Approve Users</a></li>
+								<li><a asp-area="" asp-controller="" asp-action="">Register User</a></li>
+							</ul>
+						</li>
+					 }
+
 				</ul>
 				@await Html.PartialAsync("_LoginPartial")
 			</div>

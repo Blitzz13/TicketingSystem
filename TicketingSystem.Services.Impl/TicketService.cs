@@ -25,6 +25,20 @@ namespace TicketingSystem.Services.Impl
 			return tickets.ToList().Select(CreateTicket);
 		}
 
+		public IEnumerable<Ticket> GetAllTicketsForClient(int userId)
+		{
+			IQueryable<DATA.Ticket> tickets = _context.Tickets.Where(t => t.Submitter.Id == userId);
+
+			return tickets.ToList().Select(CreateTicket);
+		}
+
+		public IEnumerable<Ticket> GetAllTicketsForAdminAndSupport()
+		{
+			IQueryable<DATA.Ticket> tickets = _context.Tickets;
+
+			return tickets.ToList().Select(CreateTicket);
+		}
+
 		public int Create(CreateTicketModel model)
 		{
 			DATA.TicketType ticketType = (DATA.TicketType)Enum.Parse(typeof(DATA.TicketType), model.TicketType);
@@ -39,6 +53,11 @@ namespace TicketingSystem.Services.Impl
 				throw new ServiceException("Invalid Ticket State.");
 			}
 
+			if (string.IsNullOrEmpty(model.TicketTitle) || model.TicketTitle.Length < 5 || string.IsNullOrWhiteSpace(model.TicketTitle))
+			{
+				throw new ServiceException("The Ticket title should have no less than 5 characters.");
+			}
+
 			if (string.IsNullOrEmpty(model.TicketDescription) || model.TicketDescription.Length < 5)
 			{
 				throw new ServiceException("The description should have no less than 5 characters.");
@@ -46,7 +65,7 @@ namespace TicketingSystem.Services.Impl
 
 			if (_context.Tickets.Any(a => a.ProjectId == model.ProjectId && a.Title == model.TicketTitle))
 			{
-				throw new ServiceException("This project already has ticket with that title.");
+				throw new ServiceException($"This project already has ticket with title '{model.TicketTitle}'.");
 			}
 
 			DATA.Ticket ticket = new DATA.Ticket()
@@ -74,7 +93,7 @@ namespace TicketingSystem.Services.Impl
 				_context.Files.Add(file);
 			}
 
-			
+
 			_context.SaveChanges();
 
 			return ticket.Id;
@@ -153,10 +172,11 @@ namespace TicketingSystem.Services.Impl
 				ProjectId = ticket.ProjectId,
 				SubmitterId = ticket.SubmitterId,
 				Title = ticket.Title,
-				State = ticket.State.ToString()
+				State = ticket.State.ToString(),
+				SubmissionDate = ticket.SubmissionDate
 			};
 		}
-		
+
 
 	}
 }

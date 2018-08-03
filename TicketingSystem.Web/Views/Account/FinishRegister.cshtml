@@ -3,16 +3,18 @@
     ViewData["Title"] = "FinishRegister";
 }
 
-<div class="col-sm-6 col-md-6">
-	<div class="alert-message alert-message-success">
-		<h4>
-			Your registration is completed
-		</h4>
-		<p>
-			Thank you for signing up <strong>@Model.FirstName</strong> you are registered as <strong>@Model.Username </strong>and your E-mail is <strong>@Model.Email</strong>
-		</p>
-		<p>
-			Please be patient while we process your account.
-		</p>
+<div class="row">
+	<div class="col-sm-6 col-md-6">
+		<div class="alert-message alert-message-success">
+			<h4>
+				Your registration is completed
+			</h4>
+			<p>
+				Thank you for signing up <strong>@Model.FirstName</strong> you your username is <strong>@Model.Username </strong>and your E-mail is <strong>@Model.Email</strong>
+			</p>
+			<p>
+				Please be patient while we process your account.
+			</p>
+		</div>
 	</div>
-</div> 
+</div>

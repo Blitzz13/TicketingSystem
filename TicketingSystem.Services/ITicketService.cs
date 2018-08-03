@@ -4,8 +4,6 @@ namespace TicketingSystem.Services
 {
 	public interface ITicketService
 	{
-		IEnumerable<Ticket> Get(int projectId, int? userId = null);
-
 		int Create(CreateTicketModel model);
 
 		void Delete(int ticketId);
@@ -15,6 +13,12 @@ namespace TicketingSystem.Services
 		Ticket GetByProjectId(int projectId);
 
 		Ticket GetByProjectIdAndTicketTitle(int projectId, string ticketTitle);
+
+		IEnumerable<Ticket> Get(int projectId, int? userId = null);
+
+		IEnumerable<Ticket> GetAllTicketsForClient(int userId);
+
+		IEnumerable<Ticket> GetAllTicketsForAdminAndSupport();
 
 		void ChangeType(UpdateTicketModel model);
 

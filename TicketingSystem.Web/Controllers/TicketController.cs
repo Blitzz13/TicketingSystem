@@ -12,9 +12,18 @@ namespace TicketingSystem.Web.Controllers
 {
 	public class TicketController : Controller
 	{
-		private static readonly ITicketService _ticketService = new TicketService();
+		public readonly ITicketService _ticketService = new TicketService();
 
-		private static readonly IProjectService _projectService = new ProjectService();
+		public readonly IProjectService _projectService = new ProjectService();
+
+		public readonly IUserService _userService = new UserService();
+
+		public TicketController(ITicketService ticketService, IProjectService projectService, IUserService userService)
+		{
+			_ticketService = ticketService;
+			_projectService = projectService;
+			_userService = userService;
+		}
 
 		[HttpGet]
 		[Authorize]
@@ -31,24 +40,10 @@ namespace TicketingSystem.Web.Controllers
 		[Authorize]
 		public IActionResult Create(CreateTicketViewModel viewModel)
 		{
-			if (!ModelState.IsValid)
-			{
-				return View(viewModel);
-			}
-
 			var model = new CreateTicketModel();
 
-			HttpContextAccessor accessor = new HttpContextAccessor();
-
 			viewModel.ProjectId = _projectService.GetByName(viewModel.ProjectName).Id;
-			var claims = accessor.HttpContext.User.Claims;
-			int userId = -1;
-
-			foreach (var claim in claims)
-			{
-				string claimValue = claim.Value;
-				int.TryParse(claimValue, out userId);
-			}
+			int userId = GetUserId();
 
 			string path = viewModel.FilePath;
 			if (!string.IsNullOrEmpty(path))
@@ -74,7 +69,7 @@ namespace TicketingSystem.Web.Controllers
 				ProjectId = viewModel.ProjectId,
 				TicketTitle = viewModel.TicketTitle,
 				TicketDescription = viewModel.Description,
-				TicketState = viewModel.TicketState.Replace(" ",""),
+				TicketState = viewModel.TicketState.Replace(" ", ""),
 				TicketType = viewModel.TicketType.Replace(" ", ""),
 				SubmitterId = userId
 			};
@@ -87,13 +82,76 @@ namespace TicketingSystem.Web.Controllers
 			{
 				viewModel.ErrorMessage = e.Message;
 				GetProjectsName(viewModel);
-				return View(nameof(Create),viewModel);
+				return View(nameof(Create), viewModel);
 			}
 
-			return RedirectToAction(nameof(HomeController.Index));
+			return RedirectToAction(nameof(HomeController.Index), "Home");
 		}
 
-		private static void GetProjectsName(CreateTicketViewModel viewModel)
+		[HttpGet]
+		[Authorize]
+		public IActionResult ListTickets()
+		{
+			int userId = GetUserId();
+			var overviewTickets = new List<OverviewTicketViewModel>();
+			if (User.IsInRole("Client"))
+			{
+				var tickets = _ticketService.GetAllTicketsForClient(userId);
+
+				CreateOverviewTickets(overviewTickets, tickets);
+
+				return View(overviewTickets);
+			}
+			else
+			{
+				var tickets = _ticketService.GetAllTicketsForAdminAndSupport();
+
+				CreateOverviewTickets(overviewTickets, tickets);
+
+				return View(overviewTickets);
+			}
+
+		}
+
+		private void CreateOverviewTickets(List<OverviewTicketViewModel> overviewTickets, IEnumerable<Ticket> tickets)
+		{
+			int messagesCount = 0;
+			foreach (var ticket in tickets)
+			{
+				if (ticket.Messages != null)
+				{
+					messagesCount = ticket.Messages.Count();
+				}
+
+				var viewModel = new OverviewTicketViewModel
+				{
+					Title = ticket.Title,
+					ProjectName = _projectService.GetById(ticket.ProjectId).Name,
+					SubmissionDate = ticket.SubmissionDate,
+					SumitterName = _userService.GetByUserId(ticket.SubmitterId).Username,
+					TicketState = ticket.State,
+					MessagesCount = messagesCount
+				};
+				overviewTickets.Add(viewModel);
+			}
+		}
+
+		private static int GetUserId()
+		{
+			HttpContextAccessor accessor = new HttpContextAccessor();
+			var claims = accessor.HttpContext.User.Claims;
+			int userId = -1;
+
+			foreach (var claim in claims)
+			{
+				string claimValue = claim.Value;
+				int.TryParse(claimValue, out userId);
+			}
+
+			return userId;
+		}
+
+		private void GetProjectsName(CreateTicketViewModel viewModel)
 		{
 			List<string> projectNames = _projectService.Get().Select(pr => pr.Name).ToList();
 
