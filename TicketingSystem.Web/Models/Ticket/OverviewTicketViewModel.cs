@@ -4,6 +4,8 @@ namespace TicketingSystem.Web.Models.Ticket
 {
 	public class OverviewTicketViewModel
 	{
+		public int Id { get; set; }
+
 		public string Title { get; set; }
 
 		public string SumitterName { get; set; }

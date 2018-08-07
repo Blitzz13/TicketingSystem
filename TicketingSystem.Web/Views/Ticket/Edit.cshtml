@@ -1,0 +1,117 @@
+﻿@model TicketFormViewModel
+@{
+	ViewData["Title"] = "Edit Ticket";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div class="row">
+	<div class="col-md-4">
+		<section>
+			<form method="post">
+				<div class="form-group">
+					<label asp-for="ProjectName"></label>
+					<input asp-for="ProjectName" disabled class="form-control" />
+					<span asp-validation-for="ProjectName" class="text-danger"></span>
+				</div>
+				<div asp-validation-summary="All" class="text-danger"></div>
+				<div class="form-group animated fadeIn">
+					<label asp-for="TicketTitle"></label>
+					<input asp-for="TicketTitle" class="form-control" />
+					<span asp-validation-for="TicketTitle" class="text-danger"></span>
+				</div>
+				<div class="form-group animated fadeIn">
+					<label asp-for="TicketType"></label>
+					<select asp-for="TicketType" class="form-control">
+						@switch (Model.TicketType)
+						{
+							case "BugReport":
+								<option selected>Bug Report</option>
+								<option>Feature Request</option>
+								<option>Assistance Request</option>
+								<option>Other</option>
+								break;
+							case "FeatureRequest":
+								<option>Bug Report</option>
+								<option selected>Feature Request</option>
+								<option>Assistance Request</option>
+								<option>Other</option>
+								break;
+							case "AssistanceRequest":
+								<option>Bug Report</option>
+								<option>Feature Request</option>
+								<option selected>Assistance Request</option>
+								<option>Other</option>
+								break;
+							case "Other":
+								<option>Bug Report</option>
+								<option>Feature Request</option>
+								<option>Assistance Request</option>
+								<option selected>Other</option>
+								break;
+							default:
+								<option>Slecet type...</option>
+								<option>Bug Report</option>
+								<option>Feature Request</option>
+								<option>Assistance Request</option>
+								<option>Other</option>
+								break;
+						}
+					</select>
+				</div>
+				<div class="form-group animated fadeIn">
+					<label asp-for="TicketState"></label>
+					<select asp-for="TicketState" class="form-control">
+						@switch (Model.TicketState)
+						{
+							case "New":
+								<option selected>New</option>
+								<option>Draft</option>
+								<option>Worked On</option>
+								<option>Done</option>
+								break;
+							case "Draft":
+								<option>New</option>
+								<option selected>Draft</option>
+								<option>Worked On</option>
+								<option>Done</option>
+								break;
+							case "WorkedOn":
+								<option>New</option>
+								<option>Draft</option>
+								<option selected>Worked On</option>
+								<option>Done</option>
+								break;
+							case "Done":
+								<option>New</option>
+								<option>Draft</option>
+								<option>Worked On</option>
+								<option selected>Done</option>
+								break;
+							default:
+								<option>Select State...</option>
+								<option>New</option>
+								<option>Draft</option>
+								<option>Worked On</option>
+								<option>Done</option>
+								break;
+						}
+					</select>
+				</div>
+				<div class="form-group animated fadeIn">
+					<label asp-for="Description"></label>
+					<textarea asp-for="Description" rows="5" class="form-control" placeholder="Description"></textarea>
+				</div>
+				<div class="form-group animated fadeIn">
+					<button type="submit" class="btn btn-success">Finish</button>
+				</div>
+				@if (Model != null && Model.ErrorMessage != null)
+				{
+					<div class="form-group animated tada alert-message alert-message-danger">
+						<span class="text-danger">@Model.ErrorMessage</span>
+					</div>
+				}
+			</form>
+		</section>
+	</div>
+</div>

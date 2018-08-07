@@ -106,6 +106,46 @@ namespace TicketingSystem.Services.Impl
 			_context.Tickets.Remove(ticket);
 			_context.SaveChanges();
 		}
+		public void Edit(UpdateTicketModel model)
+		{
+			DATA.TicketType ticketType = (DATA.TicketType)Enum.Parse(typeof(DATA.TicketType), model.Type);
+			if (!Enum.IsDefined(typeof(DATA.TicketType), ticketType))
+			{
+				throw new ServiceException("Invalid Ticket Type.");
+			}
+
+			DATA.TicketState ticketState = (DATA.TicketState)Enum.Parse(typeof(DATA.TicketState), model.State);
+			if (!Enum.IsDefined(typeof(DATA.TicketState), ticketState))
+			{
+				throw new ServiceException("Invalid Ticket State.");
+			}
+
+			if (string.IsNullOrEmpty(model.Title) || model.Title.Length < 5 || string.IsNullOrWhiteSpace(model.Title))
+			{
+				throw new ServiceException("The Ticket title should have no less than 5 characters.");
+			}
+
+			if (string.IsNullOrEmpty(model.Description) || model.Description.Length < 5)
+			{
+				throw new ServiceException("The description should have no less than 5 characters.");
+			}
+
+			DATA.Ticket ticket = _context.Tickets.First(t => t.Id == model.Id);
+
+			ticket.Description = model.Description;
+			ticket.Title = model.Title;
+			ticket.Type = ticketType;
+			ticket.State = ticketState;
+			
+			_context.SaveChanges();
+		}
+
+		public Ticket GetByTicketId(int ticketId)
+		{
+			DATA.Ticket ticket = _context.Tickets.First(t => t.Id == ticketId);
+
+			return CreateTicket(ticket);
+		}
 
 		public Ticket GetByTitle(string ticketTitle)
 		{
@@ -173,10 +213,10 @@ namespace TicketingSystem.Services.Impl
 				SubmitterId = ticket.SubmitterId,
 				Title = ticket.Title,
 				State = ticket.State.ToString(),
+				Type = ticket.Type.ToString(),
+				Description = ticket.Description,
 				SubmissionDate = ticket.SubmissionDate
 			};
 		}
-
-
 	}
 }

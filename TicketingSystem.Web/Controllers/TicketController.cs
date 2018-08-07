@@ -29,7 +29,7 @@ namespace TicketingSystem.Web.Controllers
 		[Authorize]
 		public IActionResult Create()
 		{
-			CreateTicketViewModel model = new CreateTicketViewModel();
+			TicketFormViewModel model = new TicketFormViewModel();
 
 			GetProjectsName(model);
 
@@ -38,7 +38,7 @@ namespace TicketingSystem.Web.Controllers
 
 		[HttpPost]
 		[Authorize]
-		public IActionResult Create(CreateTicketViewModel viewModel)
+		public IActionResult Create(TicketFormViewModel viewModel)
 		{
 			var model = new CreateTicketModel();
 
@@ -113,6 +113,64 @@ namespace TicketingSystem.Web.Controllers
 
 		}
 
+		[HttpPost]
+		[Authorize]
+		public IActionResult DeleteTicket(int id)
+		{
+			_ticketService.Delete(id);
+
+			return RedirectToAction(nameof(ListTickets));
+		}
+
+		[HttpGet]
+		[Authorize]
+		public IActionResult Edit(int id)
+		{
+			Ticket ticket = _ticketService.GetByTicketId(id);
+
+			var model = new TicketFormViewModel
+			{
+				TicketId = id,
+				TicketTitle = ticket.Title,
+				Description = ticket.Description,
+				FileName = ticket.FileName,
+				ProjectName = _projectService.GetById(ticket.ProjectId).Name,
+				SubmitterId = ticket.SubmitterId,
+				TicketState = ticket.State,
+				TicketType = ticket.Type,
+			};
+
+			return View(model);
+		}
+
+		[HttpPost]
+		[Authorize]
+		public IActionResult Edit(int id, TicketFormViewModel viewModel)
+		{
+			var model = new UpdateTicketModel
+			{
+				Id = id,
+				ProjectName = viewModel.ProjectName,
+				Title = viewModel.TicketTitle,
+				Description = viewModel.Description,
+				State = viewModel.TicketState.Replace(" ", ""),
+				Type = viewModel.TicketType.Replace(" ", ""),
+			};
+
+			try
+			{
+				_ticketService.Edit(model);
+			}
+			catch (System.Exception e)
+			{
+				viewModel.ErrorMessage = e.Message;
+				viewModel.ProjectName = _projectService.GetById(_ticketService.GetByTicketId(id).ProjectId).Name;
+				return View(viewModel);
+			}
+
+			return RedirectToAction(nameof(ListTickets));
+		}
+
 		private void CreateOverviewTickets(List<OverviewTicketViewModel> overviewTickets, IEnumerable<Ticket> tickets)
 		{
 			int messagesCount = 0;
@@ -125,6 +183,7 @@ namespace TicketingSystem.Web.Controllers
 
 				var viewModel = new OverviewTicketViewModel
 				{
+					Id = ticket.Id,
 					Title = ticket.Title,
 					ProjectName = _projectService.GetById(ticket.ProjectId).Name,
 					SubmissionDate = ticket.SubmissionDate,
@@ -151,7 +210,7 @@ namespace TicketingSystem.Web.Controllers
 			return userId;
 		}
 
-		private void GetProjectsName(CreateTicketViewModel viewModel)
+		private void GetProjectsName(TicketFormViewModel viewModel)
 		{
 			List<string> projectNames = _projectService.Get().Select(pr => pr.Name).ToList();
 

@@ -8,6 +8,8 @@
 	<environment include="Development">
 		<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
 		<link rel="stylesheet" href="~/css/site.css" />
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+
 	</environment>
 	<environment exclude="Development">
 		<link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.min.css"
@@ -45,7 +47,7 @@
 							</a>
 							<ul class="dropdown-menu">
 								<li><a asp-area="" asp-controller="Project" asp-action="Create">Create Project</a></li>
-								<li><a asp-area="" asp-controller="Account" asp-action="Approve">Approve Users</a></li>
+								<li><a asp-area="" asp-controller="Account" asp-action="UsersToProcess">Approve Users</a></li>
 								<li><a asp-area="" asp-controller="" asp-action="">Register User</a></li>
 							</ul>
 						</li>
@@ -60,7 +62,7 @@
 		@RenderBody()
 		<hr />
 		<footer>
-			<p>&copy; 2018 - TicketingSystem.Web</p>
+			<p>&copy; 2018 - TicketingSystem</p>
 		</footer>
 	</div>
 

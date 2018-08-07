@@ -2,6 +2,8 @@
 {
 	public class UpdateTicketModel
 	{
+		public string ProjectName { get; set; }
+
 		public int Id { get; set; }
 
 		public string Type { get; set; }

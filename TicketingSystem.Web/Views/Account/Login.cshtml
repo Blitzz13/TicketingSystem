@@ -5,7 +5,7 @@
 
 <h2>@ViewData["Title"]</h2>
 
-<div class="row">
+<div class="row animated fadeIn">
 	<div class="col-md-4">
 		<section>
 			<form asp-route-returnurl="@ViewData["ReturnUrl"]" method="post">
@@ -23,7 +23,7 @@
 				</div>
 				@if (Model != null)
 				{
-					<div class="form-group alert-message alert-message-danger">
+					<div class="form-group alert-message alert-message-danger animated tada">
 						<span class="text-danger">@Model.ErrorMessage</span>
 					</div>
 				}

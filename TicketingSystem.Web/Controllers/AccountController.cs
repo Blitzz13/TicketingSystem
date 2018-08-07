@@ -134,7 +134,7 @@ namespace TicketingSystem.Web.Controllers
 
 		[HttpGet]
 		[Authorize]
-		public IActionResult Approve()
+		public IActionResult UsersToProcess()
 		{
 			if (User.IsInRole("Administrator"))
 			{
@@ -148,6 +148,24 @@ namespace TicketingSystem.Web.Controllers
 			return RedirectToAction(nameof(HomeController.Index), "Home");
 		}
 
+		[HttpPost]
+		[Authorize]
+		public IActionResult Approve(int id)
+		{
+			_userService.Approve(id);
+
+			return RedirectToAction(nameof(UsersToProcess));
+		}
+
+		[HttpPost]
+		[Authorize]
+		public IActionResult Deny(int id)
+		{
+			_userService.Deny(id);
+
+			return RedirectToAction(nameof(UsersToProcess));
+		}
+
 		private void CreateUnApprovedUserList(List<ApprovingUsersViewModel> usersToApprove, IEnumerable<User> users)
 		{
 			foreach (var user in users)
@@ -155,11 +173,13 @@ namespace TicketingSystem.Web.Controllers
 
 				var viewModel = new ApprovingUsersViewModel
 				{
+					Id = user.Id,
 					Username = user.Username,
 					FirstName = user.FirstName,
 					LastName = user.LastName,
 					Email = user.Email,
 				};
+
 				usersToApprove.Add(viewModel);
 			}
 		}

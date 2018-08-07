@@ -20,7 +20,7 @@ namespace TicketingSystem.Services
 
 		public string Description { get; set; }
 
-		public string FileCount { get; set; }
+		public string FileName { get; set; }
 
 		public int ProjectId { get; set; }
 

@@ -3,10 +3,11 @@ using System.ComponentModel.DataAnnotations;
 
 namespace TicketingSystem.Web.Models.Ticket
 {
-	public class CreateTicketViewModel
+	public class TicketFormViewModel
 	{
 		public List<string> ProjectNames { get; set; }
 
+		[Display(Name = "Project Name")]
 		public string ProjectName { get; set; }
 
 		[Display(Name = "Ticket title")]
@@ -27,6 +28,8 @@ namespace TicketingSystem.Web.Models.Ticket
 		public string FileName { get; set; }
 
 		public int ProjectId { get; set; }
+
+		public int TicketId { get; set; }
 
 		public int SubmitterId { get; set; }
 
