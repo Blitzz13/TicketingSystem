@@ -124,6 +124,27 @@ namespace TicketingSystem.Web.Controllers
 
 		[HttpGet]
 		[Authorize]
+		public IActionResult View(int id)
+		{
+			Ticket ticket = _ticketService.GetByTicketId(id);
+
+			var model = new ViewTicketViewModel
+			{
+				TicketId = id,
+				TicketTitle = ticket.Title,
+				Description = ticket.Description,
+				FileName = ticket.FileName,
+				ProjectName = _projectService.GetById(ticket.ProjectId).Name,
+				SubmitterId = ticket.SubmitterId,
+				TicketState = ticket.State,
+				TicketType = ticket.Type,
+			};
+
+			return View(model);
+		}
+
+		[HttpGet]
+		[Authorize]
 		public IActionResult Edit(int id)
 		{
 			Ticket ticket = _ticketService.GetByTicketId(id);

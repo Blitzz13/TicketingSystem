@@ -1,0 +1,50 @@
+﻿@model ViewTicketViewModel
+@{
+	ViewData["Title"] = "View";
+}
+<br />
+<div class="row">
+	<div class="col-md-4">
+		<section>
+			<div class="form-group">
+				<label asp-for="ProjectName"></label>
+				<input asp-for="ProjectName" disabled class="form-control" />
+			</div>
+			<div asp-validation-summary="All" class="text-danger"></div>
+			<div class="form-group animated fadeIn">
+				<label asp-for="TicketTitle"></label>
+				<input asp-for="TicketTitle" disabled class="form-control" />
+			</div>
+			<div class="form-group animated fadeIn">
+				<label asp-for="TicketType"></label>
+				<input asp-for="TicketType" disabled class="form-control" />
+			</div>
+			<div class="form-group animated fadeIn">
+				<label asp-for="TicketState"></label>
+				<input asp-for="TicketState" disabled class="form-control" />
+			</div>
+			<div class="form-group animated fadeIn">
+				<label asp-for="Description"></label>
+				<textarea asp-for="Description" disabled rows="5" class="form-control" placeholder="Description"></textarea>
+			</div>
+		</section>
+
+	</div>
+</div>
+<div class="container">
+	<div class="row">
+		<h3>Status Upload Snipp</h3>
+	</div>
+	<div class="row">
+		<div class="col-md-6">
+			<div class="widget-area no-padding blank">
+				<div class="status-upload">
+					<form method="post" action="/Ticket/Message/@Model.SubmitterId">
+						<textarea placeholder="What are you doing right now?"></textarea>
+						<button type="submit" class="btn btn-success green"><i class="fa fa-share"></i> Share</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
