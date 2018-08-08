@@ -13,13 +13,9 @@ namespace TicketingSystem.Services.Impl
 			_context = new DATA.TicketingSystemDbContext();
 		}
 
-		public IEnumerable<Message> Get(int projectId, int ticketId, int? userId = null)
+		public IEnumerable<Message> Get(int ticketId)
 		{
-			IQueryable<DATA.Message> messages = _context.Messages;
-			if (userId != null)
-			{
-				_context.Tickets.Where(m => m.Id == userId);
-			}
+			IQueryable<DATA.Message> messages = _context.Messages.Where(m => m.TicketId == ticketId);
 
 			return messages.ToList().Select(CreateMessage);
 		}
@@ -55,6 +51,8 @@ namespace TicketingSystem.Services.Impl
 				_context.Files.Add(file);
 			}
 
+			_context.Add(message);
+
 			_context.SaveChanges();
 
 			return message.Id;
@@ -62,15 +60,15 @@ namespace TicketingSystem.Services.Impl
 
 		public static Message CreateMessage(DATA.Message message)
 		{
+			UserService userService = new UserService();
 			return new Message
 			{
 				Id = message.Id,
 				UserId = message.UserId,
-				Username = message.User.Username,
+				Username = userService.GetByUserId(message.UserId).Username,
 				State =  message.State.ToString(),
 				Content = message.Content,
-				PublishingDate = message.PublishingDate,
-				FileCount = message.Files.Count
+				PublishingDate = message.PublishingDate
 			};
 		}
 	}

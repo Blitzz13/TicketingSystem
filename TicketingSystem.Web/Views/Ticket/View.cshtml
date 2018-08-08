@@ -1,50 +1,85 @@
 ﻿@model ViewTicketViewModel
+@using Microsoft.AspNetCore.Http;
 @{
+	HttpContextAccessor accessor = new HttpContextAccessor();
+
+	var claims = accessor.HttpContext.User.Claims;
+	int userId = -1;
+
+	foreach (var claim in claims)
+	{
+		string claimValue = claim.Value;
+		int.TryParse(claimValue, out userId);
+	}
 	ViewData["Title"] = "View";
 }
 <br />
 <div class="row">
 	<div class="col-md-4">
-		<section>
-			<div class="form-group">
-				<label asp-for="ProjectName"></label>
-				<input asp-for="ProjectName" disabled class="form-control" />
-			</div>
-			<div asp-validation-summary="All" class="text-danger"></div>
-			<div class="form-group animated fadeIn">
-				<label asp-for="TicketTitle"></label>
-				<input asp-for="TicketTitle" disabled class="form-control" />
-			</div>
-			<div class="form-group animated fadeIn">
-				<label asp-for="TicketType"></label>
-				<input asp-for="TicketType" disabled class="form-control" />
-			</div>
-			<div class="form-group animated fadeIn">
-				<label asp-for="TicketState"></label>
-				<input asp-for="TicketState" disabled class="form-control" />
-			</div>
-			<div class="form-group animated fadeIn">
-				<label asp-for="Description"></label>
-				<textarea asp-for="Description" disabled rows="5" class="form-control" placeholder="Description"></textarea>
-			</div>
-		</section>
-
+		<div class="form-group">
+			<label asp-for="ProjectName"></label>
+			<input asp-for="ProjectName" disabled class="form-control" />
+		</div>
+		<div class="form-group animated fadeIn">
+			<label asp-for="TicketTitle"></label>
+			<input asp-for="TicketTitle" disabled class="form-control" />
+		</div>
+		<div class="form-group animated fadeIn">
+			<label asp-for="TicketType"></label>
+			<input asp-for="TicketType" disabled class="form-control" />
+		</div>
+		<div class="form-group animated fadeIn">
+			<label asp-for="TicketState"></label>
+			<input asp-for="TicketState" disabled class="form-control" />
+		</div>
+		<div class="form-group animated fadeIn">
+			<label asp-for="Description"></label>
+			<textarea asp-for="Description" disabled rows="5" class="form-control" placeholder="Description"></textarea>
+		</div>
 	</div>
 </div>
-<div class="container">
-	<div class="row">
-		<h3>Status Upload Snipp</h3>
-	</div>
-	<div class="row">
-		<div class="col-md-6">
-			<div class="widget-area no-padding blank">
-				<div class="status-upload">
-					<form method="post" action="/Ticket/Message/@Model.SubmitterId">
-						<textarea placeholder="What are you doing right now?"></textarea>
-						<button type="submit" class="btn btn-success green"><i class="fa fa-share"></i> Share</button>
-					</form>
-				</div>
+<div class="row">
+	<div class="col-md-6">
+		<div class="widget-area no-padding blank">
+			<div class="status-upload">
+				<br />
+				<form method="post" action="/Message/Create/@Model.TicketId">
+					<textarea asp-for="MessageContent" placeholder="What are you doing right now?"></textarea>
+					<input type="submit" name="state" value="Post" class="btn btn-success green pull-right" />
+					<input type="submit" name="state" value="Draft" class="btn btn-default pull-right" />
+				</form>
 			</div>
 		</div>
 	</div>
 </div>
+
+@if (Model.Messages != null)
+{
+	@foreach (var message in Model.Messages)
+	{
+		if (message.State == "Post")
+		{
+			<div class="container">
+				<div class="row">
+					<div class="col-md-6">
+						<div class="page-header"></div>
+						<div class="well well-lg">
+							<p class="pull-right">22.02.2021</p>
+							<h4 class="text-uppercase">@message.Username</h4>
+							<hr />
+							<p>
+								@message.Content
+							</p>
+							@if (User.IsInRole("Administrator") || userId != Model.SubmitterId)
+							{
+								<hr />
+								<a href="/Ticket/View" class="btn btn-danger btn-md pull-right">Delete Message</a>
+								<br />
+							}
+						</div>
+					</div>
+				</div>
+			</div>
+		}
+	}
+}

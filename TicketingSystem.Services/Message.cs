@@ -16,6 +16,8 @@ namespace TicketingSystem.Services
 
 		public int TicketId { get; set; }
 
+		public int ProjectId { get; set; }
+
 		public string State { get; set; }
 
 		public string Content { get; set; }

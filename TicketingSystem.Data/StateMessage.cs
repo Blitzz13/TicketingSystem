@@ -3,6 +3,6 @@
 	public enum StateMessage
 	{
 		Draft,
-		Posted,
+		Post,
 	}
 }

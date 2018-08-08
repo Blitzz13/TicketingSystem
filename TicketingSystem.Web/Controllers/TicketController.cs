@@ -18,11 +18,15 @@ namespace TicketingSystem.Web.Controllers
 
 		public readonly IUserService _userService = new UserService();
 
-		public TicketController(ITicketService ticketService, IProjectService projectService, IUserService userService)
+		public readonly IMessageService _messageService = new MessageService();
+
+		public TicketController(ITicketService ticketService, IProjectService projectService, 
+			IUserService userService, IMessageService messageService)
 		{
 			_ticketService = ticketService;
 			_projectService = projectService;
 			_userService = userService;
+			_messageService = messageService;
 		}
 
 		[HttpGet]
@@ -128,19 +132,53 @@ namespace TicketingSystem.Web.Controllers
 		{
 			Ticket ticket = _ticketService.GetByTicketId(id);
 
-			var model = new ViewTicketViewModel
-			{
-				TicketId = id,
-				TicketTitle = ticket.Title,
-				Description = ticket.Description,
-				FileName = ticket.FileName,
-				ProjectName = _projectService.GetById(ticket.ProjectId).Name,
-				SubmitterId = ticket.SubmitterId,
-				TicketState = ticket.State,
-				TicketType = ticket.Type,
-			};
+			int currnetUserId = _userService.GetByUsername(User.Identity.Name).Id;
 
-			return View(model);
+			if (User.IsInRole("Client") && currnetUserId != ticket.SubmitterId)
+			{
+				return NotFound();
+			}
+
+			var model = new ViewTicketViewModel();
+
+			try
+			{
+				var messages = new List<Message>();
+
+				messages.AddRange(_messageService.Get(id));
+
+				model = new ViewTicketViewModel
+				{
+					TicketId = id,
+					TicketTitle = ticket.Title,
+					Description = ticket.Description,
+					FileName = ticket.FileName,
+					ProjectName = _projectService.GetById(ticket.ProjectId).Name,
+					SubmitterId = ticket.SubmitterId,
+					TicketState = ticket.State,
+					TicketType = ticket.Type,
+					Messages = messages
+				};
+
+				return View(model);
+			}
+			catch
+			{
+				model = new ViewTicketViewModel
+				{
+					TicketId = id,
+					TicketTitle = ticket.Title,
+					Description = ticket.Description,
+					FileName = ticket.FileName,
+					ProjectName = _projectService.GetById(ticket.ProjectId).Name,
+					SubmitterId = ticket.SubmitterId,
+					TicketState = ticket.State,
+					TicketType = ticket.Type
+				};
+				return View(model);
+			}
+			
+			
 		}
 
 		[HttpGet]
@@ -148,6 +186,13 @@ namespace TicketingSystem.Web.Controllers
 		public IActionResult Edit(int id)
 		{
 			Ticket ticket = _ticketService.GetByTicketId(id);
+
+			int currnetUserId = _userService.GetByUsername(User.Identity.Name).Id;
+
+			if (User.IsInRole("Client") && currnetUserId != ticket.SubmitterId)
+			{
+				return NotFound();
+			}
 
 			var model = new TicketFormViewModel
 			{
@@ -168,6 +213,13 @@ namespace TicketingSystem.Web.Controllers
 		[Authorize]
 		public IActionResult Edit(int id, TicketFormViewModel viewModel)
 		{
+			int currnetUserId = _userService.GetByUsername(User.Identity.Name).Id;
+
+			if (User.IsInRole("Client") && currnetUserId != viewModel.SubmitterId)
+			{
+				return NotFound();
+			}
+
 			var model = new UpdateTicketModel
 			{
 				Id = id,

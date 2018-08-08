@@ -1,6 +1,6 @@
-﻿using Microsoft.VisualStudio.Web.CodeGeneration.Contracts.Messaging;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using TicketingSystem.Services;
 
 namespace TicketingSystem.Web.Models.Ticket
 {
@@ -33,6 +33,10 @@ namespace TicketingSystem.Web.Models.Ticket
 		public int SubmitterId { get; set; }
 
 		public IEnumerable<Message> Messages { get; set; }
+
+		public string MessageContent { get; set; }
+
+		public string MessageState { get; set; }
 
 		public string ErrorMessage { get; set; }
 	}

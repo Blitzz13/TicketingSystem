@@ -59,7 +59,6 @@ namespace TicketingSystem
 			{
 				Console.WriteLine($"Title: {ticket.Title}");
 				Console.WriteLine($"Submited by: {ticket.Submitter}");
-				Console.WriteLine($"Number of files: {ticket.FileCount}");
 				Console.WriteLine($"State: {ticket.State}");
 				Console.WriteLine($"Submited on: {ticket.SubmissionDate}");
 				Console.WriteLine($"Description: {ticket.Description}");

@@ -4,7 +4,7 @@ namespace TicketingSystem.Services
 {
 	public interface IMessageService
 	{
-		IEnumerable<Message> Get(int projectId, int ticketId, int? userId = null);
+		IEnumerable<Message> Get(int ticketId);
 
 		int Create(CreateMessageModel model);
 	}
