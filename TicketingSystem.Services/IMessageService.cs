@@ -6,6 +6,10 @@ namespace TicketingSystem.Services
 	{
 		IEnumerable<Message> Get(int ticketId);
 
+		Message GetById(int messageId);
+
 		int Create(CreateMessageModel model);
+
+		void Delete(int id);
 	}
 }

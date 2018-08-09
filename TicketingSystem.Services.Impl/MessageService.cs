@@ -58,9 +58,30 @@ namespace TicketingSystem.Services.Impl
 			return message.Id;
 		}
 
+		public void Delete(int id)
+		{
+			DATA.Message message = _context.Messages.First(m => m.Id == id);
+
+			if (message == null)
+			{
+				throw new ServiceException("The message does not exist");
+			}
+
+			_context.Messages.Remove(message);
+			_context.SaveChanges();
+		}
+
+		public Message GetById(int messageId)
+		{
+			Message message = _context.Messages.Select(CreateMessage).FirstOrDefault(m => m.Id == messageId);
+
+			return message;
+		}
+
 		public static Message CreateMessage(DATA.Message message)
 		{
 			UserService userService = new UserService();
+
 			return new Message
 			{
 				Id = message.Id,
@@ -68,8 +89,10 @@ namespace TicketingSystem.Services.Impl
 				Username = userService.GetByUserId(message.UserId).Username,
 				State =  message.State.ToString(),
 				Content = message.Content,
-				PublishingDate = message.PublishingDate
+				PublishingDate = message.PublishingDate,
+				TicketId = message.TicketId,
 			};
 		}
+
 	}
 }

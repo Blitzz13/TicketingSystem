@@ -55,7 +55,7 @@
 
 @if (Model.Messages != null)
 {
-	@foreach (var message in Model.Messages)
+	@foreach (var message in Model.Messages.OrderByDescending(m => m.PublishingDate))
 	{
 		if (message.State == "Post")
 		{
@@ -64,18 +64,43 @@
 					<div class="col-md-6">
 						<div class="page-header"></div>
 						<div class="well well-lg">
-							<p class="pull-right">22.02.2021</p>
+							<p class="pull-right">@message.PublishingDate.ToShortDateString()</p>
 							<h4 class="text-uppercase">@message.Username</h4>
 							<hr />
 							<p>
 								@message.Content
 							</p>
-							@if (User.IsInRole("Administrator") || userId != Model.SubmitterId)
+							@if (User.IsInRole("Administrator") || userId == message.UserId)
 							{
 								<hr />
-								<a href="/Ticket/View" class="btn btn-danger btn-md pull-right">Delete Message</a>
+								<form method="post" action="/Message/Delete/@message.Id">
+									<input type="submit" class="btn btn-danger btn-md pull-right" value="Delete Message" />
+								</form>
 								<br />
 							}
+						</div>
+					</div>
+				</div>
+			</div>
+		}
+		else if (message.State == "Draft" && userId == message.UserId)
+		{
+			<div class="container">
+				<div class="row">
+					<div class="col-md-6">
+						<div class="page-header"></div>
+						<div class="well well-lg">
+							<p class="pull-right">@message.PublishingDate.ToShortDateString() <strong>Draft</strong></p>
+							<h4 class="text-uppercase">@message.Username</h4>
+							<hr />
+							<p>
+								@message.Content
+							</p>
+							<hr />
+							<form method="post" action="/Message/Delete/@message.Id">
+								<input type="submit" class="btn btn-danger btn-md pull-right" value="Delete Message"/>
+							</form>
+							<br />
 						</div>
 					</div>
 				</div>

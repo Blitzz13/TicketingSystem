@@ -19,8 +19,8 @@
 								<div class="row">
 									<div class="col-lg-12">
 										<div class="m-b-md">
-											<a class="btn btn-danger btn-xs pull-right" data-toggle="modal" data-target="#DenyModal">Deny</a>
-											<a class="btn btn-success btn-xs pull-right" data-toggle="modal" data-target="#ApproveModal">Approve</a>
+											<a href="/Account/Deny/@user.Id" class="btn btn-danger btn-xs pull-right">Deny</a>
+											<a href="/Account/Approve/@user.Id" class="btn btn-success btn-xs pull-right">Approve</a>
 											<h2>@user.Username</h2>
 										</div>
 										<dl class="dl-horizontal">
@@ -45,52 +45,10 @@
 										</dl>
 									</div>
 								</div>
-
 							</div>
 						</div>
 					</div>
 				</div>
-			</div>
-		</div>
-		<div id="ApproveModal" class="modal fade" role="dialog">
-			<div class="modal-dialog">
-				<!-- Approve Modal content-->
-				<form method="post" action="/Account/Approve/@user.Id" id="approveForm">
-					<div class="modal-content">
-						<div class="modal-header">
-							<button type="button" class="close" data-dismiss="modal">&times;</button>
-							<h4 class="modal-title">Are you sure?</h4>
-						</div>
-						<div class="modal-body">
-							<p>Do you want to approve <strong>@user.Username</strong>?</p>
-						</div>
-						<div class="modal-footer">
-							<button type="submit" form="approveForm" class="btn btn-success">Yes</button>
-							<button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
-						</div>
-					</div>
-				</form>
-			</div>
-		</div>
-
-		<div id="DenyModal" class="modal fade" role="dialog">
-			<div class="modal-dialog">
-				<!-- Modal content-->
-				<form method="post" action="/Account/Deny/@user.Id" id="denyForm">
-					<div class="modal-content">
-						<div class="modal-header">
-							<button type="button" class="close" data-dismiss="modal">&times;</button>
-							<h4 class="modal-title">Are you sure?</h4>
-						</div>
-						<div class="modal-body">
-							<p>Do you want to deny <strong>@user.Username</strong>?</p>
-						</div>
-						<div class="modal-footer">
-							<button type="submit" form="denyForm" class="btn btn-success">Yes</button>
-							<button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
-						</div>
-					</div>
-				</form>
 			</div>
 		</div>
 	}

@@ -150,11 +150,11 @@ namespace TicketingSystem.Web.Controllers
 
 		[HttpPost]
 		[Authorize]
-		public IActionResult Approve(int id)
+		public IActionResult Approve(int id, ApprovingUsersViewModel viewModel)
 		{
 			_userService.Approve(id);
 
-			return RedirectToAction(nameof(UsersToProcess));
+			return View(viewModel);
 		}
 
 		[HttpPost]

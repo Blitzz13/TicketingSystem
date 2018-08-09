@@ -52,7 +52,7 @@ namespace TicketingSystem.Web.Controllers
 
 			_messageService.Create(model);
 
-			return RedirectToAction(nameof(TicketController.View));
+			return RedirectToAction($"{nameof(TicketController.View)}", "Ticket", new { id });
 		}
 
 		public IActionResult Edit()
@@ -60,9 +60,15 @@ namespace TicketingSystem.Web.Controllers
 			return null;
 		}
 
-		public IActionResult Delete()
+		[HttpPost]
+		[Authorize]
+		public IActionResult Delete(int Id)
 		{
-			return null;
+			int id = _messageService.GetById(Id).TicketId;
+
+			_messageService.Delete(Id);
+
+			return RedirectToAction($"{nameof(TicketController.View)}", "Ticket", new { id });
 		}
 	}
 }
