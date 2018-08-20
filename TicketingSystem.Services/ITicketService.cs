@@ -22,7 +22,11 @@ namespace TicketingSystem.Services
 
 		IEnumerable<Ticket> GetAllTicketsForClient(int userId);
 
+		IEnumerable<Ticket> GetAllTicketsToShowForClient(int userId, int page = 1, int PageSize = 5);
+
 		IEnumerable<Ticket> GetAllTicketsForAdminAndSupport();
+
+		IEnumerable<Ticket> GetAllTicketsToShowForAdminAndSupport(int page = 1, int PageSize = 5);
 
 		void ChangeType(UpdateTicketModel model);
 

@@ -22,8 +22,9 @@ namespace TicketingSystem.Web.Models.Account
 		[Display(Name = "E-main")]
 		public string Email { get; set; }
 
+		[Display(Name = "Account State")]
 		public string AccountState { get; set; }
 
-		public string Error { get; set; }
+		public string ErrorMessage { get; set; }
 	}
 }

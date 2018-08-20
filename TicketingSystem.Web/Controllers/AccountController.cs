@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using TicketingSystem.Services;
@@ -16,6 +17,7 @@ namespace TicketingSystem.Web.Controllers
 	{
 		private readonly IUserService _userService;
 
+		private const int PageSize = 5;
 		public AccountController(IUserService userService)
 		{
 			_userService = userService ?? throw new ArgumentNullException(nameof(userService));
@@ -116,7 +118,12 @@ namespace TicketingSystem.Web.Controllers
 		[HttpPost]
 		public IActionResult Register(RegisterViewModel viewModel)
 		{
-			var model = new CreateUserModel(viewModel.Username, viewModel.Password, viewModel.Email, viewModel.FirstName, viewModel.LastName);
+			if (viewModel.AccountState == null)
+			{
+				viewModel.AccountState = "Pending";
+			}
+
+			var model = new CreateUserModel(viewModel.Username, viewModel.Password, viewModel.Email, viewModel.FirstName, viewModel.LastName,viewModel.AccountState);
 
 			try
 			{
@@ -124,7 +131,7 @@ namespace TicketingSystem.Web.Controllers
 			}
 			catch (Exception e)
 			{
-				viewModel.Error = e.Message;
+				viewModel.ErrorMessage = e.Message;
 				return View(viewModel);
 			}
 
@@ -134,15 +141,22 @@ namespace TicketingSystem.Web.Controllers
 
 		[HttpGet]
 		[Authorize]
-		public IActionResult UsersToProcess()
+		public IActionResult UsersToProcess(int page = 1)
 		{
 			if (User.IsInRole("Administrator"))
 			{
-				var usersToApprove = new List<ApprovingUsersViewModel>();
+				var usersToShow = new List<ApprovingUsersViewModel>();
 
-				CreateUnApprovedUserList(usersToApprove, _userService.GetUnApprovedUsers());
+				int usersCount = _userService.GetAllUnApprovedUsers().ToList().Count;
 
-				return View(usersToApprove);
+				CreateUnApprovedUserList(usersToShow, _userService.GetUnApprovedUsers(page, PageSize));
+
+				return View(new UsersToProcessListingModel
+				{
+					Users = usersToShow,
+					CurrentPage = page,
+					TotalPages = (int)Math.Ceiling(usersCount / (double)PageSize)
+				});
 			}
 
 			return RedirectToAction(nameof(HomeController.Index), "Home");
@@ -150,11 +164,11 @@ namespace TicketingSystem.Web.Controllers
 
 		[HttpPost]
 		[Authorize]
-		public IActionResult Approve(int id, ApprovingUsersViewModel viewModel)
+		public IActionResult Approve(int id)
 		{
 			_userService.Approve(id);
 
-			return View(viewModel);
+			return View();
 		}
 
 		[HttpPost]
@@ -163,7 +177,7 @@ namespace TicketingSystem.Web.Controllers
 		{
 			_userService.Deny(id);
 
-			return RedirectToAction(nameof(UsersToProcess));
+			return View();
 		}
 
 		private void CreateUnApprovedUserList(List<ApprovingUsersViewModel> usersToApprove, IEnumerable<User> users)

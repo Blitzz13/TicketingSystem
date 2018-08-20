@@ -67,7 +67,7 @@ namespace TicketingSystem.Data
 				LastName = "testenov",
 				Email = "admin@test.test",
 				Role = AccountRole.Administrator,
-				AccountState = AccountState.Aproved
+				AccountState = AccountState.Approved
 			};
 
 			var support = new User()
@@ -78,7 +78,7 @@ namespace TicketingSystem.Data
 				LastName = "Supportev",
 				Email = "support@test.test",
 				Role = AccountRole.Support,
-				AccountState = AccountState.Aproved
+				AccountState = AccountState.Approved
 			};
 
 			context.AddRange(user,user1,user2,user3,user4,admin,support);

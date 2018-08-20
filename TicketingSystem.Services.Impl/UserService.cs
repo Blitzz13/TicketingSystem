@@ -103,18 +103,47 @@ namespace TicketingSystem.Services.Impl
 
 			string password = HashPassword(model.Passowrd);
 
-			DATA.User user = new DATA.User
-			{
-				Username = model.UserName,
-				Password = password,
-				Email = model.Email,
-				FirstName = model.FirstName,
-				LastName = model.LastName,
-				AccountState = DATA.AccountState.Pending
-			};
+			DATA.User user = new DATA.User();
 
-			_context.Add(user);
-			_context.SaveChanges();
+			if (model.AccountState != AccountState.Pending)
+			{
+				user = new DATA.User
+				{
+					Username = model.UserName,
+					Password = password,
+					Email = model.Email,
+					FirstName = model.FirstName,
+					LastName = model.LastName
+				};
+
+				if (model.AccountState == AccountState.Approved)
+				{
+					user.AccountState = DATA.AccountState.Approved;
+				}
+				else
+				{
+					user.AccountState = DATA.AccountState.Denied;
+				}
+				
+				_context.Add(user);
+				_context.SaveChanges();
+			}
+			else
+			{
+				user = new DATA.User
+				{
+					Username = model.UserName,
+					Password = password,
+					Email = model.Email,
+					FirstName = model.FirstName,
+					LastName = model.LastName,
+					AccountState = DATA.AccountState.Pending
+				};
+
+				_context.Add(user);
+				_context.SaveChanges();
+			}
+
 		}
 
 		public void Approve(int userId)
@@ -126,12 +155,12 @@ namespace TicketingSystem.Services.Impl
 				throw new ServiceException("No account found with that name.");
 			}
 
-			if (accToApprove.AccountState == DATA.AccountState.Aproved)
+			if (accToApprove.AccountState == DATA.AccountState.Approved)
 			{
 				throw new ServiceException("This account has already been approved.");
 			}
 
-			accToApprove.AccountState = DATA.AccountState.Aproved;
+			accToApprove.AccountState = DATA.AccountState.Approved;
 			_context.SaveChanges();
 		}
 
@@ -199,9 +228,17 @@ namespace TicketingSystem.Services.Impl
 			_context.SaveChanges();
 		}
 
-		public IEnumerable<User> GetUnApprovedUsers()
+		public IEnumerable<User> GetUnApprovedUsers(int page = 1, int PageSize = 5)
 		{
-			List<User> unApprovedUsers = _context.Users.Where(u => u.AccountState.ToString() == "Pending").Select(CreateUser).ToList();
+			List<User> unApprovedUsers =
+				_context
+				.Users
+				.Where(u => u.AccountState.ToString() == "Pending")
+				.Select(CreateUser)
+				.OrderByDescending(p => p.Id)
+				.Skip((page - 1) * PageSize)
+				.Take(PageSize)
+				.ToList();
 
 			return unApprovedUsers;
 		}
@@ -272,5 +309,17 @@ namespace TicketingSystem.Services.Impl
 			};
 		}
 
+		public IEnumerable<User> GetAllUnApprovedUsers()
+		{
+			List<User> allUnApprovedUsers =
+				_context
+				.Users
+				.OrderByDescending(p => p.Id)
+				.Where(u => u.AccountState.ToString() == "Pending")
+				.Select(CreateUser)
+				.ToList();
+
+			return allUnApprovedUsers;
+		}
 	}
 }

@@ -1,16 +1,18 @@
-﻿namespace TicketingSystem.Services
+﻿using System;
+
+namespace TicketingSystem.Services
 {
 	public class CreateUserModel
 	{
 
-		public CreateUserModel(string userName, string passowrd, string email, string firstName, string lastName)
+		public CreateUserModel(string userName, string passowrd, string email, string firstName, string lastName,string accountState)
 		{
 			UserName = userName;
 			Passowrd = passowrd;
 			Email = email;
 			FirstName = firstName;
 			LastName = lastName;
-			AccountState = AccountState.Pending;
+			AccountState = (AccountState)Enum.Parse(typeof(AccountState), accountState);
 		}
 
 		public string UserName { get; set; }

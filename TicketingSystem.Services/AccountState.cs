@@ -3,7 +3,7 @@
 	public enum AccountState
 	{
 		Pending,
-		Aproved,
+		Approved,
 		Denied
 	}
 }

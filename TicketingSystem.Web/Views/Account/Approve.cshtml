@@ -1,5 +1,4 @@
-﻿@model ApprovingUsersViewModel
-@{
+﻿@{
 	ViewData["Title"] = "Approved";
 }
 
@@ -10,7 +9,7 @@
 				Approved
 			</h4>
 			<p>
-				The user with username <strong>@Model.Username </strong> was approved
+				The user's account was approved.
 			</p>
 		</div>
 		<a asp-controller="Account" asp-action="UsersToProcess" class="btn btn-primary">Return</a>

@@ -53,6 +53,9 @@
 	</div>
 </div>
 
+<br />
+<br />
+
 @if (Model.Messages != null)
 {
 	@foreach (var message in Model.Messages.OrderByDescending(m => m.PublishingDate))
@@ -62,7 +65,7 @@
 			<div class="container">
 				<div class="row">
 					<div class="col-md-6">
-						<div class="page-header"></div>
+						<br />
 						<div class="well well-lg">
 							<p class="pull-right">@message.PublishingDate.ToShortDateString()</p>
 							<h4 class="text-uppercase">@message.Username</h4>
@@ -98,7 +101,7 @@
 							</p>
 							<hr />
 							<form method="post" action="/Message/Delete/@message.Id">
-								<input type="submit" class="btn btn-danger btn-md pull-right" value="Delete Message"/>
+								<input type="submit" class="btn btn-danger btn-md pull-right" value="Delete Message" />
 							</form>
 							<br />
 						</div>

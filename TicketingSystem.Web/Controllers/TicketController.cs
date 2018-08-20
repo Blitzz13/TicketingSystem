@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -20,7 +21,9 @@ namespace TicketingSystem.Web.Controllers
 
 		public readonly IMessageService _messageService = new MessageService();
 
-		public TicketController(ITicketService ticketService, IProjectService projectService, 
+		private const int PageSize = 5;
+
+		public TicketController(ITicketService ticketService, IProjectService projectService,
 			IUserService userService, IMessageService messageService)
 		{
 			_ticketService = ticketService;
@@ -94,27 +97,41 @@ namespace TicketingSystem.Web.Controllers
 
 		[HttpGet]
 		[Authorize]
-		public IActionResult ListTickets()
+		public IActionResult ListTickets(int page = 1)
 		{
 			int userId = GetUserId();
-			var overviewTickets = new List<OverviewTicketViewModel>();
+			var ticketsToShow = new List<OverviewTicketViewModel>();
 			if (User.IsInRole("Client"))
 			{
-				var tickets = _ticketService.GetAllTicketsForClient(userId);
+				int ticketsCount = _ticketService.GetAllTicketsForClient(userId).Count();
 
-				CreateOverviewTickets(overviewTickets, tickets);
+				var tickets = _ticketService.GetAllTicketsToShowForClient(userId,page,PageSize);
 
-				return View(overviewTickets);
+				CreateOverviewTickets(ticketsToShow, tickets);
+
+				return View(new TicketListingViewModel
+				{
+					Tickets = ticketsToShow,
+					CurrentPage = page,
+					TotalPages = (int)Math.Ceiling(ticketsCount / (double)PageSize)
+				});
 			}
 			else
 			{
-				var tickets = _ticketService.GetAllTicketsForAdminAndSupport();
+				int ticketsCount = _ticketService.GetAllTicketsForAdminAndSupport().Count();
 
-				CreateOverviewTickets(overviewTickets, tickets);
+				var tickets = _ticketService.GetAllTicketsToShowForAdminAndSupport();
 
-				return View(overviewTickets);
+				CreateOverviewTickets(ticketsToShow, _ticketService.GetAllTicketsToShowForAdminAndSupport(page, PageSize));
+
+				return View(new TicketListingViewModel
+				{
+					Tickets = ticketsToShow,
+					CurrentPage = page,
+					TotalPages = (int)Math.Ceiling(ticketsCount / (double)PageSize)
+				});
+
 			}
-
 		}
 
 		[HttpPost]
@@ -177,8 +194,8 @@ namespace TicketingSystem.Web.Controllers
 				};
 				return View(model);
 			}
-			
-			
+
+
 		}
 
 		[HttpGet]
@@ -209,6 +226,27 @@ namespace TicketingSystem.Web.Controllers
 			return View(model);
 		}
 
+		[HttpGet]
+		[Authorize]
+		public IActionResult Delete(int id)
+		{
+			var ticket = _ticketService.GetByTicketId(id);
+
+			return View(ticket);
+		}
+
+		[HttpPost]
+		[Authorize]
+		public IActionResult Delete(int id, TicketFormViewModel viewModel)
+		{
+
+			
+
+			_ticketService.Delete(ticket.Id)
+
+			return View(id);
+		}
+
 		[HttpPost]
 		[Authorize]
 		public IActionResult Edit(int id, TicketFormViewModel viewModel)
@@ -234,7 +272,7 @@ namespace TicketingSystem.Web.Controllers
 			{
 				_ticketService.Edit(model);
 			}
-			catch (System.Exception e)
+			catch (Exception e)
 			{
 				viewModel.ErrorMessage = e.Message;
 				viewModel.ProjectName = _projectService.GetById(_ticketService.GetByTicketId(id).ProjectId).Name;

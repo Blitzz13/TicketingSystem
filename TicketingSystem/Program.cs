@@ -659,7 +659,7 @@ namespace TicketingSystem
 			Console.Write("Last Name: ");
 			string lastName = Console.ReadLine();
 
-			return new CreateUserModel(username, password, email, firstName, lastName);
+			return new CreateUserModel(username, password, email, firstName, lastName, "Pending");
 		}
 
 		private static void ChangeTicketType()

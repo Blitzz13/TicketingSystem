@@ -16,7 +16,9 @@ namespace TicketingSystem.Services
 
 		void Delete(int userId);
 
-		IEnumerable<User> GetUnApprovedUsers();
+		IEnumerable<User> GetUnApprovedUsers(int page = 1, int PageSize = 5);
+
+		IEnumerable<User> GetAllUnApprovedUsers();
 
 		User GetByUsername(string userName);
 

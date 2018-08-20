@@ -32,11 +32,41 @@ namespace TicketingSystem.Services.Impl
 			return tickets.ToList().Select(CreateTicket);
 		}
 
+		public IEnumerable<Ticket> GetAllTicketsToShowForClient(int userId, int page = 1, int PageSize = 5)
+		{
+			List<Ticket> tickets =
+				_context
+				.Tickets
+				.Where(t => t.Submitter.Id == userId)
+				.Select(CreateTicket)
+				.OrderByDescending(p => p.Id)
+				.Skip((page - 1) * PageSize)
+				.Take(PageSize)
+				.ToList();
+
+			return tickets;
+		}
+
+		
 		public IEnumerable<Ticket> GetAllTicketsForAdminAndSupport()
 		{
-			IQueryable<DATA.Ticket> tickets = _context.Tickets;
+			List<Ticket> tickets = _context.Tickets.Select(CreateTicket).ToList();
 
-			return tickets.ToList().Select(CreateTicket);
+			return tickets;
+		}
+
+		public IEnumerable<Ticket> GetAllTicketsToShowForAdminAndSupport(int page = 1, int PageSize = 5)
+		{
+			List<Ticket> tickets = 
+				_context
+				.Tickets
+				.Select(CreateTicket)
+				.OrderByDescending(p => p.Id)
+				.Skip((page - 1) * PageSize)
+				.Take(PageSize)
+				.ToList();
+
+			return tickets;
 		}
 
 		public int Create(CreateTicketModel model)
@@ -218,7 +248,5 @@ namespace TicketingSystem.Services.Impl
 				SubmissionDate = ticket.SubmissionDate
 			};
 		}
-
-		
 	}
 }

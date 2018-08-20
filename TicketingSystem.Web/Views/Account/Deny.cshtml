@@ -8,10 +8,10 @@
 	<div class="col-sm-6 col-md-6">
 		<div class="alert-message alert-message-danger">
 			<h4>
-				Approved
+				@ViewData["Title"]
 			</h4>
 			<p>
-				The user with username <strong>@Model.Username </strong> was denied
+				The user's account was denied.
 			</p>
 		</div>
 		<a asp-controller="Account" asp-action="UsersToProcess" class="btn btn-primary">Return</a>
