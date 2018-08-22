@@ -1,6 +1,6 @@
-﻿namespace TicketingSystem.Services
+﻿namespace TicketingSystem.Web.Models.Account
 {
-	public class User
+	public class ListingUsersViewModel
 	{
 		public int Id { get; set; }
 
@@ -8,10 +8,10 @@
 
 		public string Email { get; set; }
 
+		public string State { get; set; }
+
 		public string FirstName { get; set; }
 
 		public string LastName { get; set; }
-
-		public string Role { get; set; }
 	}
 }

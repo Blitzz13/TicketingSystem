@@ -1,0 +1,79 @@
+﻿@model DetailsViewModel
+@{
+	ViewData["Title"] = "Account Details";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+
+@if (User.IsInRole("Administrator"))
+{
+	<div class="row">
+		<form method="post" action="/Account/Edit/@Model.Id">
+			<div class="col-md-4">
+				<div class="form-group animated fadeIn">
+					<label asp-for="Username"></label>
+					<input asp-for="Username" class="form-control" />
+				</div>
+				<div class="form-group animated fadeIn">
+					<label asp-for="Email"></label>
+					<input asp-for="Email" class="form-control" />
+				</div>
+				<div class="form-group animated fadeIn">
+					<label asp-for="FirstName"></label>
+					<input asp-for="FirstName" class="form-control" />
+				</div>
+				<div class="form-group animated fadeIn">
+					<label asp-for="LastName"></label>
+					<input asp-for="LastName" class="form-control" />
+				</div>
+				<div class="form-group animated fadeIn">
+					<label asp-for="Role">Current Role</label>
+					<input asp-for="Role" disabled class="form-control" />
+				</div>
+				@if (User.Identity.Name != Model.Username)
+				{
+					<div class="form-group animated fadeIn">
+						<label asp-for="Role">Chage Role To</label>
+						<select asp-for="Role" class="form-control">
+							<option>Administrator</option>
+							<option>Support</option>
+							<option selected>Client</option>
+						</select>
+					</div>
+				}
+				<div class="form-group animated fadeIn">
+					<input type="submit" class="btn btn-group-sm btn-primary pull-right" value="Edit" />
+				</div>
+			</div>
+		</form>
+	</div>
+}
+else
+{
+	<div class="row">
+		<div class="col-md-4">
+			<div class="form-group animated fadeIn">
+				<label asp-for="Username"></label>
+				<input asp-for="Username" disabled class="form-control" />
+			</div>
+			<div class="form-group">
+				<label asp-for="Email"></label>
+				<input asp-for="Email" disabled class="form-control" />
+			</div>
+			<div class="form-group animated fadeIn">
+				<label asp-for="FirstName"></label>
+				<input asp-for="FirstName" disabled class="form-control" />
+			</div>
+			<div class="form-group animated fadeIn">
+				<label asp-for="LastName"></label>
+				<input asp-for="LastName" disabled class="form-control" />
+			</div>
+			<div class="form-group animated fadeIn">
+				<label asp-for="Role"></label>
+				<input asp-for="Role" disabled class="form-control" />
+			</div>
+		</div>
+	</div>
+}
+

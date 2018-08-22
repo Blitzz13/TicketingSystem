@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using TicketingSystem.Services;
+using TicketingSystem.Web.Models.Message;
 
 namespace TicketingSystem.Web.Models.Ticket
 {
@@ -32,7 +32,7 @@ namespace TicketingSystem.Web.Models.Ticket
 
 		public int SubmitterId { get; set; }
 
-		public IEnumerable<Message> Messages { get; set; }
+		public IEnumerable<MessageViewModel> Messages { get; set; }
 
 		public string MessageContent { get; set; }
 

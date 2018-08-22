@@ -18,6 +18,8 @@ namespace TicketingSystem.Services
 
 		IEnumerable<User> GetUnApprovedUsers(int page = 1, int PageSize = 5);
 
+		IEnumerable<User> GetAllApprovedUsers(int page = 1, int PageSize = 5);
+
 		IEnumerable<User> GetAllUnApprovedUsers();
 
 		User GetByUsername(string userName);

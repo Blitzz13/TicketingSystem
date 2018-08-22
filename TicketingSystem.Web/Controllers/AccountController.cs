@@ -100,7 +100,6 @@ namespace TicketingSystem.Web.Controllers
 			}
 		}
 
-
 		[HttpGet]
 		public async Task<IActionResult> Logout()
 		{
@@ -123,7 +122,8 @@ namespace TicketingSystem.Web.Controllers
 				viewModel.AccountState = "Pending";
 			}
 
-			var model = new CreateUserModel(viewModel.Username, viewModel.Password, viewModel.Email, viewModel.FirstName, viewModel.LastName,viewModel.AccountState);
+			var model = new CreateUserModel(viewModel.Username, viewModel.Password,
+				viewModel.Email, viewModel.FirstName, viewModel.LastName, viewModel.AccountState);
 
 			try
 			{
@@ -139,17 +139,61 @@ namespace TicketingSystem.Web.Controllers
 			return View("FinishRegister", viewModel);
 		}
 
+		public IActionResult Details(int id)
+		{
+			var account = _userService.GetByUserId(id);
+
+			if (account.Username != User.Identity.Name && !User.IsInRole("Administrator"))
+			{
+				return NotFound();
+			}
+
+			var viewModel = new DetailsViewModel
+			{
+				Id = account.Id,
+				Email = account.Email,
+				Username = account.Username,
+				FirstName = account.FirstName,
+				LastName = account.LastName,
+				Role = account.Role,
+			};
+
+			return View(viewModel);
+		}
+
+		[HttpPost]
+		[Authorize]
+		public IActionResult Edit(int id, DetailsViewModel viewModel)
+		{
+			if (!User.IsInRole("Administrator"))
+			{
+				return NotFound();
+			}
+
+			var updateModel = new UpdateUserModel
+			{
+				Username = viewModel.Username,
+				Email = viewModel.Email,
+				FirstName = viewModel.FirstName,
+				LastName = viewModel.LastName,
+				Role = viewModel.Role
+			};
+
+			_userService.Update(id, updateModel);
+			return RedirectToAction(nameof(Details), new { id });
+		}
+
 		[HttpGet]
 		[Authorize]
 		public IActionResult UsersToProcess(int page = 1)
 		{
 			if (User.IsInRole("Administrator"))
 			{
-				var usersToShow = new List<ApprovingUsersViewModel>();
+				var usersToShow = new List<ListingUsersViewModel>();
 
 				int usersCount = _userService.GetAllUnApprovedUsers().ToList().Count;
 
-				CreateUnApprovedUserList(usersToShow, _userService.GetUnApprovedUsers(page, PageSize));
+				CreateUserList(usersToShow, _userService.GetUnApprovedUsers(page, PageSize));
 
 				return View(new UsersToProcessListingModel
 				{
@@ -160,6 +204,29 @@ namespace TicketingSystem.Web.Controllers
 			}
 
 			return RedirectToAction(nameof(HomeController.Index), "Home");
+		}
+
+		[HttpGet]
+		[Authorize]
+		public IActionResult BrowseUsers(int page = 1)
+		{
+			if (User.IsInRole("Administrator"))
+			{
+				var usersToShow = new List<ListingUsersViewModel>();
+
+				int usersCount = _userService.GetAllApprovedUsers().ToList().Count;
+
+				CreateUserList(usersToShow, _userService.GetAllApprovedUsers(page, PageSize));
+
+				return View(new UsersToProcessListingModel
+				{
+					Users = usersToShow,
+					CurrentPage = page,
+					TotalPages = (int)Math.Ceiling(usersCount / (double)PageSize)
+				});
+			}
+
+			return NotFound();
 		}
 
 		[HttpPost]
@@ -180,12 +247,12 @@ namespace TicketingSystem.Web.Controllers
 			return View();
 		}
 
-		private void CreateUnApprovedUserList(List<ApprovingUsersViewModel> usersToApprove, IEnumerable<User> users)
+		private void CreateUserList(List<ListingUsersViewModel> usersToApprove, IEnumerable<User> users)
 		{
 			foreach (var user in users)
 			{
 
-				var viewModel = new ApprovingUsersViewModel
+				var viewModel = new ListingUsersViewModel
 				{
 					Id = user.Id,
 					Username = user.Username,

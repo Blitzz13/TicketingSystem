@@ -1,9 +1,23 @@
+@using Microsoft.AspNetCore.Http;
+@{
+	HttpContextAccessor accessor = new HttpContextAccessor();
+
+	var claims = accessor.HttpContext.User.Claims;
+	int userId = -1;
+
+	foreach (var claim in claims)
+	{
+		string claimValue = claim.Value;
+		int.TryParse(claimValue, out userId);
+	}
+	ViewData["Title"] = "View";
+}
 @if (User.Identity.IsAuthenticated)
 {
 	<form asp-area="" asp-controller="Account" asp-action="Logout" method="post" id="logoutForm" class="navbar-right">
 		<ul class="nav navbar-nav navbar-right">
 			<li>
-				<a asp-area="" asp-controller="Manage" asp-action="Index" title="Manage">Hello @User.Identity.Name</a>
+				<a href="/Account/Details/@userId" title="Manage">Hello @User.Identity.Name</a>
 			</li>
 			<li>
 				<a asp-area="" asp-controller="Account" asp-action="Logout">Log out</a>

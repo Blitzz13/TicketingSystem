@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using TicketingSystem.Services;
 using TicketingSystem.Services.Impl;
+using TicketingSystem.Web.Models.Message;
 using TicketingSystem.Web.Models.Ticket;
 
 namespace TicketingSystem.Web.Controllers
@@ -105,7 +106,7 @@ namespace TicketingSystem.Web.Controllers
 			{
 				int ticketsCount = _ticketService.GetAllTicketsForClient(userId).Count();
 
-				var tickets = _ticketService.GetAllTicketsToShowForClient(userId,page,PageSize);
+				var tickets = _ticketService.GetAllTicketsToShowForClient(userId, page, PageSize);
 
 				CreateOverviewTickets(ticketsToShow, tickets);
 
@@ -164,6 +165,24 @@ namespace TicketingSystem.Web.Controllers
 
 				messages.AddRange(_messageService.Get(id));
 
+				var viewMessages = new List<MessageViewModel>();
+
+				foreach (var message in messages)
+				{
+
+					var viewModel = new MessageViewModel
+					{
+						Id = message.Id,
+						Content = message.Content,
+						PublishingDate = message.PublishingDate,
+						State = message.State,
+						UserId = message.UserId,
+						Username = message.Username
+					};
+
+					viewMessages.Add(viewModel);
+				}
+
 				model = new ViewTicketViewModel
 				{
 					TicketId = id,
@@ -174,7 +193,7 @@ namespace TicketingSystem.Web.Controllers
 					SubmitterId = ticket.SubmitterId,
 					TicketState = ticket.State,
 					TicketType = ticket.Type,
-					Messages = messages
+					Messages = viewMessages
 				};
 
 				return View(model);
@@ -228,21 +247,18 @@ namespace TicketingSystem.Web.Controllers
 
 		[HttpGet]
 		[Authorize]
-		public IActionResult Delete(int id)
+		public IActionResult Delete(int id, TicketFormViewModel ticket)
 		{
-			var ticket = _ticketService.GetByTicketId(id);
+			//ticket = _ticketService.GetByTicketId(id);
 
 			return View(ticket);
 		}
 
 		[HttpPost]
 		[Authorize]
-		public IActionResult Delete(int id, TicketFormViewModel viewModel)
+		public IActionResult Delete(int id)
 		{
-
-			
-
-			_ticketService.Delete(ticket.Id)
+			_ticketService.Delete(id);
 
 			return View(id);
 		}

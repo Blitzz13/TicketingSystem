@@ -4,7 +4,7 @@ namespace TicketingSystem.Web.Models.Account
 {
 	public class UsersToProcessListingModel
 	{
-		public IEnumerable<ApprovingUsersViewModel> Users { get; set; }
+		public IEnumerable<ListingUsersViewModel> Users { get; set; }
 
 		public int CurrentPage { get; set; }
 

@@ -1,14 +1,14 @@
 ﻿namespace TicketingSystem.Web.Models.Account
 {
-	public class ApprovingUsersViewModel
+	public class DetailsViewModel
 	{
 		public int Id { get; set; }
 
 		public string Username { get; set; }
 
-		public string Email { get; set; }
+		public string Role { get; set; }
 
-		public string State { get; set; }
+		public string Email { get; set; }
 
 		public string FirstName { get; set; }
 

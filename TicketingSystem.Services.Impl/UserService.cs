@@ -305,7 +305,8 @@ namespace TicketingSystem.Services.Impl
 				Username = user.Username,
 				Email = user.Email,
 				FirstName = user.FirstName,
-				LastName = user.LastName
+				LastName = user.LastName,
+				Role = user.Role.ToString()
 			};
 		}
 
@@ -320,6 +321,19 @@ namespace TicketingSystem.Services.Impl
 				.ToList();
 
 			return allUnApprovedUsers;
+		}
+
+		public IEnumerable<User> GetAllApprovedUsers(int page = 1, int PageSize = 5)
+		{
+			List<User> approvedUsers =
+				_context
+				.Users
+				.OrderByDescending(p => p.Id)
+				.Where(u => u.AccountState.ToString() != "Pending")
+				.Select(CreateUser)
+				.ToList();
+
+			return approvedUsers;
 		}
 	}
 }
