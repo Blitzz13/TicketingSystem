@@ -71,6 +71,15 @@ namespace TicketingSystem.Services.Impl
 			_context.SaveChanges();
 		}
 
+		public void ChangeStateToPost(int id)
+		{
+			DATA.Message message = _context.Messages.FirstOrDefault(m => m.Id == id);
+
+			message.State = DATA.StateMessage.Post;
+
+			_context.SaveChanges();
+		}
+
 		public Message GetById(int messageId)
 		{
 			Message message = _context.Messages.Select(CreateMessage).FirstOrDefault(m => m.Id == messageId);
@@ -94,5 +103,6 @@ namespace TicketingSystem.Services.Impl
 			};
 		}
 
+		
 	}
 }

@@ -76,9 +76,11 @@
 							@if (User.IsInRole("Administrator") || userId == message.UserId)
 							{
 								<hr />
+
 								<form method="post" action="/Message/Delete/@message.Id">
 									<input type="submit" class="btn btn-danger btn-md pull-right" value="Delete Message" />
 								</form>
+								<a class="btn btn-warning" href="/Message/Edit/@message.Id">Edit</a>
 								<br />
 							}
 						</div>
@@ -103,6 +105,10 @@
 							<form method="post" action="/Message/Delete/@message.Id">
 								<input type="submit" class="btn btn-danger btn-md pull-right" value="Delete Message" />
 							</form>
+							<form method="post" action="/Message/ChangeState/@message.Id">
+								<input type="submit" class="btn btn-primary btn-md pull-left" value="Post" />
+							</form>
+							<a class="btn btn-warning pull-right" href="/Message/Edit/@message.Id">Edit</a>
 							<br />
 						</div>
 					</div>

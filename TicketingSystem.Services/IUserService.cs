@@ -15,12 +15,14 @@ namespace TicketingSystem.Services
 		void Update(int userId, UpdateUserModel model);
 
 		void Delete(int userId);
+		
+		int GetAllProcessedUsersCount();
 
-		IEnumerable<User> GetUnApprovedUsers(int page = 1, int PageSize = 5);
+		int GetAllUnApprovedUsersCount();
 
-		IEnumerable<User> GetAllApprovedUsers(int page = 1, int PageSize = 5);
+		IEnumerable<User> GetAllUnApprovedUsers(int page = 1, int PageSize = 5);
 
-		IEnumerable<User> GetAllUnApprovedUsers();
+		IEnumerable<User> GetAllProcessedUsers(int page = 1, int PageSize = 5);
 
 		User GetByUsername(string userName);
 

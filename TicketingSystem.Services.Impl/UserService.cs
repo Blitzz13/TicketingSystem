@@ -206,6 +206,12 @@ namespace TicketingSystem.Services.Impl
 				user.Role = role;
 			}
 
+			if (!string.IsNullOrEmpty(model.AccountState))
+			{
+				DATA.AccountState state = (DATA.AccountState)Enum.Parse(typeof(DATA.AccountState), model.AccountState);
+				user.AccountState = state;
+			}
+
 			if (!string.IsNullOrEmpty(model.Password))
 			{
 				model.Password = HashPassword(model.Password);
@@ -228,7 +234,7 @@ namespace TicketingSystem.Services.Impl
 			_context.SaveChanges();
 		}
 
-		public IEnumerable<User> GetUnApprovedUsers(int page = 1, int PageSize = 5)
+		public IEnumerable<User> GetAllUnApprovedUsers(int page = 1, int PageSize = 5)
 		{
 			List<User> unApprovedUsers =
 				_context
@@ -242,6 +248,51 @@ namespace TicketingSystem.Services.Impl
 
 			return unApprovedUsers;
 		}
+
+		public IEnumerable<User> GetAllProcessedUsers(int page = 1, int PageSize = 5)
+		{
+			List<User> approvedUsers =
+				_context
+				.Users
+				.Where(u => u.AccountState.ToString() == "Approved" || u.AccountState.ToString() == "Denied")
+				.Select(CreateUser)
+				.OrderByDescending(p => p.Id)
+				.Skip((page - 1) * PageSize)
+				.Take(PageSize)
+				.ToList();
+
+			return approvedUsers;
+		}
+
+		public int GetAllProcessedUsersCount()
+		{
+			int approvedUsersCount =
+				_context
+				.Users
+				.OrderByDescending(p => p.Id)
+				.Where(u => u.AccountState.ToString() == "Approved" || u.AccountState.ToString() == "Denied")
+				.Select(CreateUser)
+				.ToList()
+				.Count;
+
+			return approvedUsersCount;
+		}
+
+		public int GetAllUnApprovedUsersCount()
+		{
+			int allUnApprovedUsersCount =
+				_context
+				.Users
+				.OrderByDescending(p => p.Id)
+				.Where(u => u.AccountState.ToString() == "Pending")
+				.Select(CreateUser)
+				.ToList()
+				.Count;
+
+			return allUnApprovedUsersCount;
+		}
+
+		
 
 		public User GetByUsername(string userName)
 		{
@@ -306,34 +357,11 @@ namespace TicketingSystem.Services.Impl
 				Email = user.Email,
 				FirstName = user.FirstName,
 				LastName = user.LastName,
-				Role = user.Role.ToString()
+				Role = user.Role.ToString(),
+				State = user.AccountState.ToString()
 			};
 		}
 
-		public IEnumerable<User> GetAllUnApprovedUsers()
-		{
-			List<User> allUnApprovedUsers =
-				_context
-				.Users
-				.OrderByDescending(p => p.Id)
-				.Where(u => u.AccountState.ToString() == "Pending")
-				.Select(CreateUser)
-				.ToList();
-
-			return allUnApprovedUsers;
-		}
-
-		public IEnumerable<User> GetAllApprovedUsers(int page = 1, int PageSize = 5)
-		{
-			List<User> approvedUsers =
-				_context
-				.Users
-				.OrderByDescending(p => p.Id)
-				.Where(u => u.AccountState.ToString() != "Pending")
-				.Select(CreateUser)
-				.ToList();
-
-			return approvedUsers;
-		}
+		
 	}
 }

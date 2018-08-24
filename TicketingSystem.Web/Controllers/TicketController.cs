@@ -247,20 +247,39 @@ namespace TicketingSystem.Web.Controllers
 
 		[HttpGet]
 		[Authorize]
-		public IActionResult Delete(int id, TicketFormViewModel ticket)
+		public IActionResult Delete(int id)
 		{
-			//ticket = _ticketService.GetByTicketId(id);
+			Ticket ticket = _ticketService.GetByTicketId(id);
 
-			return View(ticket);
+			int currnetUserId = _userService.GetByUsername(User.Identity.Name).Id;
+
+			if (User.IsInRole("Client") && currnetUserId != ticket.SubmitterId)
+			{
+				return NotFound();
+			}
+
+			var model = new TicketFormViewModel
+			{
+				TicketId = id,
+				TicketTitle = ticket.Title,
+				Description = ticket.Description,
+				FileName = ticket.FileName,
+				ProjectName = _projectService.GetById(ticket.ProjectId).Name,
+				SubmitterId = ticket.SubmitterId,
+				TicketState = ticket.State,
+				TicketType = ticket.Type,
+			};
+
+			return View(model);
 		}
 
 		[HttpPost]
 		[Authorize]
-		public IActionResult Delete(int id)
+		public IActionResult Delete(int id, TicketFormViewModel viewTicket)
 		{
 			_ticketService.Delete(id);
 
-			return View(id);
+			return RedirectToAction(nameof(ListTickets));
 		}
 
 		[HttpPost]
@@ -300,14 +319,8 @@ namespace TicketingSystem.Web.Controllers
 
 		private void CreateOverviewTickets(List<OverviewTicketViewModel> overviewTickets, IEnumerable<Ticket> tickets)
 		{
-			int messagesCount = 0;
 			foreach (var ticket in tickets)
 			{
-				if (ticket.Messages != null)
-				{
-					messagesCount = ticket.Messages.Count();
-				}
-
 				var viewModel = new OverviewTicketViewModel
 				{
 					Id = ticket.Id,
@@ -315,8 +328,7 @@ namespace TicketingSystem.Web.Controllers
 					ProjectName = _projectService.GetById(ticket.ProjectId).Name,
 					SubmissionDate = ticket.SubmissionDate,
 					SumitterName = _userService.GetByUserId(ticket.SubmitterId).Username,
-					TicketState = ticket.State,
-					MessagesCount = messagesCount
+					TicketState = ticket.State
 				};
 				overviewTickets.Add(viewModel);
 			}

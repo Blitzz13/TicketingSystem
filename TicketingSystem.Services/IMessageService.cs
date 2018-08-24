@@ -11,5 +11,7 @@ namespace TicketingSystem.Services
 		int Create(CreateMessageModel model);
 
 		void Delete(int id);
+
+		void ChangeStateToPost(int id);
 	}
 }

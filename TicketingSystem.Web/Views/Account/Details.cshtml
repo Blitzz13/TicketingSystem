@@ -27,10 +27,6 @@
 					<label asp-for="LastName"></label>
 					<input asp-for="LastName" class="form-control" />
 				</div>
-				<div class="form-group animated fadeIn">
-					<label asp-for="Role">Current Role</label>
-					<input asp-for="Role" disabled class="form-control" />
-				</div>
 				@if (User.Identity.Name != Model.Username)
 				{
 					<div class="form-group animated fadeIn">
@@ -38,7 +34,14 @@
 						<select asp-for="Role" class="form-control">
 							<option>Administrator</option>
 							<option>Support</option>
-							<option selected>Client</option>
+							<option>Client</option>
+						</select>
+					</div>
+					<div class="form-group animated fadeIn">
+						<label asp-for="State">Chage State To</label>
+						<select asp-for="State" class="form-control">
+							<option>Approved</option>
+							<option>Denied</option>
 						</select>
 					</div>
 				}

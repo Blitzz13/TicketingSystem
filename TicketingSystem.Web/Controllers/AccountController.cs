@@ -156,6 +156,7 @@ namespace TicketingSystem.Web.Controllers
 				FirstName = account.FirstName,
 				LastName = account.LastName,
 				Role = account.Role,
+				State = account.State
 			};
 
 			return View(viewModel);
@@ -176,7 +177,8 @@ namespace TicketingSystem.Web.Controllers
 				Email = viewModel.Email,
 				FirstName = viewModel.FirstName,
 				LastName = viewModel.LastName,
-				Role = viewModel.Role
+				Role = viewModel.Role,
+				AccountState = viewModel.State
 			};
 
 			_userService.Update(id, updateModel);
@@ -191,9 +193,9 @@ namespace TicketingSystem.Web.Controllers
 			{
 				var usersToShow = new List<ListingUsersViewModel>();
 
-				int usersCount = _userService.GetAllUnApprovedUsers().ToList().Count;
+				int usersCount = _userService.GetAllUnApprovedUsersCount();
 
-				CreateUserList(usersToShow, _userService.GetUnApprovedUsers(page, PageSize));
+				CreateUserList(usersToShow, _userService.GetAllUnApprovedUsers(page, PageSize));
 
 				return View(new UsersToProcessListingModel
 				{
@@ -214,9 +216,9 @@ namespace TicketingSystem.Web.Controllers
 			{
 				var usersToShow = new List<ListingUsersViewModel>();
 
-				int usersCount = _userService.GetAllApprovedUsers().ToList().Count;
+				int usersCount = _userService.GetAllProcessedUsersCount();
 
-				CreateUserList(usersToShow, _userService.GetAllApprovedUsers(page, PageSize));
+				CreateUserList(usersToShow, _userService.GetAllProcessedUsers(page, PageSize));
 
 				return View(new UsersToProcessListingModel
 				{
@@ -259,6 +261,8 @@ namespace TicketingSystem.Web.Controllers
 					FirstName = user.FirstName,
 					LastName = user.LastName,
 					Email = user.Email,
+					Role = user.Role,
+					State = user.State
 				};
 
 				usersToApprove.Add(viewModel);

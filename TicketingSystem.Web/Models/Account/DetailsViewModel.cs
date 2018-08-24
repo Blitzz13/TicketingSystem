@@ -8,6 +8,8 @@
 
 		public string Role { get; set; }
 
+		public string State { get; set; }
+
 		public string Email { get; set; }
 
 		public string FirstName { get; set; }

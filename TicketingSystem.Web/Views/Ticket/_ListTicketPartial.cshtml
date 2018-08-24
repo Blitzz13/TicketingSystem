@@ -38,7 +38,7 @@
 										@if (!User.IsInRole("Client"))
 										{
 											<a href="/Ticket/Edit/@ticket.Id" class="btn btn-warning btn-xs pull-right">Edit ticket</a>
-											<a href="/Ticket/View/@ticket.Id" class="btn btn-danger btn-xs pull-right">Delete ticket</a>
+											<a href="/Ticket/Delete/@ticket.Id" class="btn btn-danger btn-xs pull-right">Delete ticket</a>
 										}
 
 										<h2>@ticket.Title</h2>
@@ -62,8 +62,6 @@
 									<dl class="dl-horizontal">
 										<dt>Created On:</dt>
 										<dd>@ticket.SubmissionDate.ToShortDateString()</dd>
-										<dt>Messages:</dt>
-										<dd>@ticket.MessagesCount</dd>
 									</dl>
 								</div>
 							</div>

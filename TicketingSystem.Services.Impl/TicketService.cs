@@ -131,7 +131,7 @@ namespace TicketingSystem.Services.Impl
 
 		public void Delete(int ticketId)
 		{
-			DATA.Ticket ticket = _context.Tickets.First(p => p.Id == ticketId);
+			DATA.Ticket ticket = _context.Tickets.First(t => t.Id == ticketId);
 
 			_context.Tickets.Remove(ticket);
 			_context.SaveChanges();
@@ -245,7 +245,7 @@ namespace TicketingSystem.Services.Impl
 				State = ticket.State.ToString(),
 				Type = ticket.Type.ToString(),
 				Description = ticket.Description,
-				SubmissionDate = ticket.SubmissionDate
+				SubmissionDate = ticket.SubmissionDate,
 			};
 		}
 	}

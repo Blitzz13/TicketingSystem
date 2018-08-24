@@ -70,5 +70,16 @@ namespace TicketingSystem.Web.Controllers
 
 			return RedirectToAction($"{nameof(TicketController.View)}", "Ticket", new { id });
 		}
+
+		[HttpPost]
+		[Authorize]
+		public IActionResult ChangeState(int Id)
+		{
+			int id = _messageService.GetById(Id).TicketId;
+
+			_messageService.ChangeStateToPost(Id);
+
+			return RedirectToAction($"{nameof(TicketController.View)}", "Ticket", new { id });
+		}
 	}
 }
