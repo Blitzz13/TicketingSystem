@@ -4,16 +4,14 @@ using System;
 using System.Collections.Generic;
 using TicketingSystem.Services;
 using TicketingSystem.Services.Impl;
+using TicketingSystem.Web.Models.Message;
 using TicketingSystem.Web.Models.Ticket;
 
 namespace TicketingSystem.Web.Controllers
 {
 	public class MessageController : Controller
 	{
-
 		public readonly ITicketService _ticketService = new TicketService();
-
-		public readonly IProjectService _projectService = new ProjectService();
 
 		public readonly IUserService _userService = new UserService();
 
@@ -23,7 +21,6 @@ namespace TicketingSystem.Web.Controllers
 			IUserService userService, IMessageService messageService)
 		{
 			_ticketService = ticketService;
-			_projectService = projectService;
 			_userService = userService;
 			_messageService = messageService;
 		}
@@ -55,9 +52,35 @@ namespace TicketingSystem.Web.Controllers
 			return RedirectToAction($"{nameof(TicketController.View)}", "Ticket", new { id });
 		}
 
-		public IActionResult Edit()
+		[HttpGet]
+		[Authorize]
+		public IActionResult Edit(int id)
 		{
-			return null;
+			Message message = _messageService.GetById(id);
+			var model = new EditMessageViewModel
+			{
+				Id = id,
+				MessageContent = message.Content
+			};
+
+			return View(model);
+		}
+
+		[HttpPost]
+		[Authorize]
+		public IActionResult Edit(EditMessageViewModel viewModel)
+		{
+			var model = new EditMessageModel
+			{
+				Id = viewModel.Id,
+				MessageContent = viewModel.MessageContent
+			};
+
+			int id = _messageService.GetById(viewModel.Id).TicketId;
+
+			_messageService.Edit(model);
+
+			return RedirectToAction($"{nameof(TicketController.View)}", "Ticket", new { id });
 		}
 
 		[HttpPost]

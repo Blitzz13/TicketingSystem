@@ -12,6 +12,8 @@ namespace TicketingSystem.Services
 
 		void Delete(int id);
 
+		void Edit(EditMessageModel model);
+
 		void ChangeStateToPost(int id);
 	}
 }

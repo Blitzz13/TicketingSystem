@@ -187,6 +187,43 @@ namespace TicketingSystem.Web.Controllers
 
 		[HttpGet]
 		[Authorize]
+		public IActionResult Delete(int id)
+		{
+			User user = _userService.GetByUserId(id);
+
+			int currnetUserId = _userService.GetByUsername(User.Identity.Name).Id;
+
+			if (User.IsInRole("Client"))
+			{
+				return NotFound();
+			}
+
+			if (user != null)
+			{
+				var model = new DeleteViewModel
+				{
+					UserId = id,
+					Username = user.Username
+				};
+
+				return View(model);
+			}
+
+			return NotFound();
+		}
+
+		[HttpPost]
+		[Authorize]
+		public IActionResult Delete(int id, DeleteViewModel deleteView)
+		{
+			_userService.Delete(id);
+
+			return RedirectToAction(nameof(BrowseUsers));
+		}
+
+
+		[HttpGet]
+		[Authorize]
 		public IActionResult UsersToProcess(int page = 1)
 		{
 			if (User.IsInRole("Administrator"))

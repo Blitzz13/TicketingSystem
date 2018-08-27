@@ -16,23 +16,23 @@
 <br />
 <div class="row">
 	<div class="col-md-4">
-		<div class="form-group">
+		<div class="form-group animated fadeInLeft">
 			<label asp-for="ProjectName"></label>
 			<input asp-for="ProjectName" disabled class="form-control" />
 		</div>
-		<div class="form-group animated fadeIn">
+		<div class="form-group animated fadeInRight">
 			<label asp-for="TicketTitle"></label>
 			<input asp-for="TicketTitle" disabled class="form-control" />
 		</div>
-		<div class="form-group animated fadeIn">
+		<div class="form-group animated fadeInLeft">
 			<label asp-for="TicketType"></label>
 			<input asp-for="TicketType" disabled class="form-control" />
 		</div>
-		<div class="form-group animated fadeIn">
+		<div class="form-group animated fadeInRight">
 			<label asp-for="TicketState"></label>
 			<input asp-for="TicketState" disabled class="form-control" />
 		</div>
-		<div class="form-group animated fadeIn">
+		<div class="form-group animated fadeInLeft">
 			<label asp-for="Description"></label>
 			<textarea asp-for="Description" disabled rows="5" class="form-control" placeholder="Description"></textarea>
 		</div>
@@ -41,12 +41,18 @@
 <div class="row">
 	<div class="col-md-6">
 		<div class="widget-area no-padding blank">
-			<div class="status-upload">
+			<div class="status-upload animated fadeInRight">
 				<br />
 				<form method="post" action="/Message/Create/@Model.TicketId">
 					<textarea asp-for="MessageContent" placeholder="What are you doing right now?"></textarea>
-					<input type="submit" name="state" value="Post" class="btn btn-success green pull-right" />
-					<input type="submit" name="state" value="Draft" class="btn btn-default pull-right" />
+					<div class="btn-toolbar pull-right">
+						<div class="btn-group" role="group">
+							<input type="submit" name="state"style="margin-top: 5px; margin-bottom: 5px" value="Post" class="btn btn-success green pull-right" />
+						</div>
+						<div class="btn-group" role="group">
+							<input type="submit" name="state" style="margin-right: 12px; margin-top: 5px; margin-bottom: 5px" value="Draft" class="btn btn-default pull-right" />
+						</div>
+					</div>
 				</form>
 			</div>
 		</div>
@@ -63,7 +69,7 @@
 		if (message.State == "Post")
 		{
 			<div class="container">
-				<div class="row">
+				<div class="row animated fadeInUp">
 					<div class="col-md-6">
 						<br />
 						<div class="well well-lg">
@@ -76,11 +82,16 @@
 							@if (User.IsInRole("Administrator") || userId == message.UserId)
 							{
 								<hr />
-
-								<form method="post" action="/Message/Delete/@message.Id">
-									<input type="submit" class="btn btn-danger btn-md pull-right" value="Delete Message" />
-								</form>
-								<a class="btn btn-warning" href="/Message/Edit/@message.Id">Edit</a>
+								<div class="btn-toolbar pull-right">
+									<div class="btn-group" role="group">
+										<form method="post" action="/Message/Delete/@message.Id">
+											<input type="submit" class="btn btn-danger btn-md pull-right" value="Delete Message" />
+										</form>
+									</div>
+									<div class="btn-group" role="group">
+										<a class="btn btn-warning" href="/Message/Edit/@message.Id">Edit</a>
+									</div>
+								</div>
 								<br />
 							}
 						</div>
@@ -91,7 +102,7 @@
 		else if (message.State == "Draft" && userId == message.UserId)
 		{
 			<div class="container">
-				<div class="row">
+				<div class="row animated fadeInUp">
 					<div class="col-md-6">
 						<div class="page-header"></div>
 						<div class="well well-lg">
@@ -102,13 +113,19 @@
 								@message.Content
 							</p>
 							<hr />
-							<form method="post" action="/Message/Delete/@message.Id">
-								<input type="submit" class="btn btn-danger btn-md pull-right" value="Delete Message" />
-							</form>
+							<div class="btn-toolbar pull-right">
+								<div class="btn-group" role="group">
+									<form method="post" action="/Message/Delete/@message.Id">
+										<input type="submit" class="btn btn-danger btn-md" value="Delete Message" />
+									</form>
+								</div>
+								<div class="btn-group" role="group">
+									<a class="btn btn-warning" href="/Message/Edit/@message.Id">Edit</a>
+								</div>
+							</div>
 							<form method="post" action="/Message/ChangeState/@message.Id">
 								<input type="submit" class="btn btn-primary btn-md pull-left" value="Post" />
 							</form>
-							<a class="btn btn-warning pull-right" href="/Message/Edit/@message.Id">Edit</a>
 							<br />
 						</div>
 					</div>

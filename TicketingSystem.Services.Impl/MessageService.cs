@@ -71,6 +71,15 @@ namespace TicketingSystem.Services.Impl
 			_context.SaveChanges();
 		}
 
+		public void Edit(EditMessageModel model)
+		{
+			DATA.Message message = _context.Messages.FirstOrDefault(m => m.Id == model.Id);
+
+			message.Content = model.MessageContent;
+
+			_context.SaveChanges();
+		}
+
 		public void ChangeStateToPost(int id)
 		{
 			DATA.Message message = _context.Messages.FirstOrDefault(m => m.Id == id);
@@ -103,6 +112,6 @@ namespace TicketingSystem.Services.Impl
 			};
 		}
 
-		
+	
 	}
 }
