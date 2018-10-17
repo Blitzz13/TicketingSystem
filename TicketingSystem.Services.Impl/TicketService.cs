@@ -132,7 +132,9 @@ namespace TicketingSystem.Services.Impl
 		public void Delete(int ticketId)
 		{
 			DATA.Ticket ticket = _context.Tickets.First(t => t.Id == ticketId);
+			IEnumerable<DATA.Message> messages = _context.Messages.Where(m => m.TicketId == ticket.Id);
 
+			_context.Messages.RemoveRange(messages);
 			_context.Tickets.Remove(ticket);
 			_context.SaveChanges();
 		}
