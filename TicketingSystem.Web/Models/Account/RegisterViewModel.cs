@@ -4,7 +4,7 @@ namespace TicketingSystem.Web.Models.Account
 {
 	public class RegisterViewModel
 	{
-		[MinLength(5, ErrorMessage = "First name should be atleast 5 chars")]
+		[MinLength(5, ErrorMessage = "Username should be atleast 5 chars")]
 		public string Username { get; set; }
 
 		[MinLength(2,ErrorMessage = "First name should be atleast 2 chars")]
@@ -15,11 +15,11 @@ namespace TicketingSystem.Web.Models.Account
 		[Display(Name = "Last Name")]
 		public string LastName { get; set; }
 
-		[MinLength(5, ErrorMessage = "First name should be atleast 5 chars")]
+		[MinLength(5, ErrorMessage = "Password should be atleast 5 chars")]
 		public string Password { get; set; }
 
 		[EmailAddress]
-		[Display(Name = "E-main")]
+		[Display(Name = "E-mail")]
 		public string Email { get; set; }
 
 		[Display(Name = "Account State")]

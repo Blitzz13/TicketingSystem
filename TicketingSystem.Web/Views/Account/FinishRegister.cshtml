@@ -1,6 +1,6 @@
 ﻿@model RegisterViewModel
 @{
-    ViewData["Title"] = "FinishRegister";
+	ViewData["Title"] = "FinishRegister";
 }
 
 <div class="row animated flipInX">
@@ -16,6 +16,10 @@
 				Please be patient while we process your account.
 			</p>
 		</div>
-		<a asp-controller="Home" asp-action="Index" class="btn btn-primary">Return</a>
+		<a asp-controller="Home"
+		   asp-action="Index"
+		   class="btn btn-primary">
+			Return
+		</a>
 	</div>
 </div>

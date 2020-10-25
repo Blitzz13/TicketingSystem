@@ -6,19 +6,36 @@
 
 <ul class="pagination">
 	<li class="page-item @previousDisabled">
-		<a class="page-link @previousDisabled" href="/Ticket/ListTickets?page=@Model.PeviousPage" aria-label="Previous">
-			<span aria-hidden="true">&laquo;</span>
-			<span class="sr-only">Previous</span>
+		<a class="page-link @previousDisabled"
+		   href="/Ticket/ListTickets?page=@Model.PeviousPage"
+		   aria-label="Previous">
+			<span aria-hidden="true">
+				&laquo;
+			</span>
+			<span class="sr-only">
+				Previous
+			</span>
 		</a>
 	</li>
 	@for (int i = 1; i <= Model.TotalPages; i++)
 	{
-		<li class="page-item @(Model.CurrentPage == i ? "active" : string.Empty)"><a class="page-link" href="/Ticket/ListTickets?page=@i">@i</a></li>
+		<li class="page-item @(Model.CurrentPage == i ? "active" : string.Empty)">
+			<a class="page-link"
+			   href="/Ticket/ListTickets?page=@i">
+				@i
+			</a>
+		</li>
 	}
 	<li class="page-item @nextDisabled">
-		<a class="page-link @nextDisabled" href="/Ticket/ListTickets?page=@Model.NextPage" aria-label="Next">
-			<span aria-hidden="true">&raquo;</span>
-			<span class="sr-only">Next</span>
+		<a class="page-link @nextDisabled"
+		   href="/Ticket/ListTickets?page=@Model.NextPage"
+		   aria-label="Next">
+			<span aria-hidden="true">
+				&raquo;
+			</span>
+			<span class="sr-only">
+				Next
+			</span>
 		</a>
 	</li>
 </ul>
@@ -36,40 +53,69 @@
 									<div class="m-b-md">
 										<div class="btn-toolbar pull-right">
 											<div class="btn-group" role="group">
-												<a href="/Ticket/View/@ticket.Id" class="btn btn-primary btn-xs pull-right">View ticket</a>
+												<a href="/Ticket/View/@ticket.Id"
+												   class="btn btn-primary btn-xs pull-right">
+													View ticket
+												</a>
 											</div>
 											@if (!User.IsInRole("Client"))
 											{
 												<div class="btn-group" role="group">
-													<a href="/Ticket/Edit/@ticket.Id" class="btn btn-warning btn-xs pull-right">Edit ticket</a>
+													<a href="/Ticket/Edit/@ticket.Id"
+													   class="btn btn-warning btn-xs pull-right">
+														Edit ticket
+													</a>
 												</div>
 												<div class="btn-group" role="group">
-													<a href="/Ticket/Delete/@ticket.Id" class="btn btn-danger btn-xs pull-right">Delete ticket</a>
+													<a href="/Ticket/Delete/@ticket.Id"
+													   class="btn btn-danger btn-xs pull-right">
+														Delete ticket
+													</a>
 												</div>
 											}
 										</div>
-
-										<h2>@ticket.Title</h2>
+										<h2>
+											@ticket.Title
+										</h2>
 									</div>
 									<dl class="dl-horizontal">
-										<dt>Status:</dt>
-										<dd><span class="label label-primary">@ticket.TicketState</span></dd>
+										<dt>
+											Status:
+										</dt>
+										<dd>
+											<span class="label label-primary">
+												@ticket.TicketState
+											</span>
+										</dd>
 									</dl>
 								</div>
 							</div>
 							<div class="row">
 								<div class="col-lg-5">
 									<dl class="dl-horizontal">
-										<dt>Created by:</dt>
-										<dd>@ticket.SumitterName</dd>
-										<dt>From Project:</dt>
-										<dd>@ticket.ProjectName</dd>
+										<dt>
+											Created by:
+										</dt>
+										<dd>
+											@ticket.SumitterName
+										</dd>
+										<dt>
+											From Project:
+										</dt>
+										<dd>
+											@ticket.ProjectName
+										</dd>
 									</dl>
 								</div>
-								<div class="col-lg-7" id="cluster_info">
+								<div class="col-lg-7"
+									 id="cluster_info">
 									<dl class="dl-horizontal">
-										<dt>Created On:</dt>
-										<dd>@ticket.SubmissionDate.ToShortDateString()</dd>
+										<dt>
+											Created On:
+										</dt>
+										<dd>
+											@ticket.SubmissionDate.ToShortDateString()
+										</dd>
 									</dl>
 								</div>
 							</div>

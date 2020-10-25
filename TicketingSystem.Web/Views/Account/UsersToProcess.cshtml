@@ -8,24 +8,43 @@
 	string nextDisabled = Model.CurrentPage == Model.TotalPages ? "disabled" : string.Empty;
 }
 
-<h2 class="animated fadeInLeft">@ViewData["Title"]</h2>
+<h2 class="animated fadeInLeft">
+	@ViewData["Title"]
+</h2>
 <br />
 
 <ul class="pagination">
 	<li class="page-item @previousDisabled">
-		<a class="page-link @previousDisabled" href="/Account/UsersToProcess?page=@Model.PeviousPage" aria-label="Previous">
-			<span aria-hidden="true">&laquo;</span>
-			<span class="sr-only">Previous</span>
+		<a class="page-link @previousDisabled"
+		   href="/Account/UsersToProcess?page=@Model.PeviousPage"
+		   aria-label="Previous">
+			<span aria-hidden="true">
+				&laquo;
+			</span>
+			<span class="sr-only">
+				Previous
+			</span>
 		</a>
 	</li>
 	@for (int i = 1; i <= Model.TotalPages; i++)
 	{
-		<li class="page-item @(Model.CurrentPage == i ? "active" : string.Empty)"><a class="page-link" href="/Account/UsersToProcess?page=@i">@i</a></li>
+		<li class="page-item @(Model.CurrentPage == i ? "active" : string.Empty)">
+			<a class="page-link"
+			   href="/Account/UsersToProcess?page=@i">
+				@i
+			</a>
+		</li>
 	}
 	<li class="page-item @nextDisabled">
-		<a class="page-link @nextDisabled" href="/Account/UsersToProcess?page=@Model.NextPage" aria-label="Next">
-			<span aria-hidden="true">&raquo;</span>
-			<span class="sr-only">Next</span>
+		<a class="page-link @nextDisabled"
+		   href="/Account/UsersToProcess?page=@Model.NextPage"
+		   aria-label="Next">
+			<span aria-hidden="true">
+				&raquo;
+			</span>
+			<span class="sr-only">
+				Next
+			</span>
 		</a>
 	</li>
 </ul>
@@ -43,33 +62,60 @@
 								<div class="row">
 									<div class="col-lg-12">
 										<div class="m-b-md">
-											<form method="post" action="/Account/Deny/@user.Id">
-												<input type="submit" class="btn btn-danger btn-xs pull-right" value="Deny" />
+											<form method="post"
+												  action="/Account/Deny/@user.Id">
+												<input type="submit"
+													   class="btn btn-danger btn-xs pull-right"
+													   value="Deny" />
 											</form>
-											<form method="post" action="/Account/Approve/@user.Id">
-												<input type="submit" class="btn btn-success btn-xs pull-right" value="Approve" />
+											<form method="post"
+												  action="/Account/Approve/@user.Id">
+												<input type="submit"
+													   class="btn btn-success btn-xs pull-right"
+													   value="Approve" />
 											</form>
-											<h2>@user.Username</h2>
+											<h2>
+												@user.Username
+											</h2>
 										</div>
 										<dl class="dl-horizontal">
-											<dt>Status:</dt>
-											<dd><span class="label label-primary">@user.State</span></dd>
+											<dt>
+												Status:
+											</dt>
+											<dd>
+												<span class="label label-primary">
+													@user.State
+												</span>
+											</dd>
 										</dl>
 									</div>
 								</div>
 								<div class="row">
 									<div class="col-lg-5">
 										<dl class="dl-horizontal">
-											<dt>First Name:</dt>
-											<dd>@user.FirstName</dd>
-											<dt>Last Name:</dt>
-											<dd>@user.LastName</dd>
+											<dt>
+												First Name:
+											</dt>
+											<dd>
+												@user.FirstName
+											</dd>
+											<dt>
+												Last Name:
+											</dt>
+											<dd>
+												@user.LastName
+											</dd>
 										</dl>
 									</div>
-									<div class="col-lg-7" id="cluster_info">
+									<div class="col-lg-7"
+										 id="cluster_info">
 										<dl class="dl-horizontal">
-											<dt>E-Mail:</dt>
-											<dd>@user.Email</dd>
+											<dt>
+												E-Mail:
+											</dt>
+											<dd>
+												@user.Email
+											</dd>
 										</dl>
 									</div>
 								</div>

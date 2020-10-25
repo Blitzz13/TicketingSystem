@@ -10,19 +10,32 @@
 		<section>
 			<form method="post">
 				<div class="form-group animated fadeInLeft">
-					<label asp-for="ProjectName"></label>
-					<input asp-for="ProjectName" disabled class="form-control" />
-					<span asp-validation-for="ProjectName" class="text-danger"></span>
+					<label asp-for="ProjectName">
+					</label>
+					<input asp-for="ProjectName" 
+						   disabled 
+						   class="form-control" />
+					<span asp-validation-for="ProjectName" 
+						  class="text-danger">
+					</span>
 				</div>
-				<div asp-validation-summary="All" class="text-danger"></div>
+				<div asp-validation-summary="All"
+					 class="text-danger">
+				</div>
 				<div class="form-group animated fadeInRight">
-					<label asp-for="TicketTitle"></label>
-					<input asp-for="TicketTitle" class="form-control" />
-					<span asp-validation-for="TicketTitle" class="text-danger"></span>
+					<label asp-for="TicketTitle">
+					</label>
+					<input asp-for="TicketTitle" 
+						   class="form-control" />
+					<span asp-validation-for="TicketTitle"
+						  class="text-danger">
+					</span>
 				</div>
 				<div class="form-group animated fadeInLeft">
-					<label asp-for="TicketType"></label>
-					<select asp-for="TicketType" class="form-control">
+					<label asp-for="TicketType">
+					</label>
+					<select asp-for="TicketType"
+							class="form-control">
 						@switch (Model.TicketType)
 						{
 							case "BugReport":
@@ -60,8 +73,10 @@
 					</select>
 				</div>
 				<div class="form-group animated fadeInRight">
-					<label asp-for="TicketState"></label>
-					<select asp-for="TicketState" class="form-control">
+					<label asp-for="TicketState">
+					</label>
+					<select asp-for="TicketState"
+							class="form-control">
 						@switch (Model.TicketState)
 						{
 							case "New":
@@ -100,15 +115,23 @@
 				</div>
 				<div class="form-group animated fadeInLeft">
 					<label asp-for="Description"></label>
-					<textarea asp-for="Description" rows="5" class="form-control" placeholder="Description"></textarea>
+					<textarea asp-for="Description" 
+							  rows="5" 
+							  class="form-control" 
+							  placeholder="Description"></textarea>
 				</div>
 				<div class="form-group animated fadeInRight">
-					<button type="submit" class="btn btn-success">Finish</button>
+					<button type="submit" 
+							class="btn btn-success">
+					Finish
+					</button>
 				</div>
 				@if (Model != null && Model.ErrorMessage != null)
 				{
 					<div class="form-group animated tada alert-message alert-message-danger">
-						<span class="text-danger">@Model.ErrorMessage</span>
+						<span class="text-danger">
+						@Model.ErrorMessage
+						</span>
 					</div>
 				}
 			</form>

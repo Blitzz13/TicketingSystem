@@ -8,9 +8,8 @@ namespace TicketingSystem.Data
 	{
 		private static TicketingSystemDbContext _context;
 
-		public static void Seed(TicketingSystemDbContext context)
+		public static void SeedUsers(TicketingSystemDbContext context)
 		{
-
 			var user = new User()
 			{
 				Username = "test1",

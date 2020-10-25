@@ -221,7 +221,6 @@ namespace TicketingSystem.Web.Controllers
 			return RedirectToAction(nameof(BrowseUsers));
 		}
 
-
 		[HttpGet]
 		[Authorize]
 		public IActionResult UsersToProcess(int page = 1)
@@ -274,7 +273,7 @@ namespace TicketingSystem.Web.Controllers
 		{
 			_userService.Approve(id);
 
-			return View();
+			return RedirectToAction(nameof(BrowseUsers));
 		}
 
 		[HttpPost]

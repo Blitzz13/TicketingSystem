@@ -11,8 +11,13 @@
 			<div class="status-upload animated fadeInRight">
 				<br />
 				<form method="post" action="/Message/Edit/@Model.Id">
-					<textarea asp-for="MessageContent" placeholder="What are you doing right now?"></textarea>
-					<input type="submit" style="margin-right: 12px; margin-top: 5px; margin-bottom: 5px" value="Edit" class="btn btn-primary green pull-right" />
+					<textarea asp-for="MessageContent"
+							  rows="5"
+							  class="form-control"
+							  placeholder="Enter a message."></textarea>
+					<input type="submit"
+						   value="Edit"
+						   class="btn btn-primary green pull-right ticket-button-margin body" />
 				</form>
 			</div>
 		</div>

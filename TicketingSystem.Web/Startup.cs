@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.Linq;
 using TicketingSystem.Data;
 using TicketingSystem.Services;
 using TicketingSystem.Services.Impl;
@@ -36,6 +37,15 @@ namespace TicketingSystem.Web
 
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env)
 		{
+			using (var context = new TicketingSystemDbContext())
+			{
+				context.Database.Migrate();
+				if (!context.Users.Any())
+				{
+					DbSeed.SeedUsers(context);
+				}
+			}
+
 			if (env.IsDevelopment())
 			{
 				app.UseBrowserLink();

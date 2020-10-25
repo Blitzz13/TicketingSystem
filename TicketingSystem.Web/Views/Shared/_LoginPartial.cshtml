@@ -14,13 +14,25 @@
 }
 @if (User.Identity.IsAuthenticated)
 {
-	<form asp-area="" asp-controller="Account" asp-action="Logout" method="post" id="logoutForm" class="navbar-right">
+	<form asp-area=""
+		  asp-controller="Account"
+		  asp-action="Logout"
+		  method="post"
+		  id="logoutForm"
+		  class="navbar-right">
 		<ul class="nav navbar-nav navbar-right">
 			<li>
-				<a href="/Account/Details/@userId" title="Manage">Hello @User.Identity.Name</a>
+				<a href="/Account/Details/@userId"
+				   title="Manage">
+					Hello @User.Identity.Name
+				</a>
 			</li>
 			<li>
-				<a asp-area="" asp-controller="Account" asp-action="Logout">Log out</a>
+				<a asp-area=""
+				   asp-controller="Account"
+				   asp-action="Logout">
+					Log out
+				</a>
 			</li>
 		</ul>
 	</form>
@@ -28,8 +40,20 @@
 else
 {
 	<ul class="nav navbar-nav navbar-right">
-		<li><a asp-area="" asp-controller="Account" asp-action="Register">Register</a></li>
-		<li><a asp-area="" asp-controller="Account" asp-action="Login">Log in</a></li>
+		<li>
+			<a asp-area=""
+			   asp-controller="Account"
+			   asp-action="Register">
+				Register
+			</a>
+		</li>
+		<li>
+			<a asp-area=""
+			   asp-controller="Account"
+			   asp-action="Login">
+				Log in
+			</a>
+		</li>
 	</ul>
 }
 

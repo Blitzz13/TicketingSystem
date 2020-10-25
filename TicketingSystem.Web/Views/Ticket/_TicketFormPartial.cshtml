@@ -46,10 +46,10 @@
 		<label asp-for="Description"></label>
 		<textarea asp-for="Description" rows="5" class="form-control" placeholder="Description"></textarea>
 	</div>
-	<div class="form-group col-md-6 animated fadeInUp">
+	@*<div class="form-group col-md-6 animated fadeInUp">
 		<label asp-for="FilePath"></label>
 		<input asp-for="FilePath" type="file" class="form-control-file" id="file">
-	</div>
+	</div>*@
 
 	@if (Model != null && Model.ErrorMessage != null)
 	{

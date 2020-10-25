@@ -14,9 +14,16 @@
 			<p>
 				Do you want to delete <strong>@Model.Username</strong>?
 			</p>
-			<form method="post" action="/Account/Delete/@Model.UserId">
-				<input type="submit" class="btn btn-success" value="Yes" />
-				<a asp-controller="Account" asp-action="BrowseUsers" class="btn btn-danger">No</a>
+			<form method="post"
+				  action="/Account/Delete/@Model.UserId">
+				<input type="submit"
+					   class="btn btn-success"
+					   value="Yes" />
+				<a asp-controller="Account"
+				   asp-action="BrowseUsers"
+				   class="btn btn-danger">
+					No
+				</a>
 			</form>
 		</div>
 	</div>
