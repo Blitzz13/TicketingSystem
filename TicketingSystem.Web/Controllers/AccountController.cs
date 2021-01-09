@@ -282,7 +282,7 @@ namespace TicketingSystem.Web.Controllers
 		{
 			_userService.Deny(id);
 
-			return View();
+			return RedirectToAction(nameof(BrowseUsers));
 		}
 
 		private void CreateUserList(List<ListingUsersViewModel> usersToApprove, IEnumerable<User> users)
